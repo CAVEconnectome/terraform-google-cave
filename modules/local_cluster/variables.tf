@@ -134,12 +134,6 @@ variable "pcg_redis_host" {
   description = "pcg redis ip"
 }
 
-variable "mat_redis_host" {
-  type        = string
-  description = "pcg redis ip"
-}
-
-
 variable "letsencrypt_issuer_name" {
   type    = string
   default = "letsencrypt-staging"
