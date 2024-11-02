@@ -105,13 +105,10 @@ variable "max_nodes_core_pool" {
   description = "Maximum size of lightweight pool"
 }
 
-
-
 variable "postgres_write_user" {
   description = "Username for the database writer"
   default = "postgres"
 }
-
 
 variable "bigtable_instance_name" {
   description = "Name of the bigtable instance to be used by pychunkedgraph and l2cache"
@@ -127,11 +124,6 @@ variable "bigtable_google_project" {
     EOF
     type    = string
     default = ""
-}
-
-variable "pcg_redis_host" {
-  type        = string
-  description = "pcg redis ip"
 }
 
 variable "letsencrypt_issuer_name" {
