@@ -1,12 +1,12 @@
 
 
 output "l2cache_topic" {
-  value       = google_pubsub_topic.pychunkedgraph_edits.name
+  value       = google_pubsub_topic.l2cache.name
   description = "The name of the pubsub topic for l2cache  jobs"
 }
 
 output "l2cache_update" {
-  value       = google_pubsub_subscription.pychunkedgraph_edits.name
+  value       = google_pubsub_subscription.l2cache_trigger.name
   description = "The name of the pubsub subscription for l2cache jobs"
 }
 
