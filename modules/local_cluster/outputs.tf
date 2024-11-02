@@ -16,7 +16,7 @@ output "pychunkedgraph_edits_topic" {
 }
 
 output "pychunkedgraph_remesh" {
-  value       = google_pubsub_subscription.pychunkedgraph_edits.name
+  value       = google_pubsub_subscription.pychunkedgraph_remesh.name
   description = "The name of the pubsub subscriptions for pcg remesh jobs"
 }
 
