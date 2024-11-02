@@ -32,10 +32,6 @@ variable "sql_instance_name" {
   description = "Name of the SQL instance"
 }
 
-variable "postgres_user_password" {
-  description = "Password for the database writer"
-}
-
 variable "dns_zone" {
   description = "The name of the DNS managed zone"
   type        = string
