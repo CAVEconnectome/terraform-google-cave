@@ -3,6 +3,10 @@ variable "environment" {
   description = "environment name to identify resources"
 }
 
+variable "cluster_name" {
+  description = "name to identify resources associated with the kubernetes cluster"
+}
+
 variable "project_id" {
   description = "google project id"
 }
