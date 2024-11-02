@@ -24,8 +24,3 @@ output "pychunkedgraph_low_priority_remesh" {
   value       = google_pubsub_subscription.pychunkedgraph_low_priority_remesh.name
   description = "The name of the pubsub subscription for low priority remesh jobs"
 }
-
-output "helm_config_dir" {
-    value = var.helm_config_dir
-    description = "the directory where the helm configuration files are written"
-}
