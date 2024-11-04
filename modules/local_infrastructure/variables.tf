@@ -7,16 +7,27 @@ variable "region" {
   description = "region"
 }
 
-variable "owner" {
+
+variable "helm_config_dir" {
   type = string
-  description = "added as label to resources, convenient to filter costs based on labels"
-  default = "na"
+  description = "folder where to output helmfile config files"
 }
+
+variable "helm_terraform_state_url" {
+  type = string
+  description = "url where to find tfstate state, using helmfile syntax, assuming ref+tfstateURL so for example i.e. ://PATH_TO_STATE, or gs://BUCKET/PATH_TO_STATE"
+}
+
 
 variable "project_id" {
   description = "google project id"
 }
 
+variable "owner" {
+  type = string
+  description = "added as label to resources, convenient to filter costs based on labels"
+  default = "na"
+}
 
 variable "sql_instance_name" {
   description = "Name of the SQL instance"
@@ -92,3 +103,4 @@ variable "redis_version" {
   default     = "7_2"
   description = "redis version"
 }
+
