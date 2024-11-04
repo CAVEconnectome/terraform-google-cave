@@ -137,3 +137,13 @@ variable "letsencrypt_server" {
   type        = string
   default     = "https://acme-v02.api.letsencrypt.org/directory"
 }
+
+variable "helm_config_dir" {
+  type = string
+  description = "folder where to output helmfile config files"
+}
+
+variable "helm_terraform_state_url" {
+  type = string
+  description = "url where to find tfstate state, using helmfile syntax, assuming ref+tfstateURL so for example i.e. ://PATH_TO_STATE, or gs://BUCKET/PATH_TO_STATE"
+}
