@@ -1,3 +1,20 @@
+output "environment" {
+  value = var.environment
+}
+
+output "owner" {
+  value = var.owner
+}
+
+output "project_id" {
+  value = var.project_id
+}
+
+output "region" {
+  value = var.region
+}
+
+
 output "pcg_redis_host" {
   value       = google_redis_instance.pcg_redis.host
   description = "The ip of the pcg_redis host"

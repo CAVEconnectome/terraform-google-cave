@@ -11,7 +11,6 @@ variable "region" {
 variable "helm_config_dir" {
   type = string
   description = "folder where to output helmfile config files"
-  default = "${path.module}/helmfile"
 }
 
 variable "helm_terraform_state_url" {
@@ -104,4 +103,3 @@ variable "redis_version" {
   default     = "7_2"
   description = "redis version"
 }
-

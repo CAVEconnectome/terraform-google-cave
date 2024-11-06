@@ -141,10 +141,26 @@ variable "letsencrypt_server" {
 variable "helm_config_dir" {
   type = string
   description = "folder where to output helmfile config files"
-  default = "${path.module}/helmfile"
 }
 
 variable "helm_terraform_state_url" {
   type = string
   description = "url where to find tfstate state, using helmfile syntax, assuming ref+tfstateURL so for example i.e. ://PATH_TO_STATE, or gs://BUCKET/PATH_TO_STATE"
+}
+
+
+variable "redis_version" {
+  type        = string
+  default     = "7_2"
+  description = "redis version"
+}
+
+variable "network" {
+  type = string
+  description = "the self_link of the vpc network to put the cluster on "
+}
+
+variable "subnetwork"{
+  type = string
+  description ="the self_link of the vpc subnetwork to put the cluster on"
 }
