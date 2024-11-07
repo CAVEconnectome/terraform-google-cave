@@ -48,8 +48,8 @@
 # }
 
 resource "google_service_account" "cloud_dns_sa" {
-  account_id   = "clouddns-${var.environment}"
-  display_name = "clouddns-${var.environment}"
+  account_id   = "clouddns-${var.cluster_name}"
+  display_name = "clouddns-${var.cluster_name}"
   project      = var.project_id
 }
 
@@ -67,7 +67,7 @@ resource "google_project_iam_member" "cloud_dns_role" {
 
 # resource "kubernetes_secret" "cloud_dns_secret" {
 #   metadata {
-#     name = "clouddns-${var.environment}-secret"
+#     name = "clouddns-${var.cluster_name}-secret"
 #   }
 
 #   data = {

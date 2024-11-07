@@ -1,6 +1,6 @@
 resource "google_service_account" "pycg_service_account" {
-  account_id   = "pychunkedgraph-${var.environment}-${terraform.workspace}"
-  display_name = "PyChunkedGraph-${var.environment}-${terraform.workspace}"
+  account_id   = "pychunkedgraph-${var.cluster_name}-${terraform.workspace}"
+  display_name = "PyChunkedGraph-${var.cluster_name}-${terraform.workspace}"
 }
 
 resource "google_project_iam_member" "pycg_bigtable_user" {
