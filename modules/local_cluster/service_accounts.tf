@@ -11,18 +11,18 @@ resource "google_project_iam_member" "pycg_bigtable_user" {
 
 resource "google_storage_bucket_iam_member" "pycg_bucket_iam_member" {
     bucket = var.pcg_bucket_name
-    role   = "legacyBucketWriter"
+    role   = "roles/storage.legacyBucketWriter"
     member = "serviceAccount:${google_service_account.pycg_service_account.email}"
 }
 
 resource "google_storage_bucket_iam_member" "pycg_object_owner_iam_member" {
     bucket = var.pcg_bucket_name
-    role   = "legacyObjectOwner"
+    role   = "roles/storage.legacyObjectOwner"
     member = "serviceAccount:${google_service_account.pycg_service_account.email}"
 }
 
 resource "google_storage_bucket_iam_member" "pycg_object_reader_iam_member" {
     bucket = var.pcg_bucket_name
-    role   = "legacyObjectReader"
+    role   = "roles/storage.legacyObjectReader"
     member = "serviceAccount:${google_service_account.pycg_service_account.email}"
 }

@@ -148,6 +148,11 @@ variable "helm_terraform_state_url" {
   description = "url where to find tfstate state, using helmfile syntax, assuming ref+tfstateURL so for example i.e. ://PATH_TO_STATE, or gs://BUCKET/PATH_TO_STATE"
 }
 
+variable "deletion_protection" {
+  type = bool
+  description = "enable deletion protection for the cluster"
+  default = true
+}
 
 variable "redis_version" {
   type        = string

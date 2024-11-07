@@ -20,9 +20,9 @@ resource "google_service_account" "workload_identity" {
 # }
 
 resource "google_service_account_iam_binding" "ksa_gsa_binding" {
-  service_account_id = google_service_account.workload_identity.email
+  service_account_id = "projects/${var.project_id}/serviceAccounts/${google_service_account.workload_identity.email}"
   role               = "roles/iam.workloadIdentityUser"
-  members            = ["serviceAccount:${var.project_id}.svc.id.goog[default/my-service-account]"]
+  members            = ["serviceAccount:${var.project_id}.svc.id.goog[k8s-namespace/ksa-name]"]
 }
 
 resource "google_container_cluster" "cluster" {
@@ -30,6 +30,7 @@ resource "google_container_cluster" "cluster" {
   location                 = var.zone
   remove_default_node_pool = true
   initial_node_count       = 1
+  deletion_protection      = var.deletion_protection
 
   network         = var.network
   subnetwork      = var.subnetwork
@@ -67,6 +68,7 @@ resource "google_container_cluster" "cluster" {
    oauth_scopes = [
     "https://www.googleapis.com/auth/cloud-platform"
     ]
+  preemptible = true
   }
 }
 

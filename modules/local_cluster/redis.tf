@@ -4,7 +4,7 @@ resource "google_redis_instance" "mat_redis" {
   tier               = "BASIC"
   memory_size_gb     = 1
   region             = var.region
-  redis_version      = "REDIS_${var.redis_version}_X"
+  redis_version      = "REDIS_${var.redis_version}"
   authorized_network = var.network
 
   labels = {
