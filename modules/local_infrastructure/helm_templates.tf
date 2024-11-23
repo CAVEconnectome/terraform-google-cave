@@ -5,6 +5,6 @@ resource "local_file" "helm_values" {
     postgres_user       = google_sql_user.writer.name
     terraform_state_url = var.helm_terraform_state_url
     project   = var.project_id
-    postgres_secret    = "${var.environment}-postgres-password"
+    postgres_credentials    = data.google_secret_manager_secret_version.postgres_credentials.secret
   })
 }

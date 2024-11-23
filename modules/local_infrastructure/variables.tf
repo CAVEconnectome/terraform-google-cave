@@ -34,12 +34,6 @@ variable "sql_instance_name" {
   type = string
 }
 
-variable "postgres_user_password" {
-  description = "Password for the database writer"
-  type = string
-  sensitive = true
-}
-
 variable "pcg_redis_name_override" {
   description = "Override for the PCG Redis name"
   type        = string
@@ -55,12 +49,6 @@ variable "vpc_name_override" {
 locals {
   pcg_redis_name = var.pcg_redis_name_override != "" ? var.pcg_redis_name_override : "${var.owner}-${var.environment}-pcg-redis"
   vpc_name = var.vpc_name_override != "" ? var.vpc_name_override : "${var.owner}-${var.environment}-vpc"
-}
-
-variable "postgres_write_user" {
-  description = "Username for the database writer"
-  default = "postgres"
-  sensitive = true
 }
 
 variable "sql_instance_cpu" {

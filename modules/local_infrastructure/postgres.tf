@@ -50,16 +50,9 @@ resource "google_sql_user" "writer" {
   password = local.db_credentials.password
 }
 
-
-data "google_secret_manager_secret_version" "postgres_password" {
-  project = data.google_project.project.number
-  secret  = "${var.environment}-postgres-password"
-  version = "1"
-}
-
 data "google_secret_manager_secret_version" "postgres_credentials" {
   project = data.google_project.project.number
-  secret = "postgres-credentials" 
+  secret = "${var.environment}-postgres-credentials" 
   version = 1
 }
 

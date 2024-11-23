@@ -35,12 +35,6 @@ output "subnetwork_self_link" {
   description = "The self_link of the sub-network"
 }
 
-output "postgres_user" {
-  value       = var.postgres_write_user
-  description = "The username for the database writer"
-  sensitive   = true
-}
-
 output "sql_instance_name" {
   value       = var.sql_instance_name
   description = "The name of the SQL instance"
