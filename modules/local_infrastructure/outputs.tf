@@ -20,6 +20,11 @@ output "pcg_redis_host" {
   description = "The ip of the pcg_redis host"
 }
 
+output "network_name" {
+  value       = google_compute_network.vpc.name
+  description = "The network name"
+}
+
 output "network_self_link" {
   value       = google_compute_network.vpc.self_link
   description = "The self_link of the network"
@@ -33,11 +38,7 @@ output "subnetwork_self_link" {
 output "postgres_user" {
   value       = var.postgres_write_user
   description = "The username for the database writer"
-}
-
-output "postgres_password" {
-  value       = var.postgres_user_password
-  description = "The password for the database writer"
+  sensitive   = true
 }
 
 output "sql_instance_name" {

@@ -3,7 +3,8 @@ resource "local_file" "helm_values" {
   content = templatefile("${path.module}/templates/cloudsql.tpl", {
     sql_instance_name   = google_sql_database_instance.postgres.name
     postgres_user       = google_sql_user.writer.name
-    postgres_password   = google_sql_user.writer.password
-    terraform_state_url    = var.helm_terraform_state_url
+    terraform_state_url = var.helm_terraform_state_url
+    project   = var.project_id
+    postgres_secret    = "${var.environment}-postgres-password"
   })
 }

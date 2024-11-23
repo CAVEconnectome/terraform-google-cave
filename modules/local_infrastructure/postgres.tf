@@ -1,6 +1,7 @@
 resource "google_sql_database_instance" "postgres" {
   name             = var.sql_instance_name
   region           = var.region
+  project          = var.project_id
   database_version = "POSTGRES_13"
 
   lifecycle {
@@ -39,8 +40,27 @@ resource "google_sql_database" "materialization" {
   instance = google_sql_database_instance.postgres.name
 }
 
-resource "google_sql_user" "writer" {
-  name     = var.postgres_write_user
-  instance = google_sql_database_instance.postgres.name
-  password = var.postgres_user_password
+locals {
+  db_credentials = jsondecode(data.google_secret_manager_secret_version.postgres_credentials.secret_data)
 }
+
+resource "google_sql_user" "writer" {
+  name     = local.db_credentials.username
+  instance = google_sql_database_instance.postgres.name
+  password = local.db_credentials.password
+}
+
+
+data "google_secret_manager_secret_version" "postgres_password" {
+  project = data.google_project.project.number
+  secret  = "${var.environment}-postgres-password"
+  version = "1"
+}
+
+data "google_secret_manager_secret_version" "postgres_credentials" {
+  project = data.google_project.project.number
+  secret = "postgres-credentials" 
+  version = 1
+}
+
+
