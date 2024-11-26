@@ -34,6 +34,16 @@ variable "sql_instance_name" {
   type = string
 }
 
+variable "dns_zone" {
+  description = "The name of the DNS managed zone"
+  type        = string
+}
+
+variable "domain_name" {
+  description = "The DNS name associated with this managed zone"
+  type        = string
+}
+
 variable "pcg_redis_name_override" {
   description = "Override for the PCG Redis name"
   type        = string
@@ -66,6 +76,31 @@ variable "sql_temp_file_limit_gb" {
   type        = number
   default     = 100  # 104857600 Kb in GB
 }
+
+variable "sql_maintenance_work_mem_mb" {
+  description = "Maximum amount of memory to be used for maintenance operations in megabytes"
+  type        = number
+  default     = 64  # 64000 Kb in MB
+}
+
+variable "max_parallel_maintenance_workers" {
+  description = "Maximum number of maintenance workers that can be run in parallel"
+  type        = number
+  default     = 2
+}
+
+variable "temp_file_limit" {
+  description = "Temporary file size limit in kilobytes"
+  type        = number
+  default     = 104857600  # 100 GB in KB
+}
+
+variable "work_mem" {
+  description = "Amount of memory to be used by internal sort operations and hash tables in kilobytes"
+  type        = number
+  default     = 64000  # 64 MB in KB
+}
+
 
 variable "sql_work_mem_mb" {
   description = "Amount of memory to be used by internal sort operations and hash tables in megabytes"

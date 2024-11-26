@@ -12,3 +12,9 @@ resource "google_compute_subnetwork" "subnet" {
   network       = google_compute_network.vpc.name
   ip_cidr_range = "10.142.0.0/20"
 }
+
+resource "google_dns_managed_zone" "primary" {
+  name        = var.dns_zone
+  dns_name    = "${var.domain_name}."
+  description = "zone for ${var.domain_name}"
+}
