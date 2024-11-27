@@ -4,7 +4,7 @@
 resource "google_dns_record_set" "a_records" {
   for_each = var.dns_entries
 
-  name         = "${each.value.domain_name}."dn
+  name         = "${each.value.domain_name}."
   type         = "A"
   ttl          = 300
   managed_zone = each.value.zone
