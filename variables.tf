@@ -3,7 +3,7 @@ variable "environment" {
   description = "environment name to identify permanent resources"
 }
 
-variable "cluster_name" {
+variable "cluster_prefix" {
   description = "name to identify resources associated with the kubernetes cluster"
 }
 

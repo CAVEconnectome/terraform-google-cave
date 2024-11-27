@@ -3,8 +3,8 @@
 resource "google_service_account" "workload_identity" {
   project = var.project_id
 
-  account_id   = "svc-workident-${var.cluster_name}"
-  display_name = "svc-workident-${var.cluster_name}"
+  account_id   = "svc-workident-${var.cluster_prefix}"
+  display_name = "svc-workident-${var.cluster_prefix}"
 }
 
 # resource "kubernetes_service_account" "ksa" {
@@ -26,7 +26,7 @@ resource "google_service_account_iam_binding" "ksa_gsa_binding" {
 }
 
 resource "google_container_cluster" "cluster" {
-  name                     = "${var.cluster_name}-cave"
+  name                     = "${var.cluster_prefix}-cave"
   location                 = var.zone
   remove_default_node_pool = true
   initial_node_count       = 1
@@ -91,7 +91,7 @@ resource "google_container_cluster" "cluster" {
 # }
 
 resource "google_compute_address" "cluster_ip" {
-  name   = "${var.cluster_name}-cave"
+  name   = "${var.cluster_prefix}-cave"
   region = var.region
 
 }

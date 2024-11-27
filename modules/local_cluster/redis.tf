@@ -1,6 +1,6 @@
 resource "google_redis_instance" "mat_redis" {
-  name               = "${var.cluster_name}-mat-redis"
-  display_name       = "${var.cluster_name}-mat-redis"
+  name               = "${var.cluster_prefix}-mat-redis"
+  display_name       = "${var.cluster_prefix}-mat-redis"
   tier               = "BASIC"
   memory_size_gb     = 1
   region             = var.region
