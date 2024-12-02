@@ -77,10 +77,10 @@ variable "sql_temp_file_limit_gb" {
   default     = 100  # 104857600 Kb in GB
 }
 
-variable "sql_maintenance_work_mem_mb" {
-  description = "Maximum amount of memory to be used for maintenance operations in megabytes"
+variable "sql_maintenance_work_mem_gb" {
+  description = "Maximum amount of memory to be used for maintenance operations in gigabytes"
   type        = number
-  default     = 64  # 64000 Kb in MB
+  default     = 2 
 }
 
 variable "max_parallel_maintenance_workers" {

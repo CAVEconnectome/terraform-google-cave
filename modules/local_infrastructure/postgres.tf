@@ -15,19 +15,15 @@ resource "google_sql_database_instance" "postgres" {
     
     database_flags {
       name  = "maintenance_work_mem"
-      value = "${var.sql_maintenance_work_mem_mb*1024}"
+      value = "${var.sql_maintenance_work_mem_gb * 1024 * 1024}" # Convert GB to KB
     }
     database_flags {
       name  = "temp_file_limit"
-      value = "${var.sql_temp_file_limit_gb * 1024 * 1024}"  # Convert MB to KB
+      value = "${var.sql_temp_file_limit_gb * 1024 * 1024}"  # Convert GB to KB
     }
     database_flags {
       name  = "work_mem"
       value = "${var.sql_work_mem_mb * 1024}"  # Convert MB to KB
-    }
-    database_flags {
-      name  = "maintenance_work_mem"
-      value = "${var.sql_maintenance_work_mem_gb * 1024 * 1024}"  # Convert GB to KB
     }
   }
 }
