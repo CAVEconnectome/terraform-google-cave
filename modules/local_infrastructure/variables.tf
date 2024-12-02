@@ -101,19 +101,11 @@ variable "work_mem" {
   default     = 64000  # 64 MB in KB
 }
 
-
 variable "sql_work_mem_mb" {
   description = "Amount of memory to be used by internal sort operations and hash tables in megabytes"
   type        = number
   default     = 64  # 64000 Kb in MB
 }
-
-variable "sql_maintenance_work_mem_gb" {
-  description = "Maximum amount of memory to be used for maintenance operations in gigabytes"
-  type        = number
-  default     = 2  # 2097152 Kb in GB
-}
-
 
 variable "pcg_redis_memory_size_gb" {
   type        = number
