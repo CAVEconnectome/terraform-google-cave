@@ -35,7 +35,9 @@ resource "google_container_cluster" "cluster" {
   network         = var.network
   subnetwork      = var.subnetwork
   networking_mode = "VPC_NATIVE"
-
+  lifecycle {
+    ignore_changes = [node_config[0].preemptible ]
+  }
   resource_labels = {
     project = var.environment
     owner   = var.owner
@@ -68,7 +70,6 @@ resource "google_container_cluster" "cluster" {
    oauth_scopes = [
     "https://www.googleapis.com/auth/cloud-platform"
     ]
-  preemptible = true
   }
 }
 
