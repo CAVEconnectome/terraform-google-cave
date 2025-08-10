@@ -1,4 +1,14 @@
 kubeContext: gke_${project_id}_${zone}-${cluster}
 projectName: ${project_id}
 cluster:
-  meshPool: ${mesh_pool_name}
+  globalServer: "${global_server}"
+  environment: "${environment}"
+  domainName: "${domain_name}"
+  googleProject: "${project_id}"
+  dataProjectName: "${data_project_id}"
+  googleRegion: "${region}"
+  googleZone: "${zone}"
+  standardPool: "${standard_pool_name}"
+  lightweightPool: "${lightweight_pool_name}"
+  meshPool: "${mesh_pool_name}"
+  dockerRegistry: "${docker_registry}"

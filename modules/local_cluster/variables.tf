@@ -180,3 +180,14 @@ variable "pcg_redis_host" {
   type        = string
   default     = ""
 }
+
+variable "docker_registry" {
+  description = "Container registry to use in Helm values"
+  type        = string
+  default     = "docker.io/caveconnectome"
+}
+
+variable "global_server" {
+  description = "Fully qualified global server hostname (where auth and info service reside) (e.g., global.daf-apis.com)"
+  type        = string
+}
