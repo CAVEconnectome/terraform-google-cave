@@ -53,11 +53,18 @@ gcloud container clusters get-credentials <cluster-name> --region <region> --pro
 ```
 
 ## Deploy apps with Helmfile
+- Install the Helm Diff plugin (Helmfile uses `helm diff` for planning):
+  - `/opt/homebrew/bin/helm plugin install https://github.com/databus23/helm-diff`
+  - Verify: `/opt/homebrew/bin/helm plugin list` (should list `diff`)
+  - If already installed: `/opt/homebrew/bin/helm plugin update diff`
+
 ```
 cd <repo_name>/environments/<org>/v5/helmfile
 cp helmfile.yaml.example helmfile.yaml
 # Edit helmfile.yaml and create overrides (e.g., materialize.yaml) as needed
 helmfile apply
+# Tip: If you cannot install the plugin, use --skip-diff as a temporary workaround
+# helmfile apply --skip-diff
 ```
 
 ## Import existing resources (optional)
