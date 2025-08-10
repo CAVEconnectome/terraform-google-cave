@@ -1,4 +1,3 @@
-
 variable "environment" {
   description = "environment name to identify resources"
 }
@@ -168,4 +167,16 @@ variable "network" {
 variable "subnetwork"{
   type = string
   description ="the self_link of the vpc subnetwork to put the cluster on"
+}
+
+variable "mat_redis_host" {
+  description = "Hostname or IP for the Materialization/Annotation Redis (used by limiter/materialize)"
+  type        = string
+  default     = ""
+}
+
+variable "pcg_redis_host" {
+  description = "Hostname or IP for the PyChunkedGraph Redis"
+  type        = string
+  default     = ""
 }

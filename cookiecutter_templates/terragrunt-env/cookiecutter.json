@@ -1,0 +1,17 @@
+{
+  "repo_name": "cave-terraform-env",
+  "org": "allen",
+  "environment": "api",
+  "cluster_name": "v5",
+  "project_id": "my-gcp-project",
+  "region": "us-west1",
+  "zone": "us-west1-b",
+  "owner": "cave",
+  "sql_instance_name": "em-api3",
+  "dns_zone": "em",
+  "domain_name": "em.brain.example.org",
+  "letsencrypt_email": "user@example.org",
+  "state_bucket": "my-terraform-state-bucket",
+  "vpc_name_override": "",
+  "pcg_redis_name_override": ""
+}
