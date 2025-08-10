@@ -13,5 +13,30 @@
   "letsencrypt_email": "user@example.org",
   "state_bucket": "my-terraform-state-bucket",
   "vpc_name_override": "",
-  "pcg_redis_name_override": ""
+  "pcg_redis_name_override": "",
+  "docker_registry": "docker.io/caveconnectome",
+  "bigtable_google_project": "",
+  "bigtable_instance_name": "pychunkedgraph",
+  "cluster_global_server": "",
+  "_docs": {
+    "repo_name": "Name of the new environment repository.",
+    "org": "Top-level folder namespace (e.g., your org/team).",
+    "environment": "Environment name used for the cluster folder (e.g., api, staging, prod).",
+    "cluster_name": "Short identifier used as cluster_prefix and DNS subdomain (e.g., v5).",
+    "project_id": "GCP Project ID where resources are created.",
+    "region": "GCP region for regional resources (e.g., us-west1).",
+    "zone": "GCP zone used in kube context and defaults (e.g., us-west1-b).",
+    "owner": "Label used on resources; helpful for cost filtering.",
+    "sql_instance_name": "Cloud SQL Postgres instance name (existing or to be created).",
+    "dns_zone": "Cloud DNS managed zone name (e.g., em).",
+    "domain_name": "Base domain (e.g., em.brain.example.org).",
+    "letsencrypt_email": "Email used by cert-manager ACME issuer.",
+    "state_bucket": "GCS bucket for Terraform/Terragrunt state.",
+    "vpc_name_override": "Optional: existing VPC name to use instead of generated.",
+    "pcg_redis_name_override": "Optional: existing Redis instance name override.",
+    "docker_registry": "Container registry for images (default docker.io/caveconnectome).",
+    "bigtable_google_project": "If Bigtable is in another project, set that project ID.",
+    "bigtable_instance_name": "Bigtable instance name for PyChunkedGraph (default pychunkedgraph).",
+    "cluster_global_server": "Optional: globalServer value for cluster settings."
+  }
 }

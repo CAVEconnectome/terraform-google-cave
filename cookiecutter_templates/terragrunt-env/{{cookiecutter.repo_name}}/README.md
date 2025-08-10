@@ -14,6 +14,27 @@ Notes:
 - cluster_name controls the cluster_prefix only; it does not create directories.
 - Helm values use defaults+overrides: *.defaults.yaml are generated, user *.yaml overrides are optional.
 
+## Variables
+- repo_name: Name of the repository/folder that will be created for your environment repo. This does not affect resource names, only your local/git layout.
+- org: Top-level folder name under environments/. Also used in the Terraform state prefix (gs://<state-bucket>/<org>/...). Choose something stable like your team or tenant name.
+- environment: Logical environment name (e.g., api, staging, prod). Used by Terraform modules and for Secret Manager naming (<environment>-postgres-credentials). Also becomes the cluster folder path under environments/<org>/.
+- cluster_name: Short identifier for this cluster (e.g., v5). Passed to the cluster module as cluster_prefix and used to form DNS entries (e.g., <cluster_name>.<domain_name>). It does not create a new directory; it scopes names and DNS.
+- project_id: GCP project ID where resources are created and where Helmfile resolves secrets (ref+gcpsecrets://<project_id>/...).
+- region: GCP region for regional resources (e.g., us-west1). Used by Terraform for GKE/Redis/Cloud SQL and rendered into Helm values (cluster.googleRegion).
+- zone: GCP zone (e.g., us-west1-b). Used in the kubeContext string in cluster.yaml and rendered as cluster.googleZone. For regional clusters, leave as a zone in the same region (used for context formatting).
+- owner: Arbitrary label used in naming and tagging resources (e.g., owner-environment in Redis name). Helpful for cost filtering; choose a short team identifier.
+- sql_instance_name: Name of the existing or to-be-created Cloud SQL Postgres instance. Rendered into Helm defaults so apps can connect.
+- dns_zone: Name of the Cloud DNS managed zone (e.g., em). Terraform uses this to create DNS records for the cluster.
+- domain_name: Base domain served by the DNS zone (e.g., em.brain.example.org). Used to construct app hostnames and rendered into Helm values (cluster.domainName).
+- letsencrypt_email: Email used by cert-manager’s ACME issuer for certificate management. Terraform uses this during cluster bootstrap.
+- state_bucket: GCS bucket name for Terraform/Terragrunt state. Also used to point Helmfile to the static module’s tfstate (gs://<state_bucket>/<org>/static/terraform.tfstate) so it can resolve outputs like sql_instance_name.
+- vpc_name_override: Optional. If you already have a VPC, set its name here to reuse it instead of letting Terraform create one. This affects import flows and naming.
+- pcg_redis_name_override: Optional. Override the default Redis instance name if reusing an existing Memorystore instance.
+- docker_registry: Container registry for image references in Helm values (cluster.dockerRegistry). Defaults to docker.io/caveconnectome; change if you mirror images.
+- bigtable_google_project: Optional. If your Bigtable for PyChunkedGraph lives in another project, set that project ID. Rendered as cluster.dataProjectName in pychunkedgraph defaults; otherwise falls back to project_id.
+- bigtable_instance_name: Bigtable instance name used by PyChunkedGraph (pychunkedgraph.defaults.yaml). Defaults to pychunkedgraph.
+- cluster_global_server: Optional. The global server URL you are using. (e.g. global.daf-apis.com)
+
 ## Usage
 - Set your state bucket in environments/{{ cookiecutter.org }}/root.hcl (bucket and helm_terraform_state_url).
 - Provision infra:
