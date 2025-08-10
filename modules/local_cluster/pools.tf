@@ -11,7 +11,7 @@ resource "google_container_node_pool" "sp" {
     }
 
     machine_type = var.standard_machine_type
-    disk_size_gb = 20
+    disk_size_gb = 40
     preemptible = false
     
     metadata = {
@@ -70,7 +70,7 @@ resource "google_container_node_pool" "mp" {
     }
 
     machine_type = var.mesh_machine_type
-    disk_size_gb = 20
+    disk_size_gb = 40
     preemptible  = true
     
     metadata = {

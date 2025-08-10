@@ -39,3 +39,4 @@ output "sql_instance_name" {
   value       = var.sql_instance_name
   description = "The name of the SQL instance"
 }
+

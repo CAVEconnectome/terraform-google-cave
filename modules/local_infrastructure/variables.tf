@@ -1,4 +1,3 @@
-
 variable "environment" {
   description = "environment name to identify resources"
 }
@@ -117,4 +116,10 @@ variable "redis_version" {
   type        = string
   default     = "7_2"
   description = "redis version"
+}
+
+variable "sql_max_connections" {
+  description = "Maximum number of Postgres connections (max_connections database flag)"
+  type        = number
+  default     = 20000
 }

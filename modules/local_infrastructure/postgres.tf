@@ -25,6 +25,10 @@ resource "google_sql_database_instance" "postgres" {
       name  = "work_mem"
       value = "${var.sql_work_mem_mb * 1024}"  # Convert MB to KB
     }
+    database_flags {
+      name  = "max_connections"
+      value = tostring(var.sql_max_connections)
+    }
   }
 }
 
