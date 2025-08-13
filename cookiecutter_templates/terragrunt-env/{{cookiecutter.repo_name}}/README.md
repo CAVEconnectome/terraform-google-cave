@@ -33,7 +33,19 @@ Notes:
 - docker_registry: Container registry for image references in Helm values (cluster.dockerRegistry). Defaults to docker.io/caveconnectome; change if you mirror images.
 - bigtable_google_project: Optional. If your Bigtable for PyChunkedGraph lives in another project, set that project ID. Rendered as cluster.dataProjectName in pychunkedgraph defaults; otherwise falls back to project_id.
 - bigtable_instance_name: Bigtable instance name used by PyChunkedGraph (pychunkedgraph.defaults.yaml). Defaults to pychunkedgraph.
-- cluster_global_server: Optional. The global server URL you are using. (e.g. global.daf-apis.com)
+- cluster_global_server: Optional. A global server/base URL some charts reference (cluster.globalServer). The generated cluster.yaml leaves this empty; set it in a Helmfile override if you need it.
+- datastack_name: defaults to v1dd.  This is the name of your first datastack (see and the template will 
+
+## creating a materializaiton schedule
+This template makes an example schedules.py file in the helmfile directory with your Celery beat schedule.  It can be customized to add more datastacks, or change the datastacks, the timing, or the frequency and expiration of materialization versions. 
+
+The template will add a file for user customized materialize.yaml file for you to add config settings to.
+
+```
+materialize:
+  schedules: "ref+file://schedules.py"
+```
+
 
 ## Usage
 - Set your state bucket in environments/{{ cookiecutter.org }}/root.hcl (bucket and helm_terraform_state_url).
@@ -45,3 +57,17 @@ Notes:
   - cd helmfile && cp helmfile.yaml.example helmfile.yaml && helmfile apply
 
 Follow QUICKSTART in the root repo for full steps.
+
+## Configure kube and Helm for this cluster
+From environments/{{ cookiecutter.org }}/{{ cookiecutter.environment }}/helmfile:
+
+```
+./configure.sh
+helmfile apply
+```
+
+The script:
+- Sets gcloud project (from Terraform)
+- Fetches GKE credentials (uses Terraform-provided region/zone; falls back from region to zone automatically)
+- Ensures helm-diff plugin is installed
+- Switches kubectl to the correct kubeContext (from Terraform)
