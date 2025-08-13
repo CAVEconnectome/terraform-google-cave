@@ -14,7 +14,7 @@ releases:
     values:
       - ${cluster_values}
       - ${materialize_defaults}
-      # - materialize.yaml   # optional user override
+      - materialize.yaml   # user override (schedules.json reference scaffolded by template)
       - ${annotation_defaults}
       # - annotation.yaml    # optional user override
       - ${cloudsql_defaults}
