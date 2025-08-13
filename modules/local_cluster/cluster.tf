@@ -36,7 +36,8 @@ resource "google_container_cluster" "cluster" {
   subnetwork      = var.subnetwork
   networking_mode = "VPC_NATIVE"
   lifecycle {
-    ignore_changes = [node_config[0].preemptible ]
+    ignore_changes = [node_config[0].preemptible,node_config[0].resource_labels ]
+     # Ignore API-managed resource labels added by GKE on the VM instances
   }
   resource_labels = {
     project = var.environment
@@ -71,6 +72,7 @@ resource "google_container_cluster" "cluster" {
     "https://www.googleapis.com/auth/cloud-platform"
     ]
   }
+  
 }
 
 

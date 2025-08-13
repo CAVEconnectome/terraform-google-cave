@@ -26,6 +26,12 @@ resource "google_container_node_pool" "sp" {
     min_node_count = 1
     max_node_count = var.max_nodes_standard_pool
   }
+  # Ignore API-managed resource labels added by GKE on the VM instances
+  lifecycle {
+    ignore_changes = [
+      node_config[0].resource_labels,
+    ]
+  }
 }
 
 resource "google_container_node_pool" "lp" {
@@ -54,6 +60,12 @@ resource "google_container_node_pool" "lp" {
   autoscaling {
     min_node_count = 1
     max_node_count = var.max_nodes_lightweight_pool
+  }
+  # Ignore API-managed resource labels added by GKE on the VM instances
+  lifecycle {
+    ignore_changes = [
+      node_config[0].resource_labels,
+    ]
   }
 }
 
@@ -85,6 +97,12 @@ resource "google_container_node_pool" "mp" {
     min_node_count = 1
     max_node_count = var.max_nodes_mesh_pool
   }
+  # Ignore API-managed resource labels added by GKE on the VM instances
+  lifecycle {
+    ignore_changes = [
+      node_config[0].resource_labels,
+    ]
+  }
 }
 
 
@@ -114,5 +132,11 @@ resource "google_container_node_pool" "cp" {
   autoscaling {
     min_node_count = 1
     max_node_count = var.max_nodes_core_pool
+  }
+  # Ignore API-managed resource labels added by GKE on the VM instances
+  lifecycle {
+    ignore_changes = [
+      node_config[0].resource_labels,
+    ]
   }
 }
