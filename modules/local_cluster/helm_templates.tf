@@ -7,6 +7,7 @@ resource "local_file" "helm_values_cluster" {
     zone                   = var.zone,
     domain_name            = var.domain_name,
     environment            = var.environment,
+    cluster_prefix         = var.cluster_prefix,
     global_server          = var.global_server,
     cluster                = google_container_cluster.cluster.name,
     standard_pool_name     = google_container_node_pool.sp.name,
@@ -17,12 +18,6 @@ resource "local_file" "helm_values_cluster" {
   })
 }
 
-resource "local_file" "nginx_values_cluster" {
-  filename = "${var.helm_config_dir}/nginx-ingress-controller.yaml"
-  content = templatefile("${path.module}/templates/nginx-ingress-controller.tpl", {
-    cluster_ip = google_compute_address.cluster_ip.address
-  })
-}
 
 # Defaults values files generated into helm_config_dir (users can create override files next to these)
 resource "local_file" "values_materialize" {
