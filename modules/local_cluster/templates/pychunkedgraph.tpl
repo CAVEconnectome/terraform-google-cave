@@ -2,23 +2,13 @@
 limiter:
   redis:
     host: "${redis_host}"
-cluster:
-  globalServer: ""
-  environment: "${environment}"
-  domainName: "${domain_name}"
-  googleProject: "${project_id}"
-  dataProjectName: "${data_project_id}"
-  googleRegion: "${region}"
-  googleZone: "${zone}"
-  standardPool: "${standard_pool_name}"
-  dockerRegistry: "${docker_registry}"
 pychunkedgraph:
   graphIds: ""
   secretFiles:
     - name: google-secret.json
-      value: ""
+      value: "ref+gcpsecrets://${secrets_project_id}/${pycg_sa_secret}"
     - name: cave-secret.json
-      value: ""
+      value: "ref+gcpsecrets://${secrets_project_id}/${cave_secret_name}"
   config: ""
   redis:
     host: "${redis_host}"

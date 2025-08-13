@@ -1,4 +1,4 @@
-kubeContext: gke_${project_id}_${zone}-${cluster}
+kubeContext: gke_${project_id}_${zone}_${cluster}
 projectName: ${project_id}
 cluster:
   globalServer: "${global_server}"
