@@ -18,6 +18,7 @@
   "bigtable_google_project": "",
   "bigtable_instance_name": "pychunkedgraph",
   "cluster_global_server": "",
+  "materialize_datastack": "v1dd",
   "_docs": {
     "repo_name": "Name of the new environment repository.",
     "org": "Top-level folder namespace (e.g., your org/team).",
@@ -37,6 +38,7 @@
     "docker_registry": "Container registry for images (default docker.io/caveconnectome).",
     "bigtable_google_project": "If Bigtable is in another project, set that project ID.",
     "bigtable_instance_name": "Bigtable instance name for PyChunkedGraph (default pychunkedgraph).",
-    "cluster_global_server": "Optional: globalServer value for cluster settings."
+    "cluster_global_server": "Optional: globalServer value for cluster settings.",
+    "materialize_datastack": "Default datastack name to inject into the scaffolded schedules.json (e.g., v1dd)."
   }
 }
