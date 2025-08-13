@@ -191,3 +191,27 @@ variable "global_server" {
   description = "Fully qualified global server hostname (where auth and info service reside) (e.g., global.daf-apis.com)"
   type        = string
 }
+
+variable "materialization_dump_bucket_name" {
+  description = "Optional GCS bucket used for materialization dumps; grants PyCG SA access if set"
+  type        = string
+  default     = ""
+}
+
+variable "materialization_upload_bucket_name" {
+  description = "Optional GCS bucket for materialization uploads; grants PyCG SA access if set"
+  type        = string
+  default     = ""
+}
+
+variable "skeleton_cache_bucket_name" {
+  description = "Optional GCS bucket for SkeletonService cache; grants skeleton SA access if set (provide bucket name without gs://)"
+  type        = string
+  default     = ""
+}
+
+variable "cave_token" {
+  description = "CAVE access token (JSON will be created as {\"token\": \"...\"})"
+  type        = string
+  sensitive   = true
+}
