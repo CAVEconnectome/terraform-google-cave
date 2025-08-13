@@ -3,7 +3,7 @@ variable "environment" {
 }
 
 variable "cluster_prefix" {
-  description = "prefix to idenity resources associated with this cluster."
+  description = "prefix to identify resources associated with this cluster."
 }
 
 variable "project_id" {
