@@ -2,6 +2,7 @@ kubeContext: gke_${project_id}_${zone}_${cluster}
 projectName: ${project_id}
 cluster:
   globalServer: "${global_server}"
+  cluster_prefix: "${cluster_prefix}"
   environment: "${environment}"
   domainName: "${domain_name}"
   googleProject: "${project_id}"
