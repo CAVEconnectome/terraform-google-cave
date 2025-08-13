@@ -31,6 +31,8 @@ resource "local_file" "values_materialize" {
     redis_host        = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host
     project_id        = var.project_id
     sql_instance_name = var.sql_instance_name
+    secrets_project_id = var.project_id
+    cave_secret_name   = format("cave-secret-%s-%s", var.cluster_prefix, terraform.workspace)
   })
   file_permission = "0644"
 }
@@ -40,6 +42,8 @@ resource "local_file" "values_annotation" {
   content  = templatefile("${path.module}/templates/annotation.tpl", {
     redis_host = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host
     project_id = var.project_id
+    secrets_project_id = var.project_id
+    cave_secret_name   = format("cave-secret-%s-%s", var.cluster_prefix, terraform.workspace)
   })
   file_permission = "0644"
 }
@@ -50,6 +54,7 @@ resource "local_file" "values_cloudsql" {
     terraform_state_url   = var.helm_terraform_state_url
     secrets_project_id    = var.project_id
     postgres_credentials  = "${var.environment}-postgres-credentials"
+    cloudsql_sa_secret    = format("cloudsql-google-secret-%s-%s", var.cluster_prefix, terraform.workspace)
   })
   file_permission = "0644"
 }
@@ -74,7 +79,10 @@ resource "local_file" "values_pcg" {
     region                = var.region,
     zone                  = var.zone,
     standard_pool_name    = google_container_node_pool.sp.name,
-    docker_registry       = var.docker_registry
+    docker_registry       = var.docker_registry,
+    secrets_project_id    = var.project_id,
+    pycg_sa_secret        = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
+    cave_secret_name      = format("cave-secret-%s-%s", var.cluster_prefix, terraform.workspace)
   })
   file_permission = "0644"
 }
@@ -92,4 +100,16 @@ resource "local_file" "bootstrap_helmfile_example" {
     pychunkedgraph_defaults  = "pychunkedgraph.defaults.yaml"
   })
   file_permission = "0644"
+}
+
+resource "local_file" "bootstrap_configure_script" {
+  filename        = "${var.helm_config_dir}/configure.sh"
+  content         = templatefile("${path.module}/templates/configure.sh.tpl", {
+    project_id   = var.project_id,
+    region       = var.region,
+    zone         = var.zone,
+    cluster_name = google_container_cluster.cluster.name,
+    kube_context = format("gke_%s_%s_%s", var.project_id, var.zone, google_container_cluster.cluster.name)
+  })
+  file_permission = "0755"
 }
