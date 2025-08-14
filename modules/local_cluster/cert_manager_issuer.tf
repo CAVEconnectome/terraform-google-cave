@@ -18,7 +18,8 @@ resource "time_sleep" "wait_for_cert_manager" {
 # Install the local certmanager chart that creates the Issuer (namespaced)
 resource "helm_release" "cert_issuer" {
   name             = "cert-issuer"
-  chart            = local.certmanager_chart_path
+  chart            = "cert-manager-google"
+  repository = "https://caveconnectome.github.io/cave-helm-charts/"
   namespace        = "cert-manager"
   create_namespace = false
 
