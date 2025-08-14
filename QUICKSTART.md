@@ -38,18 +38,21 @@ cookiecutter terraform-google-cave/cookiecutter_templates/terragrunt-env
 ```
 Answer prompts: repo_name, org, environment, project_id, region, zone, etc.
 
+## Import existing resources (optional)
+You will want to do this if you are migrating from existing infrastructure that has data you don't want to lose.  Make sure the names of everything are aligned with what actually exists, which might requires careful editing of the root.hcl and terragrunt.hcl contained variables. 
+```
+cd <repo_name>/environments/<org>/static
+../scripts/terragrunt_import_sql.sh
+terragrunt plan -refresh-only
+```
+
 ## Provision
 ```
 cd <repo_name>/environments/<org>/static
 terragrunt init && terragrunt apply
 
-cd ../v5
+cd ../<cluster_prefix>
 terragrunt init && terragrunt apply
-```
-
-## Configure kubectl
-```
-gcloud container clusters get-credentials <cluster-name> --region <region> --project <PROJECT_ID>
 ```
 
 ## Deploy apps with Helmfile
@@ -61,17 +64,14 @@ gcloud container clusters get-credentials <cluster-name> --region <region> --pro
 ```
 cd <repo_name>/environments/<org>/v5/helmfile
 cp helmfile.yaml.example helmfile.yaml
+./configure.sh
 # Edit helmfile.yaml and create overrides (e.g., materialize.yaml) as needed
 helmfile apply
 # Tip: If you cannot install the plugin, use --skip-diff as a temporary workaround
 # helmfile apply --skip-diff
 ```
 
-## Import existing resources (optional)
-```
-./environments/scripts/terragrunt_import_sql.sh environments/<org>/static
-terragrunt --working-dir environments/<org>/static plan -refresh-only
-```
+
 
 ## Security checklist for making repos public
 - Scan for secrets: `gitleaks detect -v`
