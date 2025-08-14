@@ -19,7 +19,8 @@ resource "time_sleep" "wait_for_cert_manager" {
 resource "helm_release" "cert_issuer" {
   name             = "cert-issuer"
   chart            = "cert-manager-google"
-  repository = "https://caveconnectome.github.io/cave-helm-charts/"
+  version          = "0.4.1"
+  repository       = "https://caveconnectome.github.io/cave-helm-charts/"
   namespace        = "cert-manager"
   create_namespace = false
 
