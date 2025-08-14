@@ -19,7 +19,7 @@ releases:
   - name: materialization-engine
     namespace: default
     chart: cave/materializationengine
-    version: 0.2.1
+    version: 0.2.2
     values:
       - ${cluster_values}
       - ${materialize_defaults}
@@ -32,7 +32,7 @@ releases:
   - name: annotation-engine
     namespace: default
     chart: cave/annotationengine
-    version: 0.2.1
+    version: 0.2.2
     values:
       - ${cluster_values}
       - ${annotation_defaults}
@@ -43,7 +43,7 @@ releases:
   - name: pychunkedgraph
     namespace: default
     chart: cave/pychunkedgraph
-    version: 0.2.1
+    version: 0.2.3
     values:
       - ${cluster_values}
       - ${pychunkedgraph_defaults}
@@ -52,7 +52,7 @@ releases:
   - name: dash
     namespace: default
     chart: cave/dash
-    version: 0.2.1
+    version: 0.2.2
     values:
       - ${cluster_values}
       - ${dash_defaults}
