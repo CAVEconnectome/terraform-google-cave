@@ -7,6 +7,15 @@ repositories:
 # e.g. create materialize.yaml to override values in materialize.defaults.yaml
 
 releases:
+  - name: edge
+    namespace: default
+    chart: cave/edge
+    version: 0.1.0
+    values:
+      - ${cluster_values}
+      # Optionally override edge values in edge.yaml
+      # - edge.yaml
+
   - name: materialization-engine
     namespace: default
     chart: cave/materializationengine

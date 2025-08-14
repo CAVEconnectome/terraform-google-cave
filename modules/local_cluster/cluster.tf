@@ -1,5 +1,3 @@
-
-
 resource "google_service_account" "workload_identity" {
   project = var.project_id
 
@@ -99,20 +97,3 @@ resource "google_compute_address" "cluster_ip" {
 
 }
 
-# data "google_client_config" "default" {}
-
-
-# provider "kubectl" {
-#   host                   = google_container_cluster.cluster.endpoint
-#   token                  = data.google_client_config.default.access_token
-#   cluster_ca_certificate = base64decode(google_container_cluster.cluster.master_auth[0].cluster_ca_certificate)
-#   load_config_file       = false
-# }
-
-# provider "helm" {
-#   kubernetes {
-#     host                   = google_container_cluster.cluster.endpoint
-#     token                  = data.google_client_config.default.access_token
-#     cluster_ca_certificate = base64decode(google_container_cluster.cluster.master_auth[0].cluster_ca_certificate)
-#   }
-# }

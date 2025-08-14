@@ -8,13 +8,14 @@ terraform {
       source  = "hashicorp/helm"
       version = ">= 2.10.0"
     }
-    # kubectl = {
-    #   source  = "gavinbunney/kubectl"
-    #   version = ">= 1.7.0"
-    # }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.32.0"
+    }
   }
 }
- data "google_client_config" "default" {}
+
+data "google_client_config" "default" {}
 
 provider "google" {
   project = var.project_id
@@ -23,9 +24,9 @@ provider "google" {
 
 provider "helm" {
   kubernetes = {
-    host                   = google_container_cluster.cluster.endpoint
+    host                   = "https://${google_container_cluster.cluster.endpoint}"
     token                  = data.google_client_config.default.access_token
     cluster_ca_certificate = base64decode(google_container_cluster.cluster.master_auth[0].cluster_ca_certificate)
-    # load_config_file     = false
   }
 }
+
