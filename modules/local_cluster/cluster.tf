@@ -5,17 +5,23 @@ resource "google_service_account" "workload_identity" {
   display_name = "svc-workident-${var.cluster_prefix}"
 }
 
-# resource "kubernetes_service_account" "ksa" {
-#   metadata {
-#     name      = "my-service-account"
-#     namespace = "default"
-#     annotations = {
-#       "iam.gke.io/gcp-service-account" = google_service_account.workload_identity.email
-#     }
-#   }
+resource "google_project_iam_member" "workload_identity_default_node_sa_role" {
+  project = var.project_id
+  role    = "roles/container.defaultNodeServiceAccount"
+  member  = "serviceAccount:${google_service_account.workload_identity.email}"
+}
 
-#   automount_service_account_token = true
-# }
+resource "kubernetes_service_account" "ksa" {
+  metadata {
+    name      = "my-service-account"
+    namespace = "default"
+    annotations = {
+      "iam.gke.io/gcp-service-account" = google_service_account.workload_identity.email
+    }
+  }
+
+  automount_service_account_token = true
+}
 
 resource "google_service_account_iam_binding" "ksa_gsa_binding" {
   service_account_id = "projects/${var.project_id}/serviceAccounts/${google_service_account.workload_identity.email}"
@@ -49,13 +55,15 @@ resource "google_container_cluster" "cluster" {
   ip_allocation_policy {}
 
   addons_config {
-    http_load_balancing {
-      disabled = true
-    }
+    http_load_balancing { disabled = true }
   }
 
   workload_identity_config {
     workload_pool = "${var.project_id}.svc.id.goog"
+  }
+
+  monitoring_config {
+    managed_prometheus { enabled = true }
   }
 
   timeouts {
@@ -65,35 +73,28 @@ resource "google_container_cluster" "cluster" {
   }
 
   node_config {
-   service_account = google_service_account.workload_identity.email
-   oauth_scopes = [
-    "https://www.googleapis.com/auth/cloud-platform"
-    ]
+    service_account = google_service_account.workload_identity.email
+    oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
   }
-  
 }
 
 
-# resource "kubernetes_cluster_role_binding" "cluster_admin_binding" {
-
-#   metadata {
-#     name = "cluster-admin-binding"
-#   }
-#   role_ref {
-#     api_group = "rbac.authorization.k8s.io"
-#     kind      = "ClusterRole"
-#     name      = "cluster-admin"
-#   }
-#   subject {
-#     kind      = "User"
-#     name      = var.gcp_user_account
-#     api_group = "rbac.authorization.k8s.io"
-#   }
-# }
+resource "kubernetes_cluster_role_binding" "cluster_admin_binding" {
+  metadata { name = "cluster-admin-binding" }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind = "ClusterRole"
+    name = "cluster-admin"
+  }
+  subject {
+    kind = "User"
+    name = var.gcp_user_account
+    api_group = "rbac.authorization.k8s.io"
+  }
+}
 
 resource "google_compute_address" "cluster_ip" {
   name   = "${var.cluster_prefix}-cave"
   region = var.region
-
 }
 
