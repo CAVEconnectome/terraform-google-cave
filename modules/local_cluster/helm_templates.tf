@@ -1,6 +1,6 @@
 resource "local_file" "helm_values_cluster" {
   filename = "${var.helm_config_dir}/cluster.yaml"
-  content = templatefile("${path.module}/templates/cluster.tpl", {
+  content = templatefile("${path.module}/templates/cluster.tpl", {       
     terraform_state_url    = var.helm_terraform_state_url,
     project_id             = var.project_id,
     region                 = var.region,
