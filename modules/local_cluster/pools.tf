@@ -2,7 +2,6 @@ resource "google_container_node_pool" "sp" {
   name       = "standard-pool"
   location   = var.zone
   cluster    = google_container_cluster.cluster.name
-  node_count = 1
 
   node_config {
     labels = {
