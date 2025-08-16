@@ -14,3 +14,8 @@ cluster:
   lightweightPool: "${lightweight_pool_name}"
   meshPool: "${mesh_pool_name}"
   dockerRegistry: "${docker_registry}"
+  # Optional list of DNS hostnames used by Ingresses; generated from Terraform var.dns_entries
+  dns_entries:
+%{ for h in dns_entries ~}
+    - "${h}"
+%{ endfor ~}

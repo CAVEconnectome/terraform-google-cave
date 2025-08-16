@@ -14,7 +14,8 @@ resource "local_file" "helm_values_cluster" {
     lightweight_pool_name  = google_container_node_pool.lp.name,
     mesh_pool_name         = google_container_node_pool.mp.name,
     docker_registry        = var.docker_registry,
-    data_project_id        = var.bigtable_google_project != "" ? var.bigtable_google_project : var.project_id
+  data_project_id        = var.bigtable_google_project != "" ? var.bigtable_google_project : var.project_id,
+  dns_entries            = [for k, v in var.dns_entries : v.domain_name]
   })
 }
 
