@@ -26,7 +26,7 @@ pychunkedgraph:
   meshMaxReplicas: 3
   meshMemGb: 4
   meshCpuMilli: 1000
-  meshWorkerMinReplicas: 1
+  meshWorkerMinReplicas: 0
   meshWorkerMaxReplicas: 10
   remeshQueue: 
   enableLogs: "enable"
