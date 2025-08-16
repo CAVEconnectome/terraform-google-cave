@@ -57,3 +57,10 @@ releases:
       - ${cluster_values}
       - ${dash_defaults}
       # - dash.yaml          # optional user override
+
+  - name: authinfo
+    namespace: default
+    chart: cave/authinfo
+    version: 0.1.0
+     - ${cluster_values}
+     # - authinfo.yaml      # must fill in supported datastacks
