@@ -103,25 +103,7 @@ data "google_project" "current" {
   project_id = var.project_id
 }
 
-# Create KEDA namespace
-resource "kubernetes_namespace" "keda" {
-  metadata { name = "keda" }
-}
 
-# Install KEDA via Helm
-resource "helm_release" "keda" {
-  name             = "keda"
-  repository       = "https://kedacore.github.io/charts"
-  chart            = "keda"
-  namespace        = kubernetes_namespace.keda.metadata[0].name
-  create_namespace = true
-  wait             = true
-
-  depends_on = [
-    google_container_cluster.cluster,
-    kubernetes_namespace.keda
-  ]
-}
 
 # Grant Monitoring Viewer to KEDA operator via Workload Identity Pool principal subject
 # Matches: principal://.../workloadIdentityPools/${PROJECT_ID}.svc.id.goog/subject/ns/keda/sa/keda-operator
