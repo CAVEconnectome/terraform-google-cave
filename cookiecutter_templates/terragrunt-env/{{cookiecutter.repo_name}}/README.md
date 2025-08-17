@@ -32,6 +32,7 @@ Notes:
 - pcg_redis_name_override: Optional. Override the default Redis instance name if reusing an existing Memorystore instance.
 - docker_registry: Container registry for image references in Helm values (cluster.dockerRegistry). Defaults to docker.io/caveconnectome; change if you mirror images.
 - bigtable_google_project: Optional. If your Bigtable for PyChunkedGraph lives in another project, set that project ID. Rendered as cluster.dataProjectName in pychunkedgraph defaults; otherwise falls back to project_id.
+- skeleton_cache_cloudpath: Optional. A gs:// path where Skeleton Cache files are written (e.g., gs://my-bucket/pcg_skeletons). If set in the static (infrastructure) layer, Terraform will import/manage the bucket, grant the SkeletonService SA permissions in the cluster layer, and pass the full path to the Helm chart. If omitted, Terraform creates a deterministic shared bucket named like owner-environment-skeleton-cache and uses gs://<bucket>.
 - bigtable_instance_name: Bigtable instance name used by PyChunkedGraph (pychunkedgraph.defaults.yaml). Defaults to pychunkedgraph.
 - cluster_global_server: Optional. A global server/base URL some charts reference (cluster.globalServer). The generated cluster.yaml leaves this empty; set it in a Helmfile override if you need it.
 - datastack_name: defaults to v1dd.  This is the name of your first datastack (see and the template will 
@@ -71,3 +72,33 @@ The script:
 - Fetches GKE credentials (uses Terraform-provided region/zone; falls back from region to zone automatically)
 - Ensures helm-diff plugin is installed
 - Switches kubectl to the correct kubeContext (from Terraform)
+
+## Optional: Skeleton Cache cloud path (gs://)
+
+You can optionally set a single gs:// path to control where Skeleton Cache files go. This improves UX: one value informs bucket import/creation, IAM, and Helm config.
+
+- Where to set: environments/{{ cookiecutter.org }}/static/terragrunt.hcl (shared infra layer)
+- What to set: inputs.skeleton_cache_cloudpath = "gs://<bucket>/<optional/prefix>"
+
+Example (commented placeholder to keep defaults unless you opt in):
+
+```
+# environments/{{ cookiecutter.org }}/static/terragrunt.hcl
+terraform {
+  source = "../../../../terraform-google-cave/modules/local_infrastructure"
+}
+
+include "root" {
+  path = find_in_parent_folders("root.hcl")
+}
+
+# Optional: reuse an existing bucket/prefix for Skeleton Cache
+# inputs = {
+#   skeleton_cache_cloudpath = "gs://my-existing-bucket/pcg_skeletons"
+# }
+```
+
+How it works under the hood:
+- Infra parses the bucket from the gs:// path, imports it if it already exists (via the included import script), or creates a default bucket if you leave it unset.
+- Cluster parses the same bucket to grant the SkeletonService service account storage permissions.
+- Helm gets the full path and sets SKELETON_CACHE_BUCKET accordingly.

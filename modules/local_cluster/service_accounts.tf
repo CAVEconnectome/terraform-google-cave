@@ -112,20 +112,20 @@ resource "google_project_iam_member" "skeleton_monitoring_writer" {
   member  = "serviceAccount:${google_service_account.skeleton_service_account.email}"
 }
 resource "google_storage_bucket_iam_member" "skeleton_cache_writer" {
-  count  = var.skeleton_cache_bucket_name != "" ? 1 : 0
-  bucket = var.skeleton_cache_bucket_name
+  count  = var.skeleton_cache_cloudpath != "" ? 1 : 0
+  bucket = local.skeleton_cache_bucket_name
   role   = "roles/storage.legacyBucketWriter"
   member = "serviceAccount:${google_service_account.skeleton_service_account.email}"
 }
 resource "google_storage_bucket_iam_member" "skeleton_cache_owner" {
-  count  = var.skeleton_cache_bucket_name != "" ? 1 : 0
-  bucket = var.skeleton_cache_bucket_name
+  count  = var.skeleton_cache_cloudpath != "" ? 1 : 0
+  bucket = local.skeleton_cache_bucket_name
   role   = "roles/storage.legacyObjectOwner"
   member = "serviceAccount:${google_service_account.skeleton_service_account.email}"
 }
 resource "google_storage_bucket_iam_member" "skeleton_cache_reader" {
-  count  = var.skeleton_cache_bucket_name != "" ? 1 : 0
-  bucket = var.skeleton_cache_bucket_name
+  count  = var.skeleton_cache_cloudpath != "" ? 1 : 0
+  bucket = local.skeleton_cache_bucket_name
   role   = "roles/storage.legacyObjectReader"
   member = "serviceAccount:${google_service_account.skeleton_service_account.email}"
 }

@@ -1,3 +1,7 @@
+locals {
+  # Extract bucket from gs://bucket[/path...]
+  skeleton_cache_bucket_name = regex("^gs://([^/]+)", var.skeleton_cache_cloudpath)[0]
+}
 terraform {
   required_providers {
     google = {

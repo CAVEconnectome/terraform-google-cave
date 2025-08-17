@@ -204,10 +204,9 @@ variable "materialization_upload_bucket_name" {
   default     = ""
 }
 
-variable "skeleton_cache_bucket_name" {
-  description = "Optional GCS bucket for SkeletonService cache; grants skeleton SA access if set (provide bucket name without gs://)"
+variable "skeleton_cache_cloudpath" {
+  description = "Full gs:// cloud path for SkeletonService cache (e.g., gs://bucket/path). The bucket will be used for IAM; full path is passed to Helm."
   type        = string
-  default     = ""
 }
 
 variable "cave_token" {

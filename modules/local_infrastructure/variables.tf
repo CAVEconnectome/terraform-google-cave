@@ -123,3 +123,11 @@ variable "sql_max_connections" {
   type        = number
   default     = 20000
 }
+
+# Optional cloud path for SkeletonService cache, e.g., gs://bucket/path/to/save
+# If not provided, a default bucket name is generated and the cloudpath defaults to gs://<bucket>
+variable "skeleton_cache_cloudpath" {
+  description = "Optional gs:// cloud path where skeletons are stored (e.g., gs://bucket/path). If empty, a default bucket is created and used (gs://<bucket>)."
+  type        = string
+  default     = ""
+}

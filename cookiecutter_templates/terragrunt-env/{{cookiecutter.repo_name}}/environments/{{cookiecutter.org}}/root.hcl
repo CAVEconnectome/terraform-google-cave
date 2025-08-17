@@ -22,4 +22,7 @@ inputs = {
   bigtable_instance_name   = "{{ cookiecutter.bigtable_instance_name }}"
   helm_terraform_state_url = "gs://{{ cookiecutter.state_bucket }}/{{ cookiecutter.org }}/static/terraform.tfstate"
   helm_config_dir          = "${get_terragrunt_dir()}/helmfile"
+  # Optional: set a cloud path for Skeleton Cache (gs://bucket/prefix).
+  # Leave commented to let Terraform pick a default bucket.
+  # skeleton_cache_cloudpath = "gs://my-bucket/pcg_skeletons"
 }
