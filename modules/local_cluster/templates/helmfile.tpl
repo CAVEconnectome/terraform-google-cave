@@ -49,6 +49,24 @@ releases:
       - ${pychunkedgraph_defaults}
       # - pychunkedgraph.yaml # optional user override
 
+  - name: pcgl2cache
+    namespace: default
+    chart: cave/pcgl2cache
+    version: 0.1.0
+    values:
+      - ${cluster_values}
+      - ${pcgl2cache_defaults}
+      # - pcgl2cache.yaml    # optional user override
+
+  - name: skeletoncache
+    namespace: default
+    chart: cave/skeletoncache
+    version: 0.1.0
+    values:
+      - ${cluster_values}
+      - ${skeletoncache_defaults}
+      # - skeletoncache.yaml  # optional user override
+
   - name: dash
     namespace: default
     chart: cave/dash
