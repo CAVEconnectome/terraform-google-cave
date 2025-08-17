@@ -17,7 +17,9 @@ resource "helm_release" "nginx_ingress" {
   ]
 
   depends_on = [google_compute_address.cluster_ip,
-                google_container_cluster.cluster]
+                google_container_cluster.cluster,
+                google_container_node_pool.cp
+                ]
 }
 
 resource "helm_release" "cert_manager" {
@@ -42,7 +44,8 @@ resource "helm_release" "cert_manager" {
       value = "ClusterIssuer"
     }
   ]
-depends_on = [google_container_cluster.cluster]
+depends_on = [google_container_cluster.cluster,
+                google_container_node_pool.cp]
 }
 
 
@@ -56,6 +59,7 @@ resource "helm_release" "keda" {
   wait             = false
 
   depends_on = [
-    google_container_cluster.cluster
+    google_container_cluster.cluster,
+    google_container_node_pool.cp
   ]
 }
