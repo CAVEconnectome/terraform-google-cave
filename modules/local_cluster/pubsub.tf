@@ -55,3 +55,60 @@ resource "google_pubsub_subscription" "l2cache_trigger_low_priority" {
   }
   filter = "attributes.remesh_priority=\"false\""
 }
+
+# Skeletoncache topics and subscriptions
+resource "google_pubsub_topic" "skeletoncache_high" {
+  name = "${var.cluster_prefix}_SKELETON_CACHE_HIGH_PRIORITY"
+}
+
+resource "google_pubsub_topic" "skeletoncache_low" {
+  name = "${var.cluster_prefix}_SKELETON_CACHE_LOW_PRIORITY"
+}
+
+resource "google_pubsub_topic" "skeletoncache_dead_letter" {
+  name = "${var.cluster_prefix}_SKELETON_CACHE_DEAD_LETTER"
+}
+
+resource "google_pubsub_subscription" "skeletoncache_high_retrieve" {
+  name    = "${var.cluster_prefix}_SKELETON_CACHE_WORKER_HIGH_PRIORITY"
+  topic   = google_pubsub_topic.skeletoncache_high.name
+  ack_deadline_seconds = 600
+  retry_policy {
+    maximum_backoff = "10s"
+  }
+
+  dead_letter_policy {
+    dead_letter_topic     = google_pubsub_topic.skeletoncache_dead_letter.id
+    max_delivery_attempts = 10
+  }
+}
+
+resource "google_pubsub_subscription" "skeletoncache_low_retrieve" {
+  name    = "${var.cluster_prefix}_SKELETON_CACHE_WORKER_LOW_PRIORITY"
+  topic   = google_pubsub_topic.skeletoncache_low.name
+  ack_deadline_seconds = 600
+  retry_policy {
+    maximum_backoff = "10s"
+  }
+
+  dead_letter_policy {
+    dead_letter_topic     = google_pubsub_topic.skeletoncache_dead_letter.id
+    max_delivery_attempts = 10
+  }
+}
+
+resource "google_pubsub_subscription" "skeletoncache_dead_letter_retrieve" {
+  name    = "${var.cluster_prefix}_SKELETON_CACHE_WORKER_DEAD_LETTER"
+  topic   = google_pubsub_topic.skeletoncache_dead_letter.name
+  ack_deadline_seconds = 600
+  retry_policy {
+    maximum_backoff = "10s"
+  }
+}
+
+# Allow Pub/Sub service agent to publish dead-lettered messages to the DL topic
+resource "google_pubsub_topic_iam_member" "skeletoncache_dead_letter_publisher" {
+  topic  = google_pubsub_topic.skeletoncache_dead_letter.name
+  role   = "roles/pubsub.publisher"
+  member = "serviceAccount:service-${data.google_project.current.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
+}
