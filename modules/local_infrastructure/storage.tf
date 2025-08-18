@@ -20,6 +20,18 @@ resource "google_storage_bucket" "skeleton_cache" {
   # Some provider versions only accept "enforced"; leaving it unset inherits project/org policy.
   public_access_prevention    = var.skeleton_cache_public_read ? null : "enforced"
 
+  # Enable CORS needed by Neuroglancer when serving public data from this bucket.
+  # Applied only when public read is enabled to avoid unexpected exposure.
+  dynamic "cors" {
+    for_each = var.skeleton_cache_public_read ? [1] : []
+    content {
+      origin          = ["*"]
+      method          = ["GET", "HEAD"]
+      response_header = ["Content-Type", "Range"]
+      max_age_seconds = 3600
+    }
+  }
+
   labels = {
     environment = var.environment
     owner       = var.owner
