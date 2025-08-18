@@ -37,8 +37,10 @@ resource "local_file" "values_materialize" {
 resource "local_file" "values_skeletoncache" {
   filename = "${var.helm_config_dir}/skeletoncache.defaults.yaml"
   content  = templatefile("${path.module}/templates/skeletoncache.tpl", {
-  skeleton_sa_secret = format("skeleton-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
-  skeleton_cache_cloudpath = var.skeleton_cache_cloudpath
+  skeleton_sa_secret      = format("skeleton-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
+  skeleton_cache_cloudpath = var.skeleton_cache_cloudpath,
+  cluster_prefix           = var.cluster_prefix,
+  redis_host               = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host
   })
   file_permission = "0644"
 }

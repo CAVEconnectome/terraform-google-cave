@@ -3,3 +3,13 @@ pcgl2cache:
   bigtable:
     instance: "${bigtable_instance}"
   credentialsSecret: "${pycg_sa_secret}"
+  # Default Pub/Sub subscription names derived from cluster_prefix
+  queues:
+    update: "${cluster_prefix}_L2CACHE_WORKER"
+    high: "${cluster_prefix}_L2CACHE_HIGH_PRIORITY_TRIGGER"
+    low: "${cluster_prefix}_L2CACHE_LOW_PRIORITY_TRIGGER"
+  # Default exchanges
+  exchanges:
+    update: "${cluster_prefix}_L2CACHE"
+    # Edits exchange shared with PCG; aligns with PYCHUNKEDGRAPH_EDITS_EXCHANGE
+    edits: "${cluster_prefix}_PCG_EDIT"

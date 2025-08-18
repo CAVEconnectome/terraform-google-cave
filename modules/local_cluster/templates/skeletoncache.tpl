@@ -4,3 +4,25 @@ skeletoncache:
   credentialsSecret: "${skeleton_sa_secret}"
   # Optional: full gs:// path (bucket and prefix) for SKELETON_CACHE_BUCKET
   cloudPath: "${skeleton_cache_cloudpath}"
+  # Default Pub/Sub subscription names derived from cluster_prefix
+  queues:
+    high: "${cluster_prefix}_SKELETON_CACHE_WORKER_HIGH_PRIORITY"
+    low: "${cluster_prefix}_SKELETON_CACHE_WORKER_LOW_PRIORITY"
+    deadLetter: "${cluster_prefix}_SKELETON_CACHE_WORKER_DEAD_LETTER"
+  # Default exchanges used by SkeletonCache
+  exchanges:
+    high: "${cluster_prefix}_SKELETON_CACHE_HIGH_PRIORITY"
+    low: "${cluster_prefix}_SKELETON_CACHE_LOW_PRIORITY"
+    # dead letter exchange is configured/utilized by pubsub setup, not helm
+  # Sensible worker defaults; KEDA can still scale to zero
+  worker:
+    minReplicas: 0
+    maxReplicas: 50
+    resources:
+      requests:
+        memory: 1000Mi
+        cpu: 200m
+  # Limiter wiring (use the same Redis as PCG/materialization if provided)
+  limiter:
+    uri: "redis://${redis_host}/0"
+    categories: ""
