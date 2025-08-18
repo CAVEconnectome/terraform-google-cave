@@ -40,7 +40,9 @@ resource "local_file" "values_skeletoncache" {
   skeleton_sa_secret      = format("skeleton-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
   skeleton_cache_cloudpath = var.skeleton_cache_cloudpath,
   cluster_prefix           = var.cluster_prefix,
-  redis_host               = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host
+  redis_host               = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host,
+  secrets_project_id       = var.project_id,
+  cave_secret_name         = format("cave-secret-%s-%s", var.cluster_prefix, terraform.workspace)
   })
   file_permission = "0644"
 }
@@ -99,9 +101,11 @@ resource "local_file" "values_pcg" {
 resource "local_file" "values_pcgl2cache" {
   filename = "${var.helm_config_dir}/pcgl2cache.defaults.yaml"
   content  = templatefile("${path.module}/templates/pcgl2cache.tpl", {
-    cluster_prefix    = var.cluster_prefix,
-    bigtable_instance = var.bigtable_instance_name,
-    pycg_sa_secret    = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace)
+  cluster_prefix     = var.cluster_prefix,
+  bigtable_instance  = var.bigtable_instance_name,
+  pycg_sa_secret     = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
+  secrets_project_id = var.project_id,
+  cave_secret_name   = format("cave-secret-%s-%s", var.cluster_prefix, terraform.workspace)
   })
   file_permission = "0644"
 }

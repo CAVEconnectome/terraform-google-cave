@@ -3,6 +3,13 @@ pcgl2cache:
   bigtable:
     instance: "${bigtable_instance}"
   credentialsSecret: "${pycg_sa_secret}"
+  googleSecretFilename: "google-secret.json"
+  caveSecretFilename: "cave-secret.json"
+  secretFiles:
+    - name: google-secret.json
+      value: "ref+gcpsecrets://${secrets_project_id}/${pycg_sa_secret}"
+    - name: cave-secret.json
+      value: "ref+gcpsecrets://${secrets_project_id}/${cave_secret_name}"
   # Default Pub/Sub subscription names derived from cluster_prefix
   queues:
     update: "${cluster_prefix}_L2CACHE_WORKER"

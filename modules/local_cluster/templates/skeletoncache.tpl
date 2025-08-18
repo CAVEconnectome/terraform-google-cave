@@ -2,6 +2,13 @@
 skeletoncache:
   # Default to the SkeletonService SA secret created by Terraform
   credentialsSecret: "${skeleton_sa_secret}"
+  googleSecretFilename: "google-secret.json"
+  caveSecretFilename: "cave-secret.json"
+  secretFiles:
+    - name: google-secret.json
+      value: "ref+gcpsecrets://${secrets_project_id}/${skeleton_sa_secret}"
+    - name: cave-secret.json
+      value: "ref+gcpsecrets://${secrets_project_id}/${cave_secret_name}"
   # Optional: full gs:// path (bucket and prefix) for SKELETON_CACHE_BUCKET
   cloudPath: "${skeleton_cache_cloudpath}"
   # Default Pub/Sub subscription names derived from cluster_prefix
