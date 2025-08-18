@@ -4,6 +4,8 @@ materialize:
   redis:
     host: "${redis_host}"
   secretFiles:
+    - name: google-secret.json
+      value: "ref+gcpsecrets://${secrets_project_id}/${pycg_sa_secret}"
     - name: cave-secret.json
       value: "ref+gcpsecrets://${secrets_project_id}/${cave_secret_name}"
 limiter:

@@ -29,6 +29,7 @@ resource "local_file" "values_materialize" {
     sql_instance_name = var.sql_instance_name
     secrets_project_id = var.project_id
     cave_secret_name   = format("cave-secret-%s-%s", var.cluster_prefix, terraform.workspace)
+  pycg_sa_secret     = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace)
   })
   file_permission = "0644"
 }
