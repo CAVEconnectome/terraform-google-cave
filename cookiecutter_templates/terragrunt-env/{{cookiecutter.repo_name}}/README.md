@@ -14,6 +14,14 @@ Notes:
 - cluster_name controls the cluster_prefix only; it does not create directories.
 - Helm values use defaults+overrides: *.defaults.yaml are generated, user *.yaml overrides are optional.
 
+How this works end-to-end:
+- Terragrunt orchestrates Terraform to create and configure infrastructure outside Kubernetes (Cloud SQL, Redis, networks, DNS, Pub/Sub, buckets, Workload Identity/IAM).
+- The Terraform modules write Helm values and defaults that capture those outputs so apps can connect.
+- Helmfile deploys apps using the cave-helm-charts repository and the generated values.
+
+Helm charts repo: https://github.com/CAVEconnectome/cave-helm-charts
+Portability note: charts target Google Cloud (GKE) and may need adjustments on other Kubernetes platforms (scalers, IAM annotations, ingress).
+
 ## Variables
 - repo_name: Name of the repository/folder that will be created for your environment repo. This does not affect resource names, only your local/git layout.
 - org: Top-level folder name under environments/. Also used in the Terraform state prefix (gs://<state-bucket>/<org>/...). Choose something stable like your team or tenant name.

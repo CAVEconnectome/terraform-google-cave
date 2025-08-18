@@ -31,46 +31,43 @@ If you already have a deployment
 to get existing resources properly mapped into terraform that were created outside of it you need to import them 
 from the environment folder.
 
-postgres: 
-terraform import module.infrastructure.google_sql_database_instance.postgres projects/<project_id>/instances/<cloudsql_instance_name>
 
-i.e.
-terraform import module.infrastructure.google_sql_database_instance.postgres projects/seung-lab/instances/svenmd-dynamicannotationframework-ltv
+## How this repo fits with Helm charts
 
-get sql instance names with  ``gcloud sql instances list``
+These Terraform modules are designed to be used alongside the Helm charts in the companion repository:
 
-postgres user:
-terraform import module.infrastructure.google_sql_user.writer {GOOGLE_PROJECT_ID}/{SQL_INSTANCE_NAME}/{SQL_USER_NAME}
-i.e.
-terraform import module.infrastructure.google_sql_user.writer seung-lab/svenmd-dynamicannotationframework-ltv/postgres 
+- Helm charts: https://github.com/CAVEconnectome/cave-helm-charts
 
-postgres ann database:
-terraform import module.infrastructure.google_sql_database.annotation projects/<project_id>/instances/<sql_instance_id>/databases/annotation
-i.e.
-terraform import module.infrastructure.google_sql_database.annotation projects/seung-lab/instances/svenmd-dynamicannotationframework-ltv/databases/annotation
+High level workflow:
+- Terragrunt orchestrates Terraform to provision and configure all infrastructure outside Kubernetes (SQL, Redis, networks, Pub/Sub, buckets, credentials, etc.).
+- The Terraform modules render configuration values files/templates that feed into Helm/Helmfile so Kubernetes apps can connect to that external infrastructure.
+- Helmfile then deploys the CAVE apps into the cluster using those values, referencing the cave-helm-charts repository.
 
-postgrea mat database:
+Note: The Helm charts target Google Cloud (GKE) and Google Cloud services (e.g., Pub/Sub, GCS, Workload Identity). Other Kubernetes platforms may require adjustments; see the cave-helm-charts README for portability notes.
 
-## REDIS
-The pychunkedgraph redis instance has cached data about which mesh fragments exist and which don't which helps accelerate the manifest generation for large oct-trees.  It's valuable to hydrate that cache with data from a precious production cache but must be done manually if you are re-running terraform in a new environment.. any data that is lost in the transition will be regenerated the next time it is queries so data integrity is not a huge concern. This information is just a cache
+### Visual overview
 
-pcg redis:
-terraform import module.infrastructure.google_redis_instance.pcg_redis projects/<project_id>/locations/<region>/instances/<pcg_redis_name>
+![CAVE on GCP – Architecture](docs/architecture.png)
 
-i.e.
-terraform import module.infrastructure.google_redis_instance.pcg_redis projects/seung-lab/locations/us-east1/instances/ltv-pcg-cache
+See docs/architecture.svg for a high-level diagram of how Terragrunt, Terraform modules, Helmfile, and Helm fit together, including which layers persist across clusters and which are per-cluster.
 
+## Module types and environments
 
-## network
-terraform import module.infrastructure.google_compute_network.vpc <project_id>/<network_name>
-i.e.
-terraform import module.infrastructure.google_compute_network.vpc seung-lab/daf-ltv5-network
+For each environment/cluster, there are two kinds of Terraform modules, which we recommend coordinating with Terragrunt to share inputs and apply in order:
 
-## sub network
+1) "infrastructure" – resources that should persist across Kubernetes clusters (e.g., databases, Redis, networks, buckets). This lets you spin up a new cluster version while reusing the same backend services.
+2) "cluster" – the Kubernetes cluster and in-cluster prerequisites (e.g., GKE cluster, node pools, base addons) plus templating of app configuration values produced from infrastructure outputs.
 
- terraform import module.infrastructure.google_compute_subnetwork.subnet <project_id>/<region>/<subnet-name>
- i.e.
-terraform import module.infrastructure.google_compute_subnetwork.subnet seung-lab/us-east1/daf-ltv5-network-sub 
+Because CAVE has both global and local clusters, there will eventually be four modules:
+- local_infrastructure
+- local_cluster
+- global_infrastructure
+- global_cluster
 
+Terragrunt is used to coordinate these modules, provide shared inputs (project, region, prefixes), and manage ordering.
+
+## Cookiecutter and migration from legacy templates
+
+If you are migrating from CAVEdeployment-style legacy templates, we provide a cookiecutter template to scaffold a Terragrunt environment repo and helpers to import existing "infrastructure" resources into Terraform/Terragrunt state. See `cookiecutter_templates/terragrunt-env/` and the QUICKSTART for details.
 
 

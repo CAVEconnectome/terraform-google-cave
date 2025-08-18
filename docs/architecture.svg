@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1080 720">
+  <!-- Generator: Adobe Illustrator 29.6.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 9)  -->
+  <defs>
+    <style>
+      .st0, .st1, .st2 {
+        fill: none;
+      }
+
+      .st3 {
+        fill: #1f2937;
+        font-size: 24px;
+      }
+
+      .st3, .st4, .st5, .st6, .st7, .st8, .st9, .st10, .st11 {
+        isolation: isolate;
+      }
+
+      .st3, .st7, .st8 {
+        font-family: ArialMT, Arial;
+      }
+
+      .st12 {
+        letter-spacing: 0em;
+      }
+
+      .st12, .st13, .st14, .st15, .st16, .st17, .st18, .st6, .st19, .st20, .st21, .st22, .st23, .st11 {
+        font-family: MyriadPro-Regular, 'Myriad Pro';
+      }
+
+      .st13 {
+        letter-spacing: 0em;
+      }
+
+      .st4 {
+        font-size: 21px;
+      }
+
+      .st4, .st5, .st6, .st7, .st8, .st10, .st24 {
+        fill: #374151;
+      }
+
+      .st14 {
+        letter-spacing: 0em;
+      }
+
+      .st15 {
+        letter-spacing: 0em;
+      }
+
+      .st16 {
+        letter-spacing: 0em;
+      }
+
+      .st25 {
+        font-family: AppleBraille-Outline6Dot, 'Apple Braille';
+      }
+
+      .st17 {
+        letter-spacing: 0em;
+      }
+
+      .st5, .st6, .st7 {
+        font-size: 12px;
+      }
+
+      .st18 {
+        letter-spacing: 0em;
+      }
+
+      .st19 {
+        letter-spacing: 0em;
+      }
+
+      .st20 {
+        letter-spacing: 0em;
+      }
+
+      .st21 {
+        letter-spacing: 0em;
+      }
+
+      .st22 {
+        letter-spacing: 0em;
+      }
+
+      .st1, .st26 {
+        stroke: #111827;
+      }
+
+      .st1, .st2 {
+        stroke-width: 3px;
+      }
+
+      .st8 {
+        font-size: 18px;
+      }
+
+      .st27, .st26 {
+        fill: #fff;
+      }
+
+      .st28 {
+        fill: #f0f9ff;
+        stroke: #0284c7;
+      }
+
+      .st28, .st26, .st29, .st30 {
+        stroke-width: 2px;
+      }
+
+      .st9, .st11 {
+        fill: #111827;
+        font-size: 14px;
+      }
+
+      .st10 {
+        font-size: 16px;
+      }
+
+      .st29 {
+        fill: #f3f4f6;
+        stroke: #9ca3af;
+      }
+
+      .st30 {
+        fill: #eff6ff;
+        stroke: #3b82f6;
+      }
+
+      .st2 {
+        stroke: #000;
+        stroke-miterlimit: 10;
+      }
+    </style>
+  </defs>
+  <line class="st1" x1="228.3" y1="123.52" x2="560" y2="326.06"/>
+  <text class="st3" transform="translate(216.65 32.58)"><tspan x="0" y="0">CAVE on GCP – Terraform, Terragrunt, Helmfile, and Helm</tspan></text>
+  <text class="st10" transform="translate(223.04 61.35)"><tspan class="st23" x="0" y="0">What’s</tspan><tspan class="st25" x="45.07" y="0"> </tspan><tspan class="st23" x="50.54" y="0">managed</tspan><tspan class="st25" x="114.17" y="0"> </tspan><tspan class="st23" x="119.64" y="0">by</tspan><tspan class="st25" x="136.28" y="0"> </tspan><tspan class="st23" x="141.75" y="0">Terragrunt/Terraform</tspan><tspan class="st25" x="284.72" y="0"> </tspan><tspan class="st23" x="290.19" y="0">vs.</tspan><tspan class="st25" x="307.54" y="0"> </tspan><tspan class="st23" x="313" y="0">Helmfile/Helm,</tspan><tspan class="st25" x="413.1" y="0"> </tspan><tspan class="st12" x="418.57" y="0">and</tspan><tspan class="st25" x="444.18" y="0"> </tspan><tspan class="st23" x="449.65" y="0">how</tspan><tspan class="st25" x="479.09" y="0"> </tspan><tspan class="st12" x="484.56" y="0">modules</tspan><tspan class="st25" x="542.66" y="0"> </tspan><tspan class="st23" x="548.12" y="0">compose</tspan></text>
+  <rect class="st30" x="347.48" y="83.52" width="684.74" height="80"/>
+  <text class="st7" transform="translate(357.15 98.59)"><tspan x="0" y="0">Terragrunt</tspan></text>
+  <text class="st9" transform="translate(357.43 134.64)"><tspan class="st23" x="0" y="0">-</tspan><tspan class="st25" x="4.3" y="0"> </tspan><tspan class="st23" x="9.08" y="0">Coordinates</tspan><tspan class="st25" x="80.03" y="0"> </tspan><tspan class="st23" x="84.82" y="0">module</tspan><tspan class="st25" x="130.11" y="0"> </tspan><tspan class="st22" x="134.89" y="0">runs,</tspan><tspan class="st25" x="163.4" y="0"> </tspan><tspan class="st23" x="168.18" y="0">shares</tspan><tspan class="st25" x="205.38" y="0"> </tspan><tspan class="st23" x="210.17" y="0">inputs</tspan><tspan class="st25" x="247.07" y="0"> </tspan><tspan class="st23" x="251.85" y="0">(project_id,</tspan><tspan class="st25" x="318.45" y="0"> </tspan><tspan class="st23" x="323.24" y="0">region,</tspan><tspan class="st25" x="364.28" y="0"> </tspan><tspan class="st13" x="369.07" y="0">cluster_prefix),</tspan><tspan class="st25" x="455.36" y="0"> </tspan><tspan class="st23" x="460.15" y="0">orders</tspan><tspan class="st25" x="497.44" y="0"> </tspan><tspan class="st18" x="502.23" y="0">infra</tspan><tspan class="st25" x="528.69" y="0"> </tspan><tspan class="st23" x="533.47" y="0">→</tspan><tspan class="st25" x="540.47" y="0"> </tspan><tspan class="st23" x="545.26" y="0">cluster</tspan></text>
+  <rect class="st29" x="40" y="200" width="480" height="360"/>
+  <text class="st8" transform="translate(60 230)"><tspan x="0" y="0">Infrastructure modules (persist across clusters)</tspan></text>
+  <text class="st9" transform="translate(60 255)"><tspan class="st23" x="0" y="0">-</tspan><tspan class="st25" x="4.3" y="0"> </tspan><tspan class="st23" x="9.08" y="0">local_infrastructure/global_infrastructure</tspan></text>
+  <text/>
+  <rect class="st26" x="60" y="300" width="200" height="60"/>
+  <text class="st9" transform="translate(70 325)"><tspan class="st23" x="0" y="0">Cloud</tspan><tspan class="st25" x="34.72" y="0"> </tspan><tspan class="st23" x="39.5" y="0">SQL</tspan><tspan class="st25" x="62.66" y="0"> </tspan><tspan class="st23" x="67.45" y="0">(Postgres)</tspan></text>
+  <text class="st5" transform="translate(70 345)"><tspan class="st23" x="0" y="0">DB</tspan><tspan class="st25" x="14.5" y="0"> </tspan><tspan class="st23" x="18.6" y="0">+</tspan><tspan class="st25" x="25.75" y="0"> </tspan><tspan class="st14" x="29.85" y="0">users</tspan><tspan class="st25" x="55.9" y="0"> </tspan><tspan class="st23" x="60" y="0">+</tspan><tspan class="st25" x="67.16" y="0"> </tspan><tspan class="st23" x="71.26" y="0">secrets</tspan></text>
+  <rect class="st26" x="60" y="380" width="200" height="60"/>
+  <text class="st9" transform="translate(70 405)"><tspan class="st23" x="0" y="0">VPC</tspan><tspan class="st25" x="23.38" y="0"> </tspan><tspan class="st23" x="28.17" y="0">/</tspan><tspan class="st25" x="32.97" y="0"> </tspan><tspan class="st23" x="37.75" y="0">Subnets</tspan><tspan class="st25" x="85.3" y="0"> </tspan><tspan class="st23" x="90.08" y="0">/</tspan><tspan class="st25" x="94.88" y="0"> </tspan><tspan class="st23" x="99.67" y="0">NAT</tspan></text>
+  <text class="st6" transform="translate(70 425)"><tspan x="0" y="0">Networking</tspan></text>
+  <rect class="st26" x="57.96" y="463.39" width="200" height="60"/>
+  <text class="st11" transform="translate(70 485)"><tspan x="0" y="0">Pub/Sub</tspan></text>
+  <text class="st5" transform="translate(70 505)"><tspan class="st23" x="0" y="0">Topics,</tspan><tspan class="st25" x="34.8" y="0"> </tspan><tspan class="st23" x="38.9" y="0">subscriptions</tspan></text>
+  <rect class="st29" x="560" y="200" width="480" height="360"/>
+  <text class="st8" transform="translate(580 230)"><tspan x="0" y="0">Cluster modules (per-cluster)</tspan></text>
+  <text class="st9" transform="translate(580 255)"><tspan class="st23" x="0" y="0">-</tspan><tspan class="st25" x="4.3" y="0"> </tspan><tspan class="st23" x="9.08" y="0">local_cluster/global_cluster</tspan></text>
+  <text/>
+  <g>
+    <rect class="st26" x="585.23" y="278.41" width="199.73" height="66.59"/>
+    <text class="st9" transform="translate(595.23 303.41)"><tspan class="st23" x="0" y="0">GKE</tspan><tspan class="st25" x="23.52" y="0"> </tspan><tspan class="st23" x="28.3" y="0">cluster</tspan><tspan class="st25" x="67.36" y="0"> </tspan><tspan class="st23" x="72.15" y="0">+</tspan><tspan class="st25" x="80.49" y="0"> </tspan><tspan class="st23" x="85.28" y="0">node</tspan><tspan class="st25" x="115.64" y="0"> </tspan><tspan class="st23" x="120.43" y="0">pools</tspan></text>
+    <text class="st5" transform="translate(595.23 323.41)"><tspan class="st23" x="0" y="0">Workload</tspan><tspan class="st25" x="48.26" y="0"> </tspan><tspan class="st19" x="52.37" y="0">Identity,</tspan><tspan class="st25" x="93.56" y="0"> </tspan><tspan class="st23" x="97.66" y="0">GMP</tspan></text>
+  </g>
+  <g>
+    <rect class="st26" x="833.21" y="247.93" width="159.26" height="60"/>
+    <text class="st9" transform="translate(845.9 264.81)"><tspan class="st23" x="0" y="0">Rendered</tspan><tspan class="st25" x="56.71" y="0"> </tspan><tspan class="st23" x="61.5" y="0">Helm</tspan><tspan class="st25" x="92.62" y="0"> </tspan><tspan class="st23" x="97.41" y="0">values</tspan></text>
+    <text class="st5" transform="translate(881.34 288.12)"><tspan class="st23" x="0" y="0">Queues,</tspan><tspan class="st25" x="40.75" y="0"> </tspan><tspan class="st23" x="44.85" y="0">DNS,</tspan><tspan class="st23" x="0" y="14.4">Redis,</tspan><tspan class="st25" x="29.28" y="14.4"> </tspan><tspan class="st23" x="33.38" y="14.4">SQL,</tspan><tspan class="st25" x="55.71" y="14.4"> </tspan><tspan class="st14" x="59.81" y="14.4">etc.</tspan></text>
+  </g>
+  <rect class="st28" x="580" y="380" width="440" height="100"/>
+  <text class="st7" transform="translate(600 410)"><tspan x="0" y="0">Helmfile → Helm</tspan></text>
+  <text class="st9" transform="translate(600 435)"><tspan class="st23" x="0" y="0">Applies</tspan><tspan class="st25" x="43.64" y="0"> </tspan><tspan class="st23" x="48.42" y="0">cave-helm-charts</tspan><tspan class="st25" x="149.1" y="0"> </tspan><tspan class="st23" x="153.88" y="0">into</tspan><tspan class="st25" x="177.25" y="0"> </tspan><tspan class="st17" x="182.03" y="0">the</tspan><tspan class="st25" x="201.45" y="0"> </tspan><tspan class="st23" x="206.23" y="0">cluster</tspan><tspan class="st25" x="245.29" y="0"> </tspan><tspan class="st23" x="250.08" y="0">using</tspan><tspan class="st25" x="282.21" y="0"> </tspan><tspan class="st23" x="286.99" y="0">rendered</tspan><tspan class="st25" x="340.75" y="0"> </tspan><tspan class="st23" x="345.54" y="0">values</tspan></text>
+  <rect class="st26" x="576.18" y="495.06" width="189.82" height="40"/>
+  <text class="st9" transform="translate(585.23 518.24)"><tspan class="st23" x="0" y="0">Apps</tspan><tspan class="st25" x="30.04" y="0"> </tspan><tspan class="st23" x="34.83" y="0">(Deployments/Services)</tspan></text>
+  <rect class="st26" x="800" y="496.48" width="233.43" height="43.52"/>
+  <text class="st9" transform="translate(810 525)"><tspan class="st23" x="0" y="0">KEDA,</tspan><tspan class="st25" x="35.27" y="0"> </tspan><tspan class="st23" x="40.05" y="0">HPA,</tspan><tspan class="st25" x="68.09" y="0"> </tspan><tspan class="st22" x="72.88" y="0">Ingress,</tspan><tspan class="st25" x="117.4" y="0"> </tspan><tspan class="st17" x="122.18" y="0">Cert-Manager</tspan></text>
+  <path class="st0" d=""/>
+  <path class="st24" d="M280,200"/>
+  <path class="st0" d=""/>
+  <path class="st24" d="M800,200"/>
+  <path class="st0" d=""/>
+  <path class="st24" d="M820,330"/>
+  <path class="st0" d=""/>
+  <path class="st24" d="M820,330"/>
+  <path class="st0" d=""/>
+  <path class="st24" d="M820,330"/>
+  <path class="st0" d=""/>
+  <path class="st24" d="M800,380"/>
+  <text class="st4" transform="translate(40 590)"><tspan class="st23" x="0" y="0">Terragrunt</tspan><tspan class="st25" x="93.6" y="0"> </tspan><tspan class="st23" x="100.77" y="0">manages</tspan><tspan class="st25" x="180.76" y="0"> </tspan><tspan class="st23" x="187.94" y="0">ordering</tspan><tspan class="st25" x="263.87" y="0"> </tspan><tspan class="st21" x="271.05" y="0">and</tspan><tspan class="st25" x="304.67" y="0"> </tspan><tspan class="st23" x="311.85" y="0">shared</tspan><tspan class="st25" x="371.17" y="0"> </tspan><tspan class="st23" x="378.35" y="0">inputs;</tspan><tspan class="st25" x="438.05" y="0"> </tspan><tspan class="st20" x="445.23" y="0">run</tspan><tspan class="st25" x="475.32" y="0"> </tspan><tspan class="st23" x="482.5" y="0">infrastructure</tspan><tspan class="st25" x="601.21" y="0"> </tspan><tspan class="st23" x="608.39" y="0">first,</tspan><tspan class="st25" x="645.85" y="0"> </tspan><tspan class="st23" x="653.03" y="0">then</tspan><tspan class="st25" x="693.81" y="0"> </tspan><tspan class="st23" x="700.99" y="0">cluster.</tspan></text>
+  <text class="st4" transform="translate(40 618.32)"><tspan class="st23" x="0" y="0">Infrastructure</tspan><tspan class="st25" x="118.82" y="0"> </tspan><tspan class="st23" x="125.99" y="0">persists</tspan><tspan class="st25" x="192.14" y="0"> </tspan><tspan class="st23" x="199.32" y="0">across</tspan><tspan class="st25" x="253.88" y="0"> </tspan><tspan class="st23" x="261.06" y="0">cluster</tspan><tspan class="st25" x="319.65" y="0"> </tspan><tspan class="st23" x="326.82" y="0">replacements;</tspan><tspan class="st25" x="450.47" y="0"> </tspan><tspan class="st23" x="0" y="25.2">Cluster</tspan><tspan class="st25" x="61.36" y="25.2"> </tspan><tspan class="st23" x="68.54" y="25.2">layer</tspan><tspan class="st25" x="110.9" y="25.2"> </tspan><tspan class="st16" x="118.07" y="25.2">composes</tspan><tspan class="st25" x="207.15" y="25.2"> </tspan><tspan class="st23" x="214.33" y="25.2">infra</tspan><tspan class="st25" x="254.02" y="25.2"> </tspan><tspan class="st23" x="261.2" y="25.2">outputs</tspan><tspan class="st25" x="330.04" y="25.2"> </tspan><tspan class="st20" x="337.21" y="25.2">into</tspan><tspan class="st25" x="372.26" y="25.2"> </tspan><tspan class="st15" x="379.44" y="25.2">Helm</tspan><tspan class="st25" x="426.12" y="25.2"> </tspan><tspan class="st23" x="433.3" y="25.2">values.</tspan></text>
+  <text class="st4"><tspan class="st23" x="41.6" y="669.99">Other</tspan><tspan class="st25" x="92.06" y="669.99"> </tspan><tspan class="st23" x="99.24" y="669.99">platforms</tspan><tspan class="st25" x="183.57" y="669.99"> </tspan><tspan class="st21" x="190.75" y="669.99">may</tspan><tspan class="st25" x="228.27" y="669.99"> </tspan><tspan class="st16" x="235.45" y="669.99">require</tspan><tspan class="st25" x="298.54" y="669.99"> </tspan><tspan class="st16" x="305.71" y="669.99">changes</tspan><tspan class="st25" x="379.13" y="669.99"> </tspan><tspan class="st20" x="386.31" y="669.99">to</tspan><tspan class="st25" x="404.79" y="669.99"> </tspan><tspan class="st23" x="411.96" y="669.99">terragrunt/terraform modules and helm charts.</tspan></text>
+  <g>
+    <line class="st27" x1="912.83" y1="315.36" x2="912.83" y2="372.57"/>
+    <g>
+      <line class="st2" x1="912.83" y1="315.36" x2="912.83" y2="351.04"/>
+      <polygon points="897.88 346.66 912.83 372.57 927.79 346.66 897.88 346.66"/>
+    </g>
+  </g>
+  <line class="st2" x1="480" y1="294" x2="558.98" y2="349.25"/>
+  <line class="st2" x1="480" y1="395.06" x2="560" y2="399.75"/>
+  <line class="st2" x1="480" y1="520" x2="558.98" y2="467.9"/>
+  <line class="st2" x1="260" y1="490" x2="557.96" y2="448.17"/>
+  <line class="st2" x1="260.6" y1="399.75" x2="557.96" y2="425.44"/>
+  <line class="st2" x1="260" y1="325" x2="560" y2="368.92"/>
+  <g>
+    <rect class="st26" x="278.59" y="374.01" width="200" height="60"/>
+    <text class="st9" transform="translate(288.59 399.01)"><tspan class="st23" x="0" y="0">DNS</tspan><tspan class="st25" x="25.44" y="0"> </tspan><tspan class="st23" x="30.22" y="0">(Cloud</tspan><tspan class="st25" x="68.92" y="0"> </tspan><tspan class="st17" x="73.7" y="0">DNS)</tspan></text>
+    <text class="st5" transform="translate(288.59 419.01)"><tspan class="st23" x="0" y="0">Managed</tspan><tspan class="st25" x="47.36" y="0"> </tspan><tspan class="st23" x="51.46" y="0">Zones,</tspan><tspan class="st25" x="84.6" y="0"> </tspan><tspan class="st14" x="88.7" y="0">records</tspan></text>
+  </g>
+  <g>
+    <rect class="st26" x="278.59" y="261.56" width="200" height="60"/>
+    <text class="st9" transform="translate(288.59 286.56)"><tspan class="st23" x="0" y="0">Redis</tspan><tspan class="st25" x="31.26" y="0"> </tspan><tspan class="st22" x="36.05" y="0">(Memorystore)</tspan></text>
+    <text class="st5" transform="translate(288.59 306.56)"><tspan class="st23" x="0" y="0">PCG</tspan><tspan class="st25" x="21.1" y="0"> </tspan><tspan class="st23" x="25.2" y="0">cache</tspan></text>
+  </g>
+  <g>
+    <rect class="st26" x="280" y="493.39" width="200" height="60"/>
+    <text class="st5" transform="translate(290 538.39)"><tspan class="st23" x="0" y="0">Skeleton</tspan><tspan class="st25" x="43.62" y="0"> </tspan><tspan class="st23" x="47.72" y="0">cache,</tspan><tspan class="st25" x="79.41" y="0"> </tspan><tspan class="st23" x="83.51" y="0">backups</tspan></text>
+    <text class="st9" transform="translate(290.5 515.06)"><tspan class="st23" x="0" y="0">Buckets</tspan><tspan class="st25" x="45.33" y="0"> </tspan><tspan class="st23" x="50.12" y="0">(GCS)</tspan></text>
+  </g>
+  <g>
+    <line class="st27" x1="415.05" y1="163.77" x2="353.09" y2="212.86"/>
+    <g>
+      <line class="st2" x1="415.05" y1="163.77" x2="369.96" y2="199.49"/>
+      <polygon points="364.1 185.05 353.09 212.86 382.68 208.5 364.1 185.05"/>
+    </g>
+  </g>
+  <g>
+    <line class="st27" x1="720.46" y1="163.72" x2="790.03" y2="212.45"/>
+    <g>
+      <line class="st2" x1="720.46" y1="163.72" x2="772.4" y2="200.1"/>
+      <polygon points="760.23 209.84 790.03 212.45 777.39 185.33 760.23 209.84"/>
+    </g>
+  </g>
+  <g>
+    <rect class="st26" x="28.58" y="94.44" width="199.73" height="66.59"/>
+    <text class="st11" transform="translate(38.58 116.25)"><tspan x="0" y="0">BigTable</tspan></text>
+    <text class="st5" transform="translate(38.58 136.25)"><tspan class="st23" x="0" y="0">not</tspan><tspan class="st25" x="17.22" y="0"> </tspan><tspan class="st23" x="21.32" y="0">managed</tspan><tspan class="st25" x="69.04" y="0"> </tspan><tspan class="st23" x="73.15" y="0">by</tspan><tspan class="st25" x="85.63" y="0"> </tspan><tspan class="st14" x="89.73" y="0">terragrunt</tspan><tspan class="st23" x="0" y="14.4">used</tspan><tspan class="st25" x="24.14" y="14.4"> </tspan><tspan class="st14" x="28.25" y="14.4">by</tspan><tspan class="st25" x="40.73" y="14.4"> </tspan><tspan class="st23" x="44.83" y="14.4">PCG</tspan><tspan class="st25" x="65.92" y="14.4"> </tspan><tspan class="st23" x="70.02" y="14.4">and</tspan><tspan class="st25" x="89.24" y="14.4"> </tspan><tspan class="st23" x="93.34" y="14.4">L2cache</tspan><tspan class="st25" x="134.36" y="14.4"> </tspan><tspan class="st23" x="138.47" y="14.4">apps</tspan></text>
+  </g>
+</svg>
