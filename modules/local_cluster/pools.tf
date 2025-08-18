@@ -109,6 +109,8 @@ resource "google_container_node_pool" "cp" {
   name       = "core-pool"
   location   = var.zone
   cluster    = google_container_cluster.cluster.name
+  # Create 1 node initially so system services can schedule; autoscaler manages size afterwards
+  initial_node_count = 1
 
   node_config {
     labels = {
