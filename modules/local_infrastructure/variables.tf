@@ -131,3 +131,11 @@ variable "skeleton_cache_cloudpath" {
   type        = string
   default     = ""
 }
+
+# If true, allow public read access to objects in the Skeleton Cache bucket.
+# This grants roles/storage.objectViewer to allUsers and relaxes Public Access Prevention.
+variable "skeleton_cache_public_read" {
+  description = "Enable public read (allUsers) for the Skeleton Cache bucket."
+  type        = bool
+  default     = false
+}

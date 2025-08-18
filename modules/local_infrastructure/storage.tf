@@ -16,11 +16,21 @@ resource "google_storage_bucket" "skeleton_cache" {
   location = var.region
 
   uniform_bucket_level_access = true
-  public_access_prevention    = "enforced"
+  # Public Access Prevention: omit when public read is enabled (Terraform treats null as "unset").
+  # Some provider versions only accept "enforced"; leaving it unset inherits project/org policy.
+  public_access_prevention    = var.skeleton_cache_public_read ? null : "enforced"
 
   labels = {
     environment = var.environment
     owner       = var.owner
     component   = "skeletoncache"
   }
+}
+
+# When enabled, grant public read to all objects in the bucket via IAM (additive grant).
+resource "google_storage_bucket_iam_member" "skeleton_cache_public" {
+  count  = var.skeleton_cache_public_read ? 1 : 0
+  bucket = google_storage_bucket.skeleton_cache.name
+  role   = "roles/storage.objectViewer"
+  member = "allUsers"
 }
