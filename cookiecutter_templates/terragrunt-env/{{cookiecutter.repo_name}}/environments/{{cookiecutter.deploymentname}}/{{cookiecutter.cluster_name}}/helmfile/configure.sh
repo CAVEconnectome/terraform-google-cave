@@ -18,11 +18,11 @@ need kubectl
 need helm
 need helmfile
 
-project="em-270621"
-region="us-west1"
-zone="us-west1-b"
-cluster_name="api5-cave"
-kube_context="gke_em-270621_us-west1-b_api5-cave"
+project="{{ cookiecutter.project_id }}"
+region="{{ cookiecutter.region }}"
+zone="{{ cookiecutter.zone }}"
+cluster_name="{{ cookiecutter.cluster_name }}-cave"
+kube_context="gke_{{ cookiecutter.project_id }}_{{ cookiecutter.zone }}_${cluster_name}"
 
 echo "Setting gcloud project: ${project}"
 gcloud config set project "${project}" >/dev/null
