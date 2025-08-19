@@ -71,3 +71,15 @@ Terragrunt is used to coordinate these modules, provide shared inputs (project, 
 If you are migrating from CAVEdeployment-style legacy templates, we provide a cookiecutter template to scaffold a Terragrunt environment repo and helpers to import existing "infrastructure" resources into Terraform/Terragrunt state. See `cookiecutter_templates/terragrunt-env/` and the QUICKSTART for details.
 
 
+
+### todo
+1. for global figure out oauth secret integration with terragrutn or add to manual step before going to helm 
+2. consider adding scalers to global deployments
+3. write instructions about when/how to do the cavetoken thing with global and/or local
+4. recheck how the postgres username/password flow is suppose to work and is well documented.
+5. fix the CSRF secrets in info (maybe others too)
+6. figure out AUTH secret key
+7. fix the run_cloudsql_proxy.sh to work for helmfile
+8. make a global cookiecutter template
+
+

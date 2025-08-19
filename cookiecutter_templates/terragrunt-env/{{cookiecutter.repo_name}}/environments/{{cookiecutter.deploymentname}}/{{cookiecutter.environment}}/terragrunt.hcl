@@ -1,5 +1,5 @@
 terraform { 
-  source = "git::https://github.com/CAVEconnectome/terraform-google-cave.git//modules/local_cluster?ref=main"
+  source = "git::https://github.com/CAVEconnectome/terraform-google-cave.git/modules/local_cluster?ref=main"
 }
 
 include "root" {

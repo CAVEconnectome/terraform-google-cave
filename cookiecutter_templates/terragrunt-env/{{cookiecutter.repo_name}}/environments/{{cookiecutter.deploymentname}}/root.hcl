@@ -6,7 +6,7 @@ remote_state {
   }
   config = {
     bucket = "{{ cookiecutter.state_bucket }}"
-    prefix = "{{ cookiecutter.org }}/${path_relative_to_include()}"
+    prefix = "{{ cookiecutter.deploymentname }}/${path_relative_to_include()}"
   }
 }
 
@@ -20,7 +20,7 @@ inputs = {
   docker_registry          = "{{ cookiecutter.docker_registry }}"
   bigtable_google_project  = "{{ cookiecutter.bigtable_google_project }}"
   bigtable_instance_name   = "{{ cookiecutter.bigtable_instance_name }}"
-  helm_terraform_state_url = "gs://{{ cookiecutter.state_bucket }}/{{ cookiecutter.org }}/static/terraform.tfstate"
+  helm_terraform_state_url = "gs://{{ cookiecutter.state_bucket }}/{{ cookiecutter.deploymentname }}/static/terraform.tfstate"
   helm_config_dir          = "${get_terragrunt_dir()}/helmfile"
   # Optional: set a cloud path for Skeleton Cache (gs://bucket/prefix).
   # Leave commented to let Terraform pick a default bucket.
