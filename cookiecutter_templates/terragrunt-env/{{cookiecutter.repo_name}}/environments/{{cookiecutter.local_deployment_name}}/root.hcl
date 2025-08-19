@@ -6,7 +6,7 @@ remote_state {
   }
   config = {
     bucket = "{{ cookiecutter.state_bucket }}"
-    prefix = "{{ cookiecutter.deploymentname }}/${path_relative_to_include()}"
+    prefix = "{{ cookiecutter.local_deployment_name }}/${path_relative_to_include()}"
   }
 }
 
