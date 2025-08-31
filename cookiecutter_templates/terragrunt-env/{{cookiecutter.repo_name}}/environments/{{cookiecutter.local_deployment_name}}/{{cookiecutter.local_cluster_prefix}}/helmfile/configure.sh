@@ -21,7 +21,7 @@ need helmfile
 project="{{ cookiecutter.project_id }}"
 region="{{ cookiecutter.region }}"
 zone="{{ cookiecutter.zone }}"
-cluster_name="{{ cookiecutter.cluster_name }}-cave"
+cluster_name="{{ cookiecutter.local_cluster_prefix }}-cave"
 kube_context="gke_{{ cookiecutter.project_id }}_{{ cookiecutter.zone }}_${cluster_name}"
 
 echo "Setting gcloud project: ${project}"

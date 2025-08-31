@@ -13,15 +13,17 @@
   "global_sql_instance_name": "cave-global",
   "dns_zone": "cave",
   "domain_name": "example.org",
-  "letsencrypt_email": "user@example.org",
+  "gcp_user_account": "user@example.org",
   "state_bucket": "my-terraform-state-bucket",
   "vpc_name_override": "",
   "pcg_redis_name_override": "",
   "docker_registry": "docker.io/caveconnectome",
   "bigtable_google_project": "",
   "bigtable_instance_name": "pychunkedgraph",
+  "pcg_bucket_name": "my-pcg-bucket",
   "cluster_global_server": "",
   "materialize_datastack": "v1dd",
+
   "_docs": {
     "repo_name": "Name of the new environment repository.",
     "org": "Top-level folder namespace (e.g., your org/team).",
