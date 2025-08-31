@@ -67,7 +67,7 @@ terragrunt init && terragrunt apply
   - If already installed: `/opt/homebrew/bin/helm plugin update diff`
 
 ```
-cd <repo_name>/environments/<org>/v5/helmfile
+cd <repo_name>/environments/<org>/<cluster_prefix>/helmfile
 cp helmfile.yaml.example helmfile.yaml
 ./configure.sh
 # Edit helmfile.yaml and create overrides (e.g., materialize.yaml) as needed
