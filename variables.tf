@@ -72,7 +72,7 @@ variable "pcg_bucket_name" {
 variable "owner" {
   type = string
   description = "added as label to resources, convenient to filter costs based on labels"
-  default = "na"
+  default = "cave"
 }
 
 # define the machine types

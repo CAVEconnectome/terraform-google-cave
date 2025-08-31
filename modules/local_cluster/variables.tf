@@ -150,7 +150,7 @@ variable "helm_terraform_state_url" {
 variable "deletion_protection" {
   type = bool
   description = "enable deletion protection for the cluster"
-  default = true
+  default = false
 }
 
 variable "redis_version" {
