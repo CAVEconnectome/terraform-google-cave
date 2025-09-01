@@ -21,16 +21,16 @@ inputs = {
   dns_entries              = {
       "{{ cookiecutter.local_cluster_prefix }}" = {
         zone        = "{{ cookiecutter.dns_zone }}"
-        domain_name = "{{ cookiecutter.local_cluster_prefix }}.{{ cookiecutter.domain_name. }}"
+        domain_name = "{{ cookiecutter.local_cluster_prefix }}.{{ cookiecutter.domain_name }}"
       },
       "{{ cookiecutter.local_environment_name}} = {
         zone        = "{{ cookiecutter.dns_zone }}"
-        domain_name = "{{ cookiecutter.local_environment_name }}.{{ cookiecutter.domain_name. }}"
+        domain_name = "{{ cookiecutter.local_environment_name }}.{{ cookiecutter.domain_name }}"
       }
     }
   # mat_redis_host   = ""
 }
 
 locals {
-  prefix = "{{ local_environment_name }}/${path_relative_to_include()}"
+  prefix = "{{ cookiecutter.local_environment_name }}/${path_relative_to_include()}"
 }

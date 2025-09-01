@@ -17,7 +17,7 @@ inputs = {
   zone                     = "{{ cookiecutter.zone }}"
   environment              = "{{ cookiecutter.local_environment_name }}"
   domain_name              = "{{ cookiecutter.domain_name }}"
-  global_server            = "{{ cookiecutter.global_deployment_name }}.{{ cookiecutter.domain_name }}"
+  global_server            = "{{ cookiecutter.global_server}}"
   docker_registry          = "{{ cookiecutter.docker_registry }}"
   gcp_user_account         = "{{ cookiecutter.gcp_user_account }}"
   sql_instance_name        = "{{ cookiecutter.local_sql_instance_name }}"
@@ -36,10 +36,10 @@ inputs = {
   # pcg_redis_name_override    = "v1dd-pcg-cache"
   # vpc_name_override          = "daf-api3-network"
   # Leave commented to let Terraform pick a default bucket.
-  # skeleton_cache_cloudpath = "gs://my-bucket/pcg_skeletons"
+  # skeleton_cache_cloudpath = {{ cookiecutter.skeleton_cache_cloudpath}}
   # will default to private read
-  # skeleton_cache_public_read = false
-  # deletion_protection        = false
+  skeleton_cache_public_read = {{ cookiecutter.pcg_skeleton_cache_bucket_public_read }}
+  deletion_protection        = false
 
   sql_instance_memory_gb     = 26
 }

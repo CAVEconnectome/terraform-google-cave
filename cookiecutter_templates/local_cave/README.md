@@ -4,13 +4,13 @@ Use this template to scaffold a new Terragrunt environment repo.
 
 Quickstart:
 - pipx install cookiecutter
-- cookiecutter terraform-google-cave/cookiecutter_templates/terragrunt-env
+- cookiecutter terraform-google-cave/cookiecutter_templates/local_cave
 
 This creates {{ repo_name }}/ with:
-- environments/<org>/root.hcl (remote state + shared inputs)
-- environments/<org>/static/terragrunt.hcl (infra)
-- environments/<org>/<environment>/terragrunt.hcl (cluster)
-- environments/<org>/scripts/ (import helpers)
+- environments/<local_environment_name>/root.hcl (remote state + shared inputs)
+- environments/<local_environment_name>/static/terragrunt.hcl (infra)
+- environments/<local_environment_name>/<environment>/terragrunt.hcl (cluster)
+- environments/<local_environment_name>/scripts/ (import helpers)
 
 After generation:
 - Edit root.hcl to set your variables

@@ -1,29 +1,22 @@
 {
   "repo_name": "cave-terraform-env",
-  "local_deployment_name": "local",
-  "global_deployment_name": "global",
-  "environment": "api",
-  "local_cluster_prefix": "apiv1",
-  "global_cluster_prefix": "globalv1",
+  "gcp_user_account": "user@example.org",
+  "domain_name": "example.org",
   "project_id": "my-gcp-project-id",
   "region": "us-west1",
   "zone": "us-west1-b",
+  "state_bucket": "my-terraform-state-bucket",
+
+  "global_environment_name": "global",
+  "global_cluster_prefix": "globalv1",
+
   "owner": "cave",
-  "local_sql_instance_name": "cave-local",
   "global_sql_instance_name": "cave-global",
   "dns_zone": "cave",
-  "domain_name": "example.org",
-  "gcp_user_account": "user@example.org",
-  "state_bucket": "my-terraform-state-bucket",
-  "vpc_name_override": "",
-  "pcg_redis_name_override": "",
-  "docker_registry": "docker.io/caveconnectome",
-  "bigtable_google_project": "",
-  "bigtable_instance_name": "pychunkedgraph",
-  "pcg_bucket_name": "my-pcg-bucket",
-  "cluster_global_server": "",
-  "materialize_datastack": "v1dd",
 
+
+  "vpc_name_override": "",
+  "docker_registry": "docker.io/caveconnectome",
   "_docs": {
     "repo_name": "Name of the new environment repository.",
     "org": "Top-level folder namespace (e.g., your org/team).",
@@ -36,14 +29,9 @@
     "sql_instance_name": "Cloud SQL Postgres instance name (existing or to be created).",
     "dns_zone": "Cloud DNS managed zone name (e.g., em).",
     "domain_name": "Base domain (e.g., em.brain.example.org).",
-    "letsencrypt_email": "Email used by cert-manager ACME issuer.",
+    "gcp_user_account": "Email for google account and letsencrypt.",
     "state_bucket": "GCS bucket for Terraform/Terragrunt state.",
     "vpc_name_override": "Optional: existing VPC name to use instead of generated.",
-    "pcg_redis_name_override": "Optional: existing Redis instance name override.",
     "docker_registry": "Container registry for images (default docker.io/caveconnectome).",
-    "bigtable_google_project": "If Bigtable is in another project, set that project ID.",
-    "bigtable_instance_name": "Bigtable instance name for PyChunkedGraph (default pychunkedgraph).",
-    "cluster_global_server": "Optional: globalServer value for cluster settings.",
-    "materialize_datastack": "Default datastack name to inject into the scaffolded schedules.json (e.g., v1dd)."
   }
 }
