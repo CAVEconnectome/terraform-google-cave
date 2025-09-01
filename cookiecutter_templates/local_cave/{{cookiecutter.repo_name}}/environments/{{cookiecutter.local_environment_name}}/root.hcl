@@ -23,7 +23,9 @@ inputs = {
   sql_instance_name        = "{{ cookiecutter.local_sql_instance_name }}"
   
   pcg_bucket_name            = "{{ cookiecutter.pcg_bucket_name }}"
+{%- if cookiecutter.bigtable_google_project %}
   bigtable_google_project  = "{{ cookiecutter.bigtable_google_project }}"
+{%- endif %}
   bigtable_instance_name   = "{{ cookiecutter.bigtable_instance_name }}"
   
   helm_terraform_state_url = "gs://{{ cookiecutter.state_bucket }}/{{ cookiecutter.local_environment_name }}/static/default.tfstate"
@@ -32,12 +34,18 @@ inputs = {
   # dns variables
   dns_zone                   = "{{ cookiecutter.dns_zone }}"
 
-  # If migrating from previous setup use these variables 
-  # pcg_redis_name_override    = "v1dd-pcg-cache"
-  # vpc_name_override          = "daf-api3-network"
-  # Leave commented to let Terraform pick a default bucket.
-  # skeleton_cache_cloudpath = {{ cookiecutter.skeleton_cache_cloudpath}}
-  # will default to private read
+  # Optional configurations - only included if values are provided
+{%- if cookiecutter.pcg_redis_name_override %}
+  pcg_redis_name_override    = "{{ cookiecutter.pcg_redis_name_override }}"
+{%- endif %}
+{%- if cookiecutter.vpc_name_override %}
+  vpc_name_override          = "{{ cookiecutter.vpc_name_override }}"
+{%- endif %}
+{%- if cookiecutter.skeleton_cache_cloudpath %}
+  skeleton_cache_cloudpath   = "{{ cookiecutter.skeleton_cache_cloudpath }}"
+{%- endif %}
+  
+  # Default configurations
   skeleton_cache_public_read = {{ cookiecutter.pcg_skeleton_cache_bucket_public_read }}
   deletion_protection        = false
 
