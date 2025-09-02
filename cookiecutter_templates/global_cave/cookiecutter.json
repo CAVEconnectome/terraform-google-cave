@@ -32,6 +32,6 @@
     "gcp_user_account": "Email for google account and letsencrypt.",
     "state_bucket": "GCS bucket for Terraform/Terragrunt state.",
     "vpc_name_override": "Optional: existing VPC name to use instead of generated.",
-    "docker_registry": "Container registry for images (default docker.io/caveconnectome).",
+    "docker_registry": "Container registry for images (default docker.io/caveconnectome)."
   }
 }
