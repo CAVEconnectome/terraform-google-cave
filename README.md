@@ -64,7 +64,7 @@ Terragrunt is used to coordinate these modules, provide shared inputs (project, 
 
 ## Cookiecutter and migration from legacy templates
 
-If you are migrating from CAVEdeployment-style legacy templates, we provide a cookiecutter template to scaffold a Terragrunt environment repo and helpers to import existing "infrastructure" resources into Terraform/Terragrunt state. See `cookiecutter_templates/terragrunt-env/` and the QUICKSTART for details.
+If you are migrating from CAVEdeployment-style legacy templates, we provide a cookiecutter template to scaffold a Terragrunt environment repo and helpers to import existing "infrastructure" resources into Terraform/Terragrunt state. See `cookiecutter_templates/local_cave/` and the QUICKSTART for details.
 
 ## Migration from CAVEdeployment 
 If you already have a deployment that used CAVEdeployment
