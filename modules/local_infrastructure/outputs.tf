@@ -50,3 +50,13 @@ output "skeleton_cache_cloudpath" {
   description = "Full gs:// cloud path where skeletons are stored (may include a path suffix)"
 }
 
+output "materialization_dump_bucket_name" {
+  value       = google_storage_bucket.materialization_dump.name
+  description = "Name of the materialization dump bucket"
+}
+
+output "materialization_upload_bucket_name" {
+  value       = google_storage_bucket.materialization_upload.name
+  description = "Name of the materialization upload bucket"
+}
+

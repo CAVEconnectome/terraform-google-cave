@@ -78,6 +78,8 @@ dns_zone_name_input=$(echo "$cfg_json" | jq -r '.inputs.dns_zone // .inputs.dns_
 redis_name_input=$(echo "$cfg_json" | jq -r '.inputs.pcg_redis_name_override // .inputs.pcg_redis_name // .inputs.redis_instance_name // empty')
 sql_instance_name=$(echo "$cfg_json" | jq -r '.inputs.sql_instance_name // empty')
 postgres_write_user=$(echo "$cfg_json" | jq -r '.inputs.postgres_write_user // empty')
+materialization_dump_bucket_name=$(echo "$cfg_json" | jq -r '.inputs.materialization_dump_bucket_name // empty')
+materialization_upload_bucket_name=$(echo "$cfg_json" | jq -r '.inputs.materialization_upload_bucket_name // empty')
 
 if [ -z "$project_id$owner$environment$region$vpc_name_override$sql_instance_name$postgres_write_user" ]; then
   echo "warn: Terragrunt inputs appear empty in $WORK_DIR. Ensure this env defines inputs (or inherits via include) before import." >&2
@@ -208,6 +210,8 @@ Importing resources with the following values:
   Subnetwork ID:             ${subnetwork_id:-<none>}
   DNS Managed Zone ID:       ${dns_zone_id_primary:-<none>} (fallback: ${dns_zone_id_fallback:-<none>})
   Redis Instance ID:         ${redis_id:-<none>}
+  Materialization Dump Bucket:   ${materialization_dump_bucket_name:-<none>}
+  Materialization Upload Bucket: ${materialization_upload_bucket_name:-<none>}
 INFO
 
 # Import the SQL user (if we have enough info)
@@ -283,6 +287,29 @@ if [ -n "${redis_id}" ]; then
   fi
 else
   echo "Skipping Redis import (missing project_id/region/redis_name)"
+fi
+
+# Import materialization buckets
+if [ -n "${materialization_dump_bucket_name}" ]; then
+  if has_state "google_storage_bucket.materialization_dump"; then
+    echo "Materialization dump bucket already managed: google_storage_bucket.materialization_dump (skipping import)"
+  else
+    echo "Importing materialization dump bucket..."
+    terragrunt --working-dir "$WORK_DIR" import "google_storage_bucket.materialization_dump" "$materialization_dump_bucket_name"
+  fi
+else
+  echo "Skipping materialization dump bucket import (missing materialization_dump_bucket_name)"
+fi
+
+if [ -n "${materialization_upload_bucket_name}" ]; then
+  if has_state "google_storage_bucket.materialization_upload"; then
+    echo "Materialization upload bucket already managed: google_storage_bucket.materialization_upload (skipping import)"
+  else
+    echo "Importing materialization upload bucket..."
+    terragrunt --working-dir "$WORK_DIR" import "google_storage_bucket.materialization_upload" "$materialization_upload_bucket_name"
+  fi
+else
+  echo "Skipping materialization upload bucket import (missing materialization_upload_bucket_name)"
 fi
 
 echo "Import completed."
