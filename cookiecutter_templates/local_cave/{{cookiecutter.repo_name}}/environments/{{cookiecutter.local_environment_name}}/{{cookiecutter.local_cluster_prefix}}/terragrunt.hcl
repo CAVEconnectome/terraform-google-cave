@@ -23,7 +23,7 @@ inputs = {
         zone        = "{{ cookiecutter.dns_zone }}"
         domain_name = "{{ cookiecutter.local_cluster_prefix }}.{{ cookiecutter.domain_name }}"
       },
-      "{{ cookiecutter.local_environment_name}} = {
+      "{{ cookiecutter.local_environment_name }}" = {
         zone        = "{{ cookiecutter.dns_zone }}"
         domain_name = "{{ cookiecutter.local_environment_name }}.{{ cookiecutter.domain_name }}"
       }
