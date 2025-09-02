@@ -4,9 +4,9 @@
   "project_id": "my-gcp-project-id",
   "domain_name": "example.org",
   "gcp_user_account": "user@example.org",
-  "state_bucket": "my-terraform-state-bucket",
+  "state_bucket": "{{ cookiecutter.project_id }}-terraform-state",
   "pcg_bucket_name": "my-pcg-bucket",
-  "global_server": "global.example.org",
+  "global_server": "global.{{ cookiecutter.domain_name }}",
   "materialize_datastack": "v1dd",
 
   "region": "us-west1",
@@ -15,7 +15,7 @@
 
   "local_environment_name": "api",
   "local_cluster_prefix": "apiv1",
-  "local_sql_instance_name": "cave-local",
+  "local_sql_instance_name": "cave-{{ cookiecutter.local_environment_name }}",
   "dns_zone": "cave",
   
   "vpc_name_override": "",
@@ -25,6 +25,11 @@
   "pcg_skeleton_cache_bucket_public_read": "false",
   "bigtable_instance_name": "pychunkedgraph",
   "docker_registry": "docker.io/caveconnectome",
+  
+  "cave_token": "",
+  "letsencrypt_email": "{{ cookiecutter.gcp_user_account }}",
+  "materialization_dump_bucket_name": "",
+  "materialization_upload_bucket_name": "",
 
   "__prompts__": {
     "repo_name": "Name of the new environment repository.",
@@ -32,9 +37,9 @@
     "project_id": "GCP Project ID where resources are created, Must supply answer.",
     "domain_name": "Base domain (e.g., myfancydomain.org) that you have setup delegate clouddns to control, You must supply answer.",
     "gcp_user_account": "an email address that has google account permissions in the GCP project to give GCP resources permsissions and will be used for letsencrypt certifactes. You must supply answer.",
-    "state_bucket": "the name of the bucket you setup to track terraform state. You must supply answer.",
+    "state_bucket": "the name of the bucket you setup to track terraform state. Defaults to {project_id}-terraform-state.",
     "pcg_bucket_name": "the name of the bucket you setup to store PCG data. You must supply answer.",
-    "global_server": "the domain name of the global server you are using. You must supply answer",
+    "global_server": "the domain name of the global server you are using. Defaults to global.{domain_name}.",
     "materialize_datastack": "the first datastack that you want to setup, and create a templated schedule for.  You must supply answer, but is easy to change later",
     "region": "GCP region for regional resources (e.g., us-west1), depends where you want the cluster to be, default will work.",
     "zone": "GCP zone used in kube context and defaults (e.g., us-west1-b), depends on where you want cluster to be, default will work.",
@@ -42,7 +47,7 @@
    
     "local_environment_name": "Environment name used for the cluster folder (e.g., api, staging, prod). Default will work",
     "local_cluster_prefix": "Short identifier used as cluster_prefix and DNS subdomain (e.g., apiv5), you might have several versions of a cluster from one environment, suggest to be clearly related to the local_environment_name. Default will work.",
-    "local_sql_instance_name": "Cloud SQL Postgres instance name (suggested name is fine if you don't care, if migrating existing data lookup the name you decided). Default will work.",
+    "local_sql_instance_name": "Cloud SQL Postgres instance name. Defaults to cave-{local_environment_name}. If migrating existing data, lookup the name you decided.",
     "dns_zone": "Cloud DNS managed zone name (e.g., cave), can leave default if you don't care.",
     "bigtable_instance_name": "Optional: Bigtable instance name for PyChunkedGraph (default pychunkedgraph). You must supply but this is the most common name",
 
@@ -51,6 +56,11 @@
     "bigtable_google_project": "Optional: if your PCG bigtable instance is in another project, the name of that project",
     "skeleton_cache_cloudpath": "Optional: if you have already setup a skeleton cache bucket, name of the path to that bucket. Note you need to uncomment this in the root.hcl file to utilize.",
     "pcg_skeleton_cache_bucket_public_read": "Optional: should the skeleton cache bucket be publically readable. false will work by default. If true, you need to uncomment in the root.hcl file.",
-    "docker_registry": "Optional: Container registry for images (default docker.io/caveconnectome) is likely correct."
+    "docker_registry": "Optional: Container registry for images (default docker.io/caveconnectome) is likely correct.",
+    
+    "cave_token": "Required: CAVE access token for API authentication. You should configure a service account on your global server that has access to all datasets for this.",
+    "letsencrypt_email": "Email for Let's Encrypt certificates. Defaults to your gcp_user_account value.",
+    "materialization_dump_bucket_name": "Optional: GCS bucket name for materialization dumps. Leave blank if not needed.",
+    "materialization_upload_bucket_name": "Optional: GCS bucket name for materialization uploads. Leave blank if not needed."
   }
 }
