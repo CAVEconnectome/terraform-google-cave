@@ -26,10 +26,6 @@ if this is a production environemnt, we reccomend setting up blue/green workspac
 
 If you have an existing deployment of CAVE that you would like to start managing with CAVE you will see a lot of resources being created here. To fix this you need to follow the instructions under the Migration section below. 
 
-## Migration: 
-If you already have a deployment
-to get existing resources properly mapped into terraform that were created outside of it you need to import them 
-from the environment folder.
 
 
 ## How this repo fits with Helm charts
@@ -70,7 +66,12 @@ Terragrunt is used to coordinate these modules, provide shared inputs (project, 
 
 If you are migrating from CAVEdeployment-style legacy templates, we provide a cookiecutter template to scaffold a Terragrunt environment repo and helpers to import existing "infrastructure" resources into Terraform/Terragrunt state. See `cookiecutter_templates/terragrunt-env/` and the QUICKSTART for details.
 
+## Migration from CAVEdeployment 
+If you already have a deployment that used CAVEdeployment
+to get existing resources properly mapped into terraform that were created outside of it you need to import them 
+from the environment folder.
 
+We have made two scripts to assist with this process. To use them navigate to your infrastrucutre directories ({{deployment_description}}/{{static}}), and then run ../scripts/import
 
 ### todo
 1. for global figure out oauth secret integration with terragrutn or add to manual step before going to helm 
@@ -81,5 +82,10 @@ If you are migrating from CAVEdeployment-style legacy templates, we provide a co
 6. figure out AUTH secret key
 7. fix the run_cloudsql_proxy.sh to work for helmfile
 8. make a global cookiecutter template
-
+9. need to get cluster_name, cluster_prefix, domain_name, all straight, how many do we want/need.. v5, api5, api, em.brain.allen-tech.org, etc. 
+  cluster_prefix: api5
+  domain_names:
+    - api.em.allen-tech.org (production URL)
+    - api5.em.allen-tech.org (automatically made)
+  cluster_name: {{ cluster_prefix }}-cave
 

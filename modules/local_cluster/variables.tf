@@ -209,8 +209,7 @@ variable "skeleton_cache_cloudpath" {
   type        = string
 }
 
-variable "cave_token" {
-  description = "CAVE access token (JSON will be created as {\"token\": \"...\"})"
+variable "cave_secret_name" {
+  description = "Name of the Google Secret Manager secret containing the CAVE token"
   type        = string
-  sensitive   = true
 }

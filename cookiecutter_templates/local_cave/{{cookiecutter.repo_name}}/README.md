@@ -110,3 +110,50 @@ How it works under the hood:
 - Infra parses the bucket from the gs:// path, imports it if it already exists (via the included import script), or creates a default bucket if you leave it unset.
 - Cluster parses the same bucket to grant the SkeletonService service account storage permissions.
 - Helm gets the full path and sets SKELETON_CACHE_BUCKET accordingly.
+
+## Required: CAVE Token Secret
+
+**IMPORTANT**: Before running Terraform, you must manually create a Google Secret Manager secret containing your CAVE access token.
+
+The secret name is configured in your cookiecutter variables as `cave_secret_name` (defaults to `{{ cookiecutter.cave_secret_name }}`).
+
+### Create the secret:
+
+```bash
+# Set your project ID
+export PROJECT_ID="{{ cookiecutter.project_id }}"
+
+# Create the secret with your CAVE token
+gcloud secrets create "{{ cookiecutter.cave_secret_name }}" \
+  --project="$PROJECT_ID" \
+  --data-file=<(echo -n '{"token": "YOUR_ACTUAL_CAVE_TOKEN_HERE"}')
+```
+
+**Alternative using a file:**
+
+```bash
+# Create a temporary JSON file with your token
+echo '{"token": "YOUR_ACTUAL_CAVE_TOKEN_HERE"}' > cave-token.json
+
+# Create the secret
+gcloud secrets create "{{ cookiecutter.cave_secret_name }}" \
+  --project="{{ cookiecutter.project_id }}" \
+  --data-file=cave-token.json
+
+# Clean up
+rm cave-token.json
+```
+
+### Verify the secret:
+
+```bash
+gcloud secrets versions access latest \
+  --secret="{{ cookiecutter.cave_secret_name }}" \
+  --project="{{ cookiecutter.project_id }}"
+```
+
+**Notes:**
+- The token should be a valid CAVE access token from your global server
+- Configure a service account token that has access to all datasets you need
+- The secret must exist before running `terragrunt apply` on the cluster module
+- If you change the secret name, update it in your `root.hcl` file

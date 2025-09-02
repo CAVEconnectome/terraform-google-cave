@@ -26,7 +26,7 @@
   "bigtable_instance_name": "pychunkedgraph",
   "docker_registry": "docker.io/caveconnectome",
   
-  "cave_token": "",
+  "cave_secret_name": "{{ cookiecutter.local_environment_name }}-cave-token",
   "letsencrypt_email": "{{ cookiecutter.gcp_user_account }}",
   "materialization_dump_bucket_name": "",
   "materialization_upload_bucket_name": "",
@@ -58,7 +58,7 @@
     "pcg_skeleton_cache_bucket_public_read": "Optional: should the skeleton cache bucket be publically readable. false will work by default. If true, you need to uncomment in the root.hcl file.",
     "docker_registry": "Optional: Container registry for images (default docker.io/caveconnectome) is likely correct.",
     
-    "cave_token": "Required: CAVE access token for API authentication. You should configure a service account on your global server that has access to all datasets for this.",
+    "cave_secret_name": "Name of the Google Secret Manager secret containing the CAVE token. Defaults to {local_environment_name}-cave-token. You must manually create this secret before running terraform.",
     "letsencrypt_email": "Email for Let's Encrypt certificates. Defaults to your gcp_user_account value.",
     "materialization_dump_bucket_name": "Optional: GCS bucket name for materialization dumps. Leave blank if not needed.",
     "materialization_upload_bucket_name": "Optional: GCS bucket name for materialization uploads. Leave blank if not needed."

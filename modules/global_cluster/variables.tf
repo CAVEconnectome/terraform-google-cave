@@ -115,3 +115,9 @@ variable "global_server" {
   description = "Fully qualified global server hostname (where auth and info service reside) (e.g., global.daf-apis.com)"
   type        = string
 }
+
+variable "cave_token" {
+  description = "CAVE access token (JSON will be created as {\"token\": \"...\"})"
+  type        = string
+  sensitive   = true
+}

@@ -45,6 +45,11 @@ inputs = {
   skeleton_cache_cloudpath   = "{{ cookiecutter.skeleton_cache_cloudpath }}"
 {%- endif %}
   
+  # Required configurations
+  cave_secret_name           = "{{ cookiecutter.cave_secret_name }}"
+  letsencrypt_email          = "{{ cookiecutter.letsencrypt_email }}"
+
+
   # Default configurations
   skeleton_cache_public_read = {{ cookiecutter.pcg_skeleton_cache_bucket_public_read }}
   deletion_protection        = false

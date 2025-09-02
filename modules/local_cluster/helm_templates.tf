@@ -28,7 +28,7 @@ resource "local_file" "values_materialize" {
     project_id        = var.project_id
     sql_instance_name = var.sql_instance_name
     secrets_project_id = var.project_id
-    cave_secret_name   = format("cave-secret-%s-%s", var.cluster_prefix, terraform.workspace)
+    cave_secret_name   = var.cave_secret_name
   pycg_sa_secret     = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace)
   })
   file_permission = "0644"
@@ -43,7 +43,7 @@ resource "local_file" "values_skeletoncache" {
   cluster_prefix           = var.cluster_prefix,
   redis_host               = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host,
   secrets_project_id       = var.project_id,
-  cave_secret_name         = format("cave-secret-%s-%s", var.cluster_prefix, terraform.workspace)
+  cave_secret_name         = var.cave_secret_name
   })
   file_permission = "0644"
 }
@@ -54,7 +54,7 @@ resource "local_file" "values_annotation" {
     redis_host = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host
     project_id = var.project_id
     secrets_project_id = var.project_id
-    cave_secret_name   = format("cave-secret-%s-%s", var.cluster_prefix, terraform.workspace)
+    cave_secret_name   = var.cave_secret_name
   })
   file_permission = "0644"
 }
@@ -93,7 +93,7 @@ resource "local_file" "values_pcg" {
     docker_registry       = var.docker_registry,
     secrets_project_id    = var.project_id,
     pycg_sa_secret        = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
-    cave_secret_name      = format("cave-secret-%s-%s", var.cluster_prefix, terraform.workspace)
+    cave_secret_name      = var.cave_secret_name
   })
   file_permission = "0644"
 }
@@ -106,7 +106,7 @@ resource "local_file" "values_pcgl2cache" {
   bigtable_instance  = var.bigtable_instance_name,
   pycg_sa_secret     = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
   secrets_project_id = var.project_id,
-  cave_secret_name   = format("cave-secret-%s-%s", var.cluster_prefix, terraform.workspace)
+  cave_secret_name   = var.cave_secret_name
   })
   file_permission = "0644"
 }
