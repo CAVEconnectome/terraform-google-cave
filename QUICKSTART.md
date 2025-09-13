@@ -35,10 +35,27 @@ gsutil mb -l us gs://<STATE_BUCKET>
 printf '%s' '{"username":"postgres","password":"<strong-secret>"}' \
  | gcloud secrets create <ENV>-postgres-credentials --data-file=-
 ```
+Note if you have already setup a postgres instance and are migrating to terragrunt/helmfile you will want this password to match your existing username/password. ENV should be whatever you want your local and/or global environment to be. 
 
-## Generate a starter env with Cookiecutter
+
+## Generate a starter local environment with Cookiecutter
+
+We reccomend that you setup a seperate repository to store all your environment configurations. So make a new folder that you will store and track these files. 
+
+copy an example cookiecutter template file into that directory (we will refer to this AS ENVIRONMENTS_REPO) and rename it to something (we will call it CC_TEMPLATE.yaml)
+
+install cookiecutter (for example)
 ```
 pipx install cookiecutter  # or pip install --user cookiecutter
+```
+
+
+cd into ENVIRONMENTS_REPO
+
+```
+cookiecutter terraform-google-cave/cookiecutter_templates/terragrunt-env
+
+```
 cookiecutter terraform-google-cave/cookiecutter_templates/terragrunt-env
 ```
 Answer prompts: repo_name, org, environment, project_id, region, zone, etc.

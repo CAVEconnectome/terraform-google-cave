@@ -3,8 +3,17 @@ A repository to store terraform modules for setting up infrastructure as code fo
 
 
 # setup
-1. Install terraform
-2. Install helm
+1. Install terraform and terragrunt
+   mac:  install homebrew
+         brew install terraform terragrunt
+2. Install helm and helmfile
+   mac: install homebrew
+        brew install helm helmfile
+
+3. setup environment(s) using the cookiecutter templates (see cookiecutter_templates/README.md)
+
+
+
 3. make sure you can login to your google account, and you have a google project setup with the follwoing permissions on your account. 
 
 service account user
@@ -51,7 +60,7 @@ See docs/architecture.svg for a high-level diagram of how Terragrunt, Terraform 
 
 For each environment/cluster, there are two kinds of Terraform modules, which we recommend coordinating with Terragrunt to share inputs and apply in order:
 
-1) "infrastructure" – resources that should persist across Kubernetes clusters (e.g., databases, Redis, networks, buckets). This lets you spin up a new cluster version while reusing the same backend services.
+1) "static" – resources that should persist across Kubernetes clusters (e.g., databases, Redis, networks, buckets). This lets you spin up a new cluster version while reusing the same backend services.
 2) "cluster" – the Kubernetes cluster and in-cluster prerequisites (e.g., GKE cluster, node pools, base addons) plus templating of app configuration values produced from infrastructure outputs.
 
 Because CAVE has both global and local clusters, there will eventually be four modules:
