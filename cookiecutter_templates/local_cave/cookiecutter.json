@@ -1,6 +1,4 @@
 {
-  "repo_name": "cave-terraform-env",
-
   "project_id": "my-gcp-project-id",
   "domain_name": "example.org",
   "gcp_user_account": "user@example.org",
