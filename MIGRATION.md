@@ -42,35 +42,66 @@ To create the bucket you can use this line, but you'll have to add permissions o
 gsutil mb -l us gs://<STATE_BUCKET>
 ```
 
-## Create DB credentials secret
-Rather than store the cloudsql username and password that you setup in an environment file, these scripts assume that the credentials are stored in a google secret manager credential.  So you should take your existing password from your environment file and replace it here.  ENV refers to the "local-environment-name" or "global-environment-name" you have used before and will fill into the cookiecutter.  This would be the part of the domain that you had persist from cluster to cluster (as opposed to the cluster specific name).
 
-You will have to do this twice for the username/password on the global and local sql server.
-```
-printf '%s' '{"username":"postgres","password":"<YOUR-EXISTING-POSTGRES-PASSWORD>"}' \
- | gcloud secrets create <ENV>-postgres-credentials --data-file=-
-```
 ## Environment repository
-We reccomend that you setup a seperate repository to store all your environment configurations. So make a new folder that you will store and track these files. This is the equivalent to the ENV_REPO that was specified in your CAVEdeployment environment.  However, unlike the environment files, we have tried to design this repo so that no sensitive data is stored in this repository, so it can be developed in the open. 
+We reccomend that you setup a seperate repository to store all your environment configurations. So make a new folder that you will store and track these files. This is the equivalent to the ENV_REPO that was specified in your CAVEdeployment environment.  However, unlike the environment files, we have tried to design this repo so that no sensitive data is stored in this repository, so it can be developed in the open. We will refer to this location as ENVIRONMENTS_REPO in this documentation.
+
+You can see an example repository at https://www.github.com/CAVEconnectome/terraform-cave-private which is used to manage several cave deployments (3 global, and 6 local clusters).
 
 
 ## Generate a starter local environment with Cookiecutter
 We would reccomend migrating a local cluster first, before a global one as you'll get the most value out of managing regular updates to services.  You can continue to manage your global cluster using CAVEdeployment, as they have no real interactions. 
 
-copy the example cookiecutter template file from this repository (example-local-config.yaml) into that directory (we will refer to this location as ENVIRONMENTS_REPO) and rename it to something (we will call it ENV_CONFIG.yaml)
-
-install cookiecutter however you would like(for example)
+install cookiecutter however you would like (for example)
 ```
 pipx install cookiecutter  # or pip install --user cookiecutter
 ```
 
-cd into ENVIRONMENTS_REPO
+copy the example cookiecutter template file from this repository (example-local-config-migrate.yaml) into ENVIRONMENTS_REPO and rename it to something (we will refer to this as ENV_CONFIG.yaml).   Many of the values of this file are environment variables that were present in the old bash script environment files (located at OLD_ENV_REPO/OLD_ENV_FILE.sh), so you can automate filling this file in by sourcing that environment and running envsubst. Or you can rename it and fill in the value manually. 
 
 ```
-cookiecutter terraform-google-cave/cookiecutter_templates/terragrunt-env
+cd 
+source OLD_ENV_REPO/OLD_ENV_FILE.sh
+envsubst < example-local-config-migrate.yaml > ENV_CONFIG.yaml
+
+```
+You should read over the result, particular attention should be made to:
+- materialize_datastack: as you might have more than one and will need to edit the config files to support more than 1 datastack.
+- local_environment_name: Because we didn't have this really templated before.  We intend for this to be whatever DNS name users were generally using before to access local services.  The idea is that you should be able to spin up a new cluster and point the DNS to local_cluster_prefix.domain_name, verify that everything is working, then switch traffic over from local_environment_name.domain_name. Users will then have uninterrupted service, but you can verify that things are functional before that switch. 
+- pcg_skeleton_cache_bucket_public_read: The skeleton cache has a path to a bucket to save skeleton files. For some deployments we made this bucket in a location that was a subfolder of the same bucket that stored the PCG data, including the watershed supervoxels, which needed to be public to allow neuroglancer to download the supervoxel layer.  If you need or want this bucket to be public set this to true, otherwise false is fine.  Note, if it is false, terraform/terragrunt will change the permissions on the bucket to not be publically accessible. You can always change this in the root.hcl file after you make the cookiecutter.
+- cave_secret_name: You should pick something here that is associated with the local_environment_name. We didn't have something like this before.  See 
+```
+cookiecutter gh:caveconnectome/terraform-google-cave --directory cookiecutter_templates/local_cave --config-file ./ENV_CONFIG.yaml
 ```
 
-Answer prompts: repo_name, org, environment, project_id, region, zone, etc.
+If you have filled out ENV_CONFIG.yaml you should just be able to hit enter through all the prompts because the defaults will equal the values.  There are more detailed explanations given in 
+
+
+## Create local CAVE token credentials secret
+Services that needed a cave token used to be given that access by setting up a cave-secret.json file in an CAVEdeployment/secrets/ENV/cave-token.json file.  Instead, we are moving to store this information in a google cloud secret.  You should already have a token value setup, so you just need to store it google secret manager. 
+
+You can do that via the command line
+```
+printf '%s' '{"token":"YOUR_TOKEN"} \
+ | gcloud secrets create {{ cave_secret_name }} --data-file=-
+```
+or the cloud console, using the secret name you provided in the cookiecutter template. 
+
+## Create DB credentials secret
+Similarly, rather than store the cloudsql username and password that you setup in an environment file, these scripts assume that the credentials are stored in a google secret manager credential.  So you should take your existing password from your environment file and replace it here.  ENV refers to the "local-environment-name" or "global-environment-name" you have used before and will fill into the cookiecutter.  This would be the part of the domain that you had persist from cluster to cluster (as opposed to the cluster specific name).
+
+You will have to do this twice for the username/password on the global and local sql server.
+
+You can do that via the command line
+```
+printf '%s' '{"username":"postgres","password":"<YOUR-EXISTING-POSTGRES-PASSWORD>"}' \
+ | gcloud secrets create {{ local_environment_name }}-postgres-credentials --data-file=-
+```
+or the google console. 
+
+
+## Other credentials
+
 
 ## Import existing resources (optional)
 You will want to do this if you are migrating from existing infrastructure that has data you don't want to lose.  Make sure the names of everything are aligned with what actually exists, which might requires careful editing of the root.hcl and terragrunt.hcl contained variables. 
@@ -88,6 +119,20 @@ terragrunt init && terragrunt apply
 cd ../<cluster_prefix>
 terragrunt init && terragrunt apply
 ```
+
+This should create a number of files inside ENVIRONMENTS_REPO/{ local_environment_name}/{local_cluster_prefix}/helmfile. The XXXX.defaults.yaml (where XXXX is the name of a service) files and cluster.yaml files include values that are exported from terraform. 
+
+- Copy helmfile.yaml.example to helmfile.yaml 
+
+helmfile.yaml will become the principle entry point for editing the deployed services, and it references all the configuration files. In general, we do not reccomend editing the {{XXXX}}.defaults.yaml .  files because terragrunt will overwrite them if you run terragrunt again. Instead you should edit the XXXX.yaml files. 
+
+## Other credentials
+In that vein, in CAVEdeployment, we had a mechanism to add arbitrary other credentials to secrets that were mounted to services.  We would reccomend following a similar pattern as the above credentials for those "extra" credentials.  We will come back to this some deployments require additional credentials to be mounted to different services.  We would 
+  secretFiles:
+    - name: google-secret.json
+      value: "ref+gcpsecrets://em-270621/pycg-google-secret-api5-default"
+    - name: cave-secret.json
+      value: "ref+gcpsecrets://em-270621/cave-secret-api5-default"
 
 ## Deploy apps with Helmfile
 - Install the Helm Diff plugin (Helmfile uses `helm diff` for planning):

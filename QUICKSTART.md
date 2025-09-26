@@ -39,7 +39,12 @@ printf '%s' '{"username":"postgres","password":"<strong-secret>"}' \
  | gcloud secrets create <ENV>-postgres-credentials --data-file=-
 ```
 
+## Environment repository
+We reccomend that you setup a seperate repository/folder to store all your environment configurations. So make a new folder that you will store and track these files. 
 
+You can see an example repository at https://www.github.com/CAVEconnectome/terraform-cave-private which is used to manage several cave deployments (3 global, and 6 local clusters).
+
+copy the example-global-config.yaml and example-local-config.yaml into this folder on your 
 ## Generate a starter global environnent with CookieCutter
 
 We reccomend that you setup a seperate repository to store all your environment configurations. So make a new folder that you will store and track these files. 
@@ -61,7 +66,7 @@ cd into ENVIRONMENTS_REPO
 ```
 cookiecutter terraform-google-cave/cookiecutter_templates/terragrunt-env
 
-```
+
 cookiecutter terraform-google-cave/cookiecutter_templates/terragrunt-env
 ```
 Answer prompts: repo_name, org, environment, project_id, region, zone, etc.

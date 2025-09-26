@@ -1,0 +1,26 @@
+default_context:
+  project_id: "$PROJECT_ID"
+  domain_name: "$DOMAIN_NAME"
+  gcp_user_account: "EMAIL_WITH_PERMISSIONS_TO_SETUP_SERVICE_ACCOUTNTS"
+  state_bucket: "my-terraform-state-bucket"
+  pcg_bucket_name: "$PCG_BUCKET_NAME"
+  global_server: "$GLOBAL_SERVER"
+  materialize_datastack: "$SUPPORTED_DATASTACKS" # If you have more than one, put a single value here, and edit {{ local_environment }}/{{ local_cluster_prefix }}/helfmile/materialize.yaml to add more. Also, you will want to disable 
+  region: "$REGION"
+  zone: "$ZONE"
+  owner: "cave"
+  local_environment_name: "PERSISTENT_DNS_PREFIX" # careful to remove {{ local_environment_name }} dns entry from {{ local_environment }}/{{ local_cluster_prefix }}/terragrunt.hcl to not redirect clouddns till you have verified that {{local_cluster_prefix}}.{{domain_name}} is working correctly.  
+  local_cluster_prefix: "$ENVIRONMENT"
+  local_sql_instance_name: "$SQL_INSTANCE_NAME"
+  dns_zone: "$DNS_ZONE"
+  vpc_name_override: "$NETWORK_NAME"
+  pcg_redis_name_override: "$PCG_REDIS_NAME"
+  bigtable_google_project: "$DATA_PROJECT_NAME"
+  skeleton_cache_cloudpath: "gs://$SKELETON_CACHE_BUCKET"
+  pcg_skeleton_cache_bucket_public_read: "false" # Could be true if skeleton bucket was made public, if same as PCG_BUCKET, needs to be true. false, will break PCG neuroglance access if so.
+  bigtable_instance_name: "$BIGTABLE_INSTANCE_NAME"
+  docker_registry: "$DOCKER_REPOSITORY"
+  cave_secret_name: "my-cave-secret" # you need to set this up with cave service account token you were using for secrets.sh
+  letsencrypt_email: "$LETSENCRYPT_EMAIL"
+  materialization_dump_bucket_name: "$MATERIALIZATION_DUMP_BUCKET_NAME"
+  materialization_upload_bucket_name: "$MATERIALIZATION_UPLOAD_BUCKET_NAME"
