@@ -1,5 +1,5 @@
 default_context:
-  project_id: "$PROJECT_ID"
+  project_id: "$PROJECT_NAME"
   domain_name: "$DOMAIN_NAME"
   gcp_user_account: "EMAIL_WITH_PERMISSIONS_TO_SETUP_SERVICE_ACCOUTNTS"
   state_bucket: "my-terraform-state-bucket"
