@@ -84,7 +84,7 @@ If you have filled out ENV_CONFIG.yaml you should just be able to hit enter thro
 ## Create local CAVE token credentials secret
 Services that needed a cave token used to be given that access by setting up a cave-secret.json file in an CAVEdeployment/secrets/ENV/cave-token.json file.  Instead, we are moving to store this information in a google cloud secret.  You should already have a token value setup, so you just need to store it google secret manager. 
 
-You can do that via the command line
+You can do that via the command line. Note you must replace YOUR_TOKEN and {{ cave_secret_name }} with the token from your old secret, and the name of the cave_secret_name you just choose in your cookiecutter template. 
 ```
 printf '%s' '{"token":"YOUR_TOKEN"} \
  | gcloud secrets create {{ cave_secret_name }} --data-file=-
