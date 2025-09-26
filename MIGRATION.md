@@ -66,15 +66,20 @@ envsubst < example-local-config-migrate.yaml > ENV_CONFIG.yaml
 
 ```
 You should read over the result, particular attention should be made to:
+- gcp_user_account: this should be filled in with a google account email that has permissions to setup service accounts in your google project.
 - materialize_datastack: as you might have more than one and will need to edit the config files to support more than 1 datastack.
 - local_environment_name: Because we didn't have this really templated before.  We intend for this to be whatever DNS name users were generally using before to access local services.  The idea is that you should be able to spin up a new cluster and point the DNS to local_cluster_prefix.domain_name, verify that everything is working, then switch traffic over from local_environment_name.domain_name. Users will then have uninterrupted service, but you can verify that things are functional before that switch. 
+
+Note you will want to remove this entry from the dns_entries config, while you 
 - pcg_skeleton_cache_bucket_public_read: The skeleton cache has a path to a bucket to save skeleton files. For some deployments we made this bucket in a location that was a subfolder of the same bucket that stored the PCG data, including the watershed supervoxels, which needed to be public to allow neuroglancer to download the supervoxel layer.  If you need or want this bucket to be public set this to true, otherwise false is fine.  Note, if it is false, terraform/terragrunt will change the permissions on the bucket to not be publically accessible. You can always change this in the root.hcl file after you make the cookiecutter.
-- cave_secret_name: You should pick something here that is associated with the local_environment_name. We didn't have something like this before.  See 
+- cave_secret_name: You should pick something here that is associated with the local_environment_name. We didn't have something like this before. 
+
+When you are down 
 ```
 cookiecutter gh:caveconnectome/terraform-google-cave --directory cookiecutter_templates/local_cave --config-file ./ENV_CONFIG.yaml
 ```
 
-If you have filled out ENV_CONFIG.yaml you should just be able to hit enter through all the prompts because the defaults will equal the values.  There are more detailed explanations given in 
+If you have filled out ENV_CONFIG.yaml you should just be able to hit enter through all the prompts because the defaults will equal the values.  There are more detailed explanations for what these variables are in the cookiecutter docs, so you can read them to ensure that you understand what they are. 
 
 
 ## Create local CAVE token credentials secret
