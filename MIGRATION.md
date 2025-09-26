@@ -105,7 +105,7 @@ or the google console.
 
 
 ## Other credentials
-If you have additional secrets that are required to for example, enable the PychunkedgGraph service to access buckets or bigtables instances that are in different google projects, you will also similarly need to setup a google secret for each of those credential files, and then there will be slots in the the helmfile configurations to specify that you want to add those secrets to be mounted alongside the other credentials.  These would have been stored in your old environment repository in OLD_ENV_REPO/secrets/OLD_ENV/ADDITIONAL_CREDENTIAL.json
+In that vein, in CAVEdeployment, we had a mechanism to add arbitrary other credentials to secrets that were mounted to services.  We would reccomend following a similar pattern as the above credentials for those "extra" credentials.  We will come back to this later in the process when you actually deploy the services. 
 
 This can be done via the command line (as above) or the google cloud console. 
 
@@ -133,12 +133,16 @@ This should create a number of files inside ENVIRONMENTS_REPO/{ local_environmen
 helmfile.yaml will become the principle entry point for editing the deployed services, and it references all the configuration files. In general, we do not reccomend editing the {{XXXX}}.defaults.yaml .  files because terragrunt will overwrite them if you run terragrunt again. Instead you should edit the XXXX.yaml files. 
 
 ## Other credentials
-In that vein, in CAVEdeployment, we had a mechanism to add arbitrary other credentials to secrets that were mounted to services.  We would reccomend following a similar pattern as the above credentials for those "extra" credentials.  We will come back to this some deployments require additional credentials to be mounted to different services.  We would 
+
+If you have additional secrets that are required to for example, enable the PychunkedgGraph service to access buckets or bigtables instances that are in different google projects, you will also similarly need to setup a google secret for each of those credential files, and then there will be slots in the the helmfile configurations to specify that you want to add those secrets to be mounted alongside the other credentials.  These would have been stored in your old environment repository in OLD_ENV_REPO/secrets/OLD_ENV/ADDITIONAL_CREDENTIAL.json
+
   secretFiles:
     - name: google-secret.json
       value: "ref+gcpsecrets://em-270621/pycg-google-secret-api5-default"
     - name: cave-secret.json
       value: "ref+gcpsecrets://em-270621/cave-secret-api5-default"
+
+
 
 ## Deploy apps with Helmfile
 - Install the Helm Diff plugin (Helmfile uses `helm diff` for planning):
