@@ -105,7 +105,9 @@ or the google console.
 
 
 ## Other credentials
-If you have additional secrets that are required to for example, enable the PychunkedgGraph service to access buckets or bigtables instances that are in different google projects, you will also similarly need to setup a google secret for each of those credential files, and then there will be slots in the the helmfile configurations to specify that you want to add those secrets to be mounted alongside the other credentials.  
+If you have additional secrets that are required to for example, enable the PychunkedgGraph service to access buckets or bigtables instances that are in different google projects, you will also similarly need to setup a google secret for each of those credential files, and then there will be slots in the the helmfile configurations to specify that you want to add those secrets to be mounted alongside the other credentials.  These would have been stored in your old environment repository in OLD_ENV_REPO/secrets/OLD_ENV/ADDITIONAL_CREDENTIAL.json
+
+This can be done via the command line (as above) or the google cloud console. 
 
 ## Import existing resources (optional)
 You will want to do this if you are migrating from existing infrastructure that has data you don't want to lose.  Make sure the names of everything are aligned with what actually exists, which might requires careful editing of the root.hcl and terragrunt.hcl contained variables. 
