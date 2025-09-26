@@ -5,7 +5,7 @@ default_context:
   state_bucket: "my-terraform-state-bucket"
   pcg_bucket_name: "$PCG_BUCKET_NAME"
   global_server: "$GLOBAL_SERVER"
-  materialize_datastack: "$SUPPORTED_DATASTACKS" # If you have more than one, put a single value here, and edit {{ local_environment }}/{{ local_cluster_prefix }}/helfmile/materialize.yaml to add more. Also, you will want to disable 
+  materialize_datastack: $SUPPORTED_DATASTACKS # If you have more than one, put a single value here, and edit {{ local_environment }}/{{ local_cluster_prefix }}/helfmile/materialize.yaml to add more. 
   region: "$REGION"
   zone: "$ZONE"
   owner: "cave"
