@@ -112,14 +112,14 @@ This can be done via the command line (as above) or the google cloud console.
 ## Import existing resources (optional)
 You will want to do this if you are migrating from existing infrastructure that has data you don't want to lose.  Make sure the names of everything are aligned with what actually exists, which might requires careful editing of the root.hcl and terragrunt.hcl contained variables. 
 ```
-cd <repo_name>/environments/<org>/static
-../scripts/terragrunt_import_sql.sh
+cd <environment_name>/static
+../scripts/terragrunt_import.sh
 terragrunt plan -refresh-only
 ```
 
 ## Provision
 ```
-cd <repo_name>/environments/<org>/static
+cd <environment_name>/static
 terragrunt init && terragrunt apply
 
 cd ../<cluster_prefix>

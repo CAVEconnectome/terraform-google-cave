@@ -2,7 +2,7 @@ default_context:
   project_id: "$PROJECT_NAME"
   domain_name: "$DOMAIN_NAME"
   gcp_user_account: "EMAIL_WITH_PERMISSIONS_TO_SETUP_SERVICE_ACCOUTNTS"
-  state_bucket: "my-terraform-state-bucket"
+  state_bucket: "my-terraform-state-bucket" # REPLACE THIS!! 
   pcg_bucket_name: "$PCG_BUCKET_NAME"
   global_server: "$GLOBAL_SERVER"
   materialize_datastack: $SUPPORTED_DATASTACKS # If you have more than one, put a single value here, and edit {{ local_environment }}/{{ local_cluster_prefix }}/helfmile/materialize.yaml to add more. 
