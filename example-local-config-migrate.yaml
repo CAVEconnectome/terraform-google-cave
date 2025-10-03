@@ -10,7 +10,7 @@ default_context:
   zone: "$ZONE"
   owner: "cave"
   local_environment_name: "PERSISTENT_DNS_PREFIX" # careful to remove {{ local_environment_name }} dns entry from {{ local_environment }}/{{ local_cluster_prefix }}/terragrunt.hcl to not redirect clouddns till you have verified that {{local_cluster_prefix}}.{{domain_name}} is working correctly.  
-  local_cluster_prefix: "$ENVIRONMENT"
+  local_cluster_prefix: "" # you need to pick a new local_cluster_prefix so that you spin up a new cluster rather than trying to take over the existing one
   local_sql_instance_name: "$SQL_INSTANCE_NAME"
   dns_zone: "$DNS_ZONE"
   vpc_name_override: "$NETWORK_NAME"

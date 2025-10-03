@@ -66,6 +66,7 @@ envsubst < example-local-config-migrate.yaml > ENV_CONFIG.yaml
 
 ```
 You should read over the result, particular attention should be made to:
+- local_cluster_prefix: you need to fill in a value here that is a new prefix for this cluster, because you don't want the old cluster to stop working immediately, you want to get the new cluster up and running and then redirect traffic to it once it is fully functional.  So if you had ltv5 before for environment, you might pick ltv6.  If you hadn't spun up more than one cluster before and had your environment name "local", you will want to make this something like "local1". 
 - gcp_user_account: this should be filled in with a google account email that has permissions to setup service accounts in your google project.
 - materialize_datastack: as you might have more than one and will need to edit the config files to support more than 1 datastack.
 - local_environment_name: Because we didn't have this really templated before.  We intend for this to be whatever DNS name users were generally using before to access local services.  The idea is that you should be able to spin up a new cluster and point the DNS to local_cluster_prefix.domain_name, verify that everything is working, then switch traffic over from local_environment_name.domain_name. Users will then have uninterrupted service, but you can verify that things are functional before that switch. 
@@ -109,19 +110,24 @@ In that vein, in CAVEdeployment, we had a mechanism to add arbitrary other crede
 
 This can be done via the command line (as above) or the google cloud console. 
 
-## Import existing resources (optional)
-You will want to do this if you are migrating from existing infrastructure that has data you don't want to lose.  Make sure the names of everything are aligned with what actually exists, which might requires careful editing of the root.hcl and terragrunt.hcl contained variables. 
+## Import existing resources
+Given that you are migration, you have a bunch of existing infrastructure that has data you don't want to lose. We need to make terraform/terragrunt aware of these existing cloud resources.  Make sure the names of everything are aligned with what actually exists, which might requires careful editing of the root.hcl and terragrunt.hcl contained variables. 
 ```
 cd <environment_name>/static
 ../scripts/terragrunt_import.sh
 terragrunt plan -refresh-only
 ```
-
+This should not be making any meaningful changes to any resources
 ## Provision
 ```
 cd <environment_name>/static
-terragrunt init && terragrunt apply
+terragrunt apply
+```
+Review these proposed changes carefully, it should not be creating any new cloud resources (though a helmfile config file should be made), and the changes to the resources it is making should be expected.  Make sure that the username and passwords that you are referencing (i.e. the postgres username and password) are correct and reflect your current deployments values, because you don't want to bring down the old deployments services by accidentally changing the password.  Added labels, and a created helmfile is expected. 
 
+Now we can move on the the more ephemeral cluster. 
+
+``
 cd ../<cluster_prefix>
 terragrunt init && terragrunt apply
 ```
