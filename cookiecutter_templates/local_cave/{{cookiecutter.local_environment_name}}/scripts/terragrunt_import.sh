@@ -80,6 +80,8 @@ sql_instance_name=$(echo "$cfg_json" | jq -r '.inputs.sql_instance_name // empty
 postgres_write_user=$(echo "$cfg_json" | jq -r '.inputs.postgres_write_user // empty')
 materialization_dump_bucket_name=$(echo "$cfg_json" | jq -r '.inputs.materialization_dump_bucket_name // empty')
 materialization_upload_bucket_name=$(echo "$cfg_json" | jq -r '.inputs.materialization_upload_bucket_name // empty')
+skeleton_cache_cloudpath=$(echo "$cfg_json" | jq -r '.inputs.skeleton_cache_cloudpath // empty')
+
 
 if [ -z "$project_id$owner$environment$region$vpc_name_override$sql_instance_name$postgres_write_user" ]; then
   echo "warn: Terragrunt inputs appear empty in $WORK_DIR. Ensure this env defines inputs (or inherits via include) before import." >&2
@@ -212,6 +214,7 @@ Importing resources with the following values:
   Redis Instance ID:         ${redis_id:-<none>}
   Materialization Dump Bucket:   ${materialization_dump_bucket_name:-<none>}
   Materialization Upload Bucket: ${materialization_upload_bucket_name:-<none>}
+  Skeleton Cache Cloudpath:     ${skeleton_cache_cloudpath:-<none>}
 INFO
 
 # Import the SQL user (if we have enough info)
@@ -310,6 +313,22 @@ if [ -n "${materialization_upload_bucket_name}" ]; then
   fi
 else
   echo "Skipping materialization upload bucket import (missing materialization_upload_bucket_name)"
+fi
+
+if [ -n ${skeleton_cache_cloudpath}] ;then 
+  skeleton_cache_bucket_name=$(echo "$skeleton_cache_cloudpath" | sed -n -e 's/^gs:\/\/\([^/]*\).*$/\1/p')
+  if [ -n "${skeleton_cache_bucket_name}" ]; then
+    if has_state "google_storage_bucket.skeleton_cache"; then
+      echo "Skeleton cache bucket already managed: google_storage_bucket.skeleton_cache (skipping import)"
+    else
+      echo "Importing skeleton cache bucket..."
+      terragrunt --working-dir "$WORK_DIR" import "google_storage_bucket.skeleton_cache" "$skeleton_cache_bucket_name"
+    fi
+  else
+    echo "Skipping skeleton cache bucket import (unable to parse bucket name from skeleton_cache_cloudpath)"
+  fi
+else
+  echo "Skipping skeleton cache bucket import (missing skeleton_cache_cloudpath)"
 fi
 
 echo "Import completed."
