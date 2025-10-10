@@ -123,6 +123,7 @@ This should not be making any meaningful changes to any resources
 cd <environment_name>/static
 terragrunt apply
 ```
+
 Review these proposed changes carefully, it should not be creating any new cloud resources (though a helmfile config file should be made), and the changes to the resources it is making should be expected.  Make sure that the username and passwords that you are referencing (i.e. the postgres username and password) are correct and reflect your current deployments values, because you don't want to bring down the old deployments services by accidentally changing the password.  Added labels, and a created helmfile is expected. If there are unexpected or undesired changes, such as changing sql server memory or cpu, you might need to adjust the root.hcl configuration to reflect your desired configuration. 
 
 Now we can move on the the more ephemeral cluster. 
@@ -130,7 +131,7 @@ Now we can move on the the more ephemeral cluster.
 ``
 cd ../<cluster_prefix>
 terragrunt init && terragrunt apply
-```
+``
 
 This should create a number of files inside ENVIRONMENTS_REPO/{ local_environment_name}/{local_cluster_prefix}/helmfile. The XXXX.defaults.yaml (where XXXX is the name of a service) files and cluster.yaml files include values that are exported from terraform. 
 
