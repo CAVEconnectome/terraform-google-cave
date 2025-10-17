@@ -5,7 +5,8 @@
   "state_bucket": "{{ cookiecutter.project_id }}-terraform-state",
   "pcg_bucket_name": "my-pcg-bucket",
   "global_server": "global.{{ cookiecutter.domain_name }}",
-  "materialize_datastack": "v1dd",
+  "materialize_datastack": "my_datastack_name",
+  "health_annotation_align_volume": "an_aligned_volume_name",
 
   "region": "us-west1",
   "zone": "us-west1-b",
@@ -39,6 +40,8 @@
     "pcg_bucket_name": "the name of the bucket you setup to store PCG data. You must supply answer.",
     "global_server": "the domain name of the global server you are using. Defaults to global.{domain_name}.",
     "materialize_datastack": "the first datastack that you want to setup, and create a templated schedule for.  You must supply answer, but is easy to change later",
+    "health_annotation_align_volume": "an aligned volume name that will be used by the annotaiton service for the liveliness probe",
+    
     "region": "GCP region for regional resources (e.g., us-west1), depends where you want the cluster to be, default will work.",
     "zone": "GCP zone used in kube context and defaults (e.g., us-west1-b), depends on where you want cluster to be, default will work.",
     "owner": "Label used on resources; helpful for cost filtering. Default will work",
