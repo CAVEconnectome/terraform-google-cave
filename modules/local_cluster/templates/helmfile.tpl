@@ -19,7 +19,7 @@ releases:
   - name: materialization-engine
     namespace: default
     chart: cave/materializationengine
-    version: 0.2.3
+    version: 5.12.0
     values:
       - ${cluster_values}
       - ${materialize_defaults}
@@ -32,7 +32,7 @@ releases:
   - name: annotation-engine
     namespace: default
     chart: cave/annotationengine
-    version: 0.2.2
+    version: 4.32.0
     values:
       - ${cluster_values}
       - ${annotation_defaults}
@@ -80,5 +80,6 @@ releases:
     namespace: default
     chart: cave/authinfo
     version: 0.1.0
-     - ${cluster_values}
-     # - authinfo.yaml      # must fill in supported datastacks
+    values:
+      - ${cluster_values}
+      # - authinfo.yaml      # must fill in supported datastacks
