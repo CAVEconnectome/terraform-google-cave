@@ -61,7 +61,7 @@ releases:
   - name: skeletoncache
     namespace: default
     chart: cave/skeletoncache
-    version: 0.1.0
+    version: 0.22.49
     values:
       - ${cluster_values}
       - ${skeletoncache_defaults}
