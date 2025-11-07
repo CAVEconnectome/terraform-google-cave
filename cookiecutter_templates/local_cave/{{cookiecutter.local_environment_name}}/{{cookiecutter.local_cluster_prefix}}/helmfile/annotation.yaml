@@ -1,0 +1,2 @@
+annotation:
+  healthAlignedVolumeName: {{ cookiecutter.health_annotation_align_volume }}
