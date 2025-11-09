@@ -25,7 +25,7 @@ releases:
       - ${materialize_defaults}
       - materialize.yaml   # user override (schedules.json reference scaffolded by template)
       - ${annotation_defaults}
-      # - annotation.yaml    # optional user override
+      - annotation.yaml    # optional user override
       - ${cloudsql_defaults}
       # - cloudsql.yaml      # optional user override
 
@@ -36,7 +36,7 @@ releases:
     values:
       - ${cluster_values}
       - ${annotation_defaults}
-      # - annotation.yaml    # optional user override
+      - annotation.yaml    # optional user override
       - ${cloudsql_defaults}
       # - cloudsql.yaml      # optional user override
 
@@ -52,7 +52,7 @@ releases:
   - name: pcgl2cache
     namespace: default
     chart: cave/pcgl2cache
-    version: 0.1.0
+    version: 1.3.1
     values:
       - ${cluster_values}
       - ${pcgl2cache_defaults}
@@ -67,14 +67,14 @@ releases:
       - ${skeletoncache_defaults}
       # - skeletoncache.yaml  # optional user override
 
-  - name: dash
-    namespace: default
-    chart: cave/dash
-    version: 0.2.2
-    values:
-      - ${cluster_values}
-      - ${dash_defaults}
-      # - dash.yaml          # optional user override
+  #- name: dash
+  #  namespace: default
+  #  chart: cave/dash
+  #  version: 0.2.2
+  #  values:
+  #    - ${cluster_values}
+  #    - ${dash_defaults}
+  #    # - dash.yaml          # optional user override
 
   - name: authinfo
     namespace: default
