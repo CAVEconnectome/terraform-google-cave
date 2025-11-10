@@ -19,7 +19,7 @@ releases:
   - name: materialization-engine
     namespace: default
     chart: cave/materializationengine
-    version: 5.12.0
+    version: 5.13.4-r6
     values:
       - ${cluster_values}
       - ${materialize_defaults}
