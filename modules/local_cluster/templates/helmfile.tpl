@@ -10,7 +10,7 @@ releases:
   - name: edge
     namespace: default
     chart: cave/edge
-    version: 0.2.0
+    version: 0.3.0
     values:
       - ${cluster_values}
       # Optionally override edge values in edge.yaml
