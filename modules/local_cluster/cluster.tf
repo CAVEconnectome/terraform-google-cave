@@ -56,6 +56,11 @@ resource "google_container_cluster" "cluster" {
 
   addons_config {
     http_load_balancing { disabled = true }
+    
+    # Enable Gateway API
+    gateway_api_config {
+      channel = "CHANNEL_STANDARD"
+    }
   }
 
   workload_identity_config {
