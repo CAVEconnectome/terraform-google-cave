@@ -83,3 +83,10 @@ releases:
     values:
       - ${cluster_values}
       # - authinfo.yaml      # must fill in supported datastacks
+
+  - name: swaggerui
+    namespace: default
+    chart: /Users/forrestc/ConnectomeStack/cave-helm-charts/charts/swaggerui
+    version: 0.1.0
+    values:
+      - ${cluster_values}
