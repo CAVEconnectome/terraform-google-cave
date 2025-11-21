@@ -24,7 +24,7 @@ resource "kubernetes_service_account" "ksa" {
   automount_service_account_token = true
   depends_on = [
     google_container_cluster.cluster,
-    google_container_node_pool.default
+    google_container_node_pool.cp
   ]
 }
 
