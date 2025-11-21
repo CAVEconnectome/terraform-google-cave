@@ -88,19 +88,19 @@ resource "google_container_cluster" "cluster" {
 }
 
 
-resource "kubernetes_cluster_role_binding" "cluster_admin_binding" {
-  metadata { name = "cluster-admin-binding" }
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind = "ClusterRole"
-    name = "cluster-admin"
-  }
-  subject {
-    kind = "User"
-    name = var.gcp_user_account
-    api_group = "rbac.authorization.k8s.io"
-  }
-}
+# resource "kubernetes_cluster_role_binding" "cluster_admin_binding" {
+#   metadata { name = "cluster-admin-binding" }
+#   role_ref {
+#     api_group = "rbac.authorization.k8s.io"
+#     kind = "ClusterRole"
+#     name = "cluster-admin"
+#   }
+#   subject {
+#     kind = "User"
+#     name = var.gcp_user_account
+#     api_group = "rbac.authorization.k8s.io"
+#   }
+# }
 
 resource "google_compute_address" "cluster_ip" {
   name   = "${var.cluster_prefix}-cave"
