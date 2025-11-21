@@ -12,6 +12,7 @@ resource "google_project_iam_member" "workload_identity_default_node_sa_role" {
 }
 
 resource "kubernetes_service_account" "ksa" {
+  provider = kubernetes.gke 
   metadata {
     name      = "my-service-account"
     namespace = "default"
@@ -21,6 +22,10 @@ resource "kubernetes_service_account" "ksa" {
   }
 
   automount_service_account_token = true
+  depends_on = [
+    google_container_cluster.cluster,
+    google_container_node_pool.default
+  ]
 }
 
 resource "google_service_account_iam_binding" "ksa_gsa_binding" {
