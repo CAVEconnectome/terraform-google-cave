@@ -44,7 +44,6 @@ provider "helm" {
     host                   = local.cluster_endpoint
     token                  = local.gke_token
     cluster_ca_certificate = local.cluster_ca_certificate
-    load_config_file       = false
   }
 }
 
@@ -52,5 +51,4 @@ provider "kubernetes" {
   host                   = local.cluster_endpoint
   cluster_ca_certificate = local.cluster_ca_certificate
   token                  = local.gke_token
-  load_config_file       = false
 }
