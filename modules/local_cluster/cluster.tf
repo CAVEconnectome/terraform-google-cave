@@ -12,7 +12,6 @@ resource "google_project_iam_member" "workload_identity_default_node_sa_role" {
 }
 
 resource "kubernetes_service_account" "ksa" {
-  provider = kubernetes.gke 
   metadata {
     name      = "my-service-account"
     namespace = "default"
