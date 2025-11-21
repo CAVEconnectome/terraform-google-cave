@@ -11,27 +11,27 @@ resource "google_project_iam_member" "workload_identity_default_node_sa_role" {
   member  = "serviceAccount:${google_service_account.workload_identity.email}"
 }
 
-resource "kubernetes_service_account" "ksa" {
-  metadata {
-    name      = "my-service-account"
-    namespace = "default"
-    annotations = {
-      "iam.gke.io/gcp-service-account" = google_service_account.workload_identity.email
-    }
-  }
+# resource "kubernetes_service_account" "ksa" {
+#   metadata {
+#     name      = "my-service-account"
+#     namespace = "default"
+#     annotations = {
+#       "iam.gke.io/gcp-service-account" = google_service_account.workload_identity.email
+#     }
+#   }
 
-  automount_service_account_token = true
-  depends_on = [
-    google_container_cluster.cluster,
-    google_container_node_pool.cp
-  ]
-}
+#   automount_service_account_token = true
+#   depends_on = [
+#     google_container_cluster.cluster,
+#     google_container_node_pool.cp
+#   ]
+# }
 
-resource "google_service_account_iam_binding" "ksa_gsa_binding" {
-  service_account_id = "projects/${var.project_id}/serviceAccounts/${google_service_account.workload_identity.email}"
-  role               = "roles/iam.workloadIdentityUser"
-  members            = ["serviceAccount:${var.project_id}.svc.id.goog[k8s-namespace/ksa-name]"]
-}
+# resource "google_service_account_iam_binding" "ksa_gsa_binding" {
+#   service_account_id = "projects/${var.project_id}/serviceAccounts/${google_service_account.workload_identity.email}"
+#   role               = "roles/iam.workloadIdentityUser"
+#   members            = ["serviceAccount:${var.project_id}.svc.id.goog[k8s-namespace/ksa-name]"]
+# }
 
 resource "google_container_cluster" "cluster" {
   name                     = "${var.cluster_prefix}-cave"
