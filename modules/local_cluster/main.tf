@@ -40,7 +40,7 @@ provider "google" {
 }
 
 provider "helm" {
-  kubernetes {
+  kubernetes = {
     host                   = local.cluster_endpoint
     token                  = local.gke_token
     cluster_ca_certificate = local.cluster_ca_certificate
