@@ -36,21 +36,21 @@ resource "google_project_iam_member" "pycg_storage_object_admin" {
 }
 
 resource "google_storage_bucket_iam_member" "pycg_bucket_iam_member" {
-    bucket = var.pcg_bucket_name
-    role   = "roles/storage.legacyBucketWriter"
-    member = "serviceAccount:${google_service_account.pycg_service_account.email}"
+  bucket = var.pcg_bucket_name
+  role   = "roles/storage.legacyBucketWriter"
+  member = "serviceAccount:${google_service_account.pycg_service_account.email}"
 }
 
 resource "google_storage_bucket_iam_member" "pycg_object_owner_iam_member" {
-    bucket = var.pcg_bucket_name
-    role   = "roles/storage.legacyObjectOwner"
-    member = "serviceAccount:${google_service_account.pycg_service_account.email}"
+  bucket = var.pcg_bucket_name
+  role   = "roles/storage.legacyObjectOwner"
+  member = "serviceAccount:${google_service_account.pycg_service_account.email}"
 }
 
 resource "google_storage_bucket_iam_member" "pycg_object_reader_iam_member" {
-    bucket = var.pcg_bucket_name
-    role   = "roles/storage.legacyObjectReader"
-    member = "serviceAccount:${google_service_account.pycg_service_account.email}"
+  bucket = var.pcg_bucket_name
+  role   = "roles/storage.legacyObjectReader"
+  member = "serviceAccount:${google_service_account.pycg_service_account.email}"
 }
 
 # Optional additional buckets for PyCG
@@ -184,7 +184,7 @@ resource "google_service_account_key" "pycg_key" {
   private_key_type   = local.sa_key_private_type
 }
 resource "google_secret_manager_secret" "pycg_secret" {
-  secret_id  = "pycg-google-secret-${var.cluster_prefix}-${terraform.workspace}"
+  secret_id = "pycg-google-secret-${var.cluster_prefix}-${terraform.workspace}"
   replication {
     auto {}
   }
@@ -199,7 +199,7 @@ resource "google_service_account_key" "skeleton_key" {
   private_key_type   = local.sa_key_private_type
 }
 resource "google_secret_manager_secret" "skeleton_secret" {
-  secret_id  = "skeleton-google-secret-${var.cluster_prefix}-${terraform.workspace}"
+  secret_id = "skeleton-google-secret-${var.cluster_prefix}-${terraform.workspace}"
   replication {
     auto {}
   }
@@ -214,7 +214,7 @@ resource "google_service_account_key" "ae_key" {
   private_key_type   = local.sa_key_private_type
 }
 resource "google_secret_manager_secret" "ae_secret" {
-  secret_id  = "annotation-google-secret-${var.cluster_prefix}-${terraform.workspace}"
+  secret_id = "annotation-google-secret-${var.cluster_prefix}-${terraform.workspace}"
   replication {
     auto {}
   }
@@ -229,7 +229,7 @@ resource "google_service_account_key" "pmanagement_key" {
   private_key_type   = local.sa_key_private_type
 }
 resource "google_secret_manager_secret" "pmanagement_secret" {
-  secret_id  = "pmanagement-google-secret-${var.cluster_prefix}-${terraform.workspace}"
+  secret_id = "pmanagement-google-secret-${var.cluster_prefix}-${terraform.workspace}"
   replication {
     auto {}
   }
@@ -244,9 +244,9 @@ resource "google_service_account_key" "cloudsql_key" {
   private_key_type   = local.sa_key_private_type
 }
 resource "google_secret_manager_secret" "cloudsql_secret" {
-  secret_id  = "cloudsql-google-secret-${var.cluster_prefix}-${terraform.workspace}"
-  replication { 
-    auto {} 
+  secret_id = "cloudsql-google-secret-${var.cluster_prefix}-${terraform.workspace}"
+  replication {
+    auto {}
   }
 }
 resource "google_secret_manager_secret_version" "cloudsql_secret_version" {
@@ -259,9 +259,9 @@ resource "google_service_account_key" "clouddns_key" {
   private_key_type   = local.sa_key_private_type
 }
 resource "google_secret_manager_secret" "clouddns_secret" {
-  secret_id  = "clouddns-google-secret-${var.cluster_prefix}-${terraform.workspace}"
-  replication { 
-    auto {} 
+  secret_id = "clouddns-google-secret-${var.cluster_prefix}-${terraform.workspace}"
+  replication {
+    auto {}
   }
 }
 resource "google_secret_manager_secret_version" "clouddns_secret_version" {

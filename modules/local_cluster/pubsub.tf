@@ -4,8 +4,8 @@ resource "google_pubsub_topic" "l2cache" {
 }
 
 resource "google_pubsub_subscription" "l2cache_update" {
-  name    =  "${var.cluster_prefix}_L2CACHE_WORKER"
-  topic   = google_pubsub_topic.l2cache.name
+  name                 = "${var.cluster_prefix}_L2CACHE_WORKER"
+  topic                = google_pubsub_topic.l2cache.name
   ack_deadline_seconds = 60
   retry_policy {
     maximum_backoff = "10s"
@@ -13,12 +13,12 @@ resource "google_pubsub_subscription" "l2cache_update" {
 }
 
 resource "google_pubsub_topic" "pychunkedgraph_edits" {
-  name ="${var.cluster_prefix}_PCG_EDIT"
+  name = "${var.cluster_prefix}_PCG_EDIT"
 }
 
 resource "google_pubsub_subscription" "pychunkedgraph_remesh" {
-  name    = "${var.cluster_prefix}_PCG_HIGH_PRIORITY_REMESH"
-  topic   = google_pubsub_topic.pychunkedgraph_edits.name
+  name                 = "${var.cluster_prefix}_PCG_HIGH_PRIORITY_REMESH"
+  topic                = google_pubsub_topic.pychunkedgraph_edits.name
   ack_deadline_seconds = 600
   retry_policy {
     maximum_backoff = "10s"
@@ -27,8 +27,8 @@ resource "google_pubsub_subscription" "pychunkedgraph_remesh" {
 }
 
 resource "google_pubsub_subscription" "pychunkedgraph_low_priority_remesh" {
-  name    = "${var.cluster_prefix}_PCG_LOW_PRIORITY_REMESH"
-  topic   = google_pubsub_topic.pychunkedgraph_edits.name
+  name                 = "${var.cluster_prefix}_PCG_LOW_PRIORITY_REMESH"
+  topic                = google_pubsub_topic.pychunkedgraph_edits.name
   ack_deadline_seconds = 600
   retry_policy {
     maximum_backoff = "10s"
@@ -37,8 +37,8 @@ resource "google_pubsub_subscription" "pychunkedgraph_low_priority_remesh" {
 }
 
 resource "google_pubsub_subscription" "l2cache_trigger" {
-  name    = "${var.cluster_prefix}_${terraform.workspace}_L2CACHE_HIGH_PRIORITY_TRIGGER"
-  topic   = google_pubsub_topic.pychunkedgraph_edits.name
+  name                 = "${var.cluster_prefix}_${terraform.workspace}_L2CACHE_HIGH_PRIORITY_TRIGGER"
+  topic                = google_pubsub_topic.pychunkedgraph_edits.name
   ack_deadline_seconds = 600
   retry_policy {
     maximum_backoff = "10s"
@@ -47,8 +47,8 @@ resource "google_pubsub_subscription" "l2cache_trigger" {
 }
 
 resource "google_pubsub_subscription" "l2cache_trigger_low_priority" {
-  name    = "${var.cluster_prefix}_${terraform.workspace}_L2CACHE_LOW_PRIORITY_TRIGGER"
-  topic   = google_pubsub_topic.pychunkedgraph_edits.name
+  name                 = "${var.cluster_prefix}_${terraform.workspace}_L2CACHE_LOW_PRIORITY_TRIGGER"
+  topic                = google_pubsub_topic.pychunkedgraph_edits.name
   ack_deadline_seconds = 600
   retry_policy {
     maximum_backoff = "10s"
@@ -70,8 +70,8 @@ resource "google_pubsub_topic" "skeletoncache_dead_letter" {
 }
 
 resource "google_pubsub_subscription" "skeletoncache_high_retrieve" {
-  name    = "${var.cluster_prefix}_SKELETON_CACHE_WORKER_HIGH_PRIORITY"
-  topic   = google_pubsub_topic.skeletoncache_high.name
+  name                 = "${var.cluster_prefix}_SKELETON_CACHE_WORKER_HIGH_PRIORITY"
+  topic                = google_pubsub_topic.skeletoncache_high.name
   ack_deadline_seconds = 600
   retry_policy {
     maximum_backoff = "10s"
@@ -84,8 +84,8 @@ resource "google_pubsub_subscription" "skeletoncache_high_retrieve" {
 }
 
 resource "google_pubsub_subscription" "skeletoncache_low_retrieve" {
-  name    = "${var.cluster_prefix}_SKELETON_CACHE_WORKER_LOW_PRIORITY"
-  topic   = google_pubsub_topic.skeletoncache_low.name
+  name                 = "${var.cluster_prefix}_SKELETON_CACHE_WORKER_LOW_PRIORITY"
+  topic                = google_pubsub_topic.skeletoncache_low.name
   ack_deadline_seconds = 600
   retry_policy {
     maximum_backoff = "10s"
@@ -98,8 +98,8 @@ resource "google_pubsub_subscription" "skeletoncache_low_retrieve" {
 }
 
 resource "google_pubsub_subscription" "skeletoncache_dead_letter_retrieve" {
-  name    = "${var.cluster_prefix}_SKELETON_CACHE_WORKER_DEAD_LETTER"
-  topic   = google_pubsub_topic.skeletoncache_dead_letter.name
+  name                 = "${var.cluster_prefix}_SKELETON_CACHE_WORKER_DEAD_LETTER"
+  topic                = google_pubsub_topic.skeletoncache_dead_letter.name
   ack_deadline_seconds = 600
   retry_policy {
     maximum_backoff = "10s"

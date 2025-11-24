@@ -50,14 +50,14 @@ variable "dns_entries" {
 }
 
 variable "pcg_bucket_name" {
-    description = "name of bucket where bigtable needs to read and write data"
-    type        = string
+  description = "name of bucket where bigtable needs to read and write data"
+  type        = string
 }
 
 variable "owner" {
-  type = string
+  type        = string
   description = "added as label to resources, convenient to filter costs based on labels"
-  default = "na"
+  default     = "na"
 }
 
 # define the machine types
@@ -106,7 +106,7 @@ variable "max_nodes_core_pool" {
 
 variable "postgres_write_user" {
   description = "Username for the database writer"
-  default = "postgres"
+  default     = "postgres"
 }
 
 variable "bigtable_instance_name" {
@@ -116,18 +116,18 @@ variable "bigtable_instance_name" {
 }
 
 variable "bigtable_google_project" {
-    description = <<EOF
+  description = <<EOF
         "name of the google project your bigtable sits in.
         Use only if it sits in a different project. Note: you will need to create
         a service account with the proper permissions"
     EOF
-    type    = string
-    default = ""
+  type        = string
+  default     = ""
 }
 
 variable "letsencrypt_issuer_name" {
-  type    = string
-  default = "letsencrypt-staging"
+  type        = string
+  default     = "letsencrypt-staging"
   description = "which certificate issuer to configure cert-manager with"
 }
 
@@ -138,19 +138,19 @@ variable "letsencrypt_server" {
 }
 
 variable "helm_config_dir" {
-  type = string
+  type        = string
   description = "folder where to output helmfile config files"
 }
 
 variable "helm_terraform_state_url" {
-  type = string
+  type        = string
   description = "url where to find tfstate state, using helmfile syntax, assuming ref+tfstateURL so for example i.e. ://PATH_TO_STATE, or gs://BUCKET/PATH_TO_STATE"
 }
 
 variable "deletion_protection" {
-  type = bool
+  type        = bool
   description = "enable deletion protection for the cluster"
-  default = false
+  default     = false
 }
 
 variable "redis_version" {
@@ -160,13 +160,13 @@ variable "redis_version" {
 }
 
 variable "network" {
-  type = string
+  type        = string
   description = "the self_link of the vpc network to put the cluster on "
 }
 
-variable "subnetwork"{
-  type = string
-  description ="the self_link of the vpc subnetwork to put the cluster on"
+variable "subnetwork" {
+  type        = string
+  description = "the self_link of the vpc subnetwork to put the cluster on"
 }
 
 variable "mat_redis_host" {

@@ -1,5 +1,5 @@
-terraform { 
-  source = "tfr:///CAVEconnectome/cave/google//modules/local_cluster?version=0.0.13"
+terraform {
+  source = "tfr:///CAVEconnectome/cave/google//modules/local_cluster?version=0.0.27"
 }
 
 include "root" {
@@ -15,12 +15,12 @@ inputs = {
   subnetwork               = dependency.static.outputs.subnetwork_self_link
   zone                     = "{{ cookiecutter.zone }}"
   cluster_prefix           = "{{ cookiecutter.local_cluster_prefix }}"
-  letsencrypt_email        = "{{ cookiecutter.gcp_user_account }}"
-  pcg_redis_host                     = dependency.static.outputs.pcg_redis_host
-  skeleton_cache_cloudpath           = dependency.static.outputs.skeleton_cache_cloudpath
+  letsencrypt_email        = "{{ cookiecutter.letsencrypt_email }}"
+  pcg_redis_host           = dependency.static.outputs.pcg_redis_host
+  skeleton_cache_cloudpath = dependency.static.outputs.skeleton_cache_cloudpath
   materialization_dump_bucket_name   = dependency.static.outputs.materialization_dump_bucket_name
   materialization_upload_bucket_name = dependency.static.outputs.materialization_upload_bucket_name
-  dns_entries                        = {
+  dns_entries = {
       "{{ cookiecutter.local_cluster_prefix }}" = {
         zone        = "{{ cookiecutter.dns_zone }}"
         domain_name = "{{ cookiecutter.local_cluster_prefix }}.{{ cookiecutter.domain_name }}"

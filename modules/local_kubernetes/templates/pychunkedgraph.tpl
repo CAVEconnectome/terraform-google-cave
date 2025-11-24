@@ -28,6 +28,6 @@ pychunkedgraph:
   meshCpuMilli: 1000
   meshWorkerMinReplicas: 0
   meshWorkerMaxReplicas: 10
-  remeshQueue: 
+  remeshQueue:
   enableLogs: "enable"
   logsLeavesMany: ""

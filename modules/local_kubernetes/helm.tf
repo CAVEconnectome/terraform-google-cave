@@ -8,7 +8,7 @@ resource "helm_release" "nginx_ingress" {
   set = [
     {
       name  = "controller.service.loadBalancerIP"
-      value = google_compute_address.cluster_ip.address
+      value = var.cluster_ip
     },
     {
       name  = "controller.service.externalTrafficPolicy"
@@ -16,18 +16,15 @@ resource "helm_release" "nginx_ingress" {
     }
   ]
 
-  depends_on = [google_compute_address.cluster_ip,
-                google_container_cluster.cluster,
-                google_container_node_pool.cp
-                ]
+  depends_on = [data.google_container_cluster.cluster]
 }
 
 resource "helm_release" "cert_manager" {
-  name       = "cert-manager"
-  repository = "https://charts.jetstack.io"
-  chart      = "cert-manager"
-  version    = "1.9.1"
-  namespace  = "cert-manager"
+  name             = "cert-manager"
+  repository       = "https://charts.jetstack.io"
+  chart            = "cert-manager"
+  version          = "1.9.1"
+  namespace        = "cert-manager"
   create_namespace = true
 
   set = [
@@ -44,10 +41,9 @@ resource "helm_release" "cert_manager" {
       value = "ClusterIssuer"
     }
   ]
-depends_on = [google_container_cluster.cluster,
-                google_container_node_pool.cp]
-}
 
+  depends_on = [data.google_container_cluster.cluster]
+}
 
 # Install KEDA via Helm
 resource "helm_release" "keda" {
@@ -58,8 +54,5 @@ resource "helm_release" "keda" {
   create_namespace = true
   wait             = false
 
-  depends_on = [
-    google_container_cluster.cluster,
-    google_container_node_pool.cp
-  ]
+  depends_on = [data.google_container_cluster.cluster]
 }

@@ -65,7 +65,13 @@ source OLD_ENV_REPO/OLD_ENV_FILE.sh
 envsubst < example-local-config-migrate.yaml > ENV_CONFIG.yaml
 
 ```
-You should read over the result, particular attention should be made to:
+You should read over the result. The generated structure now creates three Terragrunt modules per local environment:
+
+- `static/` – long-lived shared infrastructure
+- `<cluster_prefix>/` – the GKE cluster itself plus templated Helm values
+- `<cluster_prefix>/kubernetes/` – the in-cluster Helm/Kubernetes resources that run after the cluster comes up
+
+Particular attention should be made to:
 - local_cluster_prefix: you need to fill in a value here that is a new prefix for this cluster, because you don't want the old cluster to stop working immediately, you want to get the new cluster up and running and then redirect traffic to it once it is fully functional.  So if you had ltv5 before for environment, you might pick ltv6.  If you hadn't spun up more than one cluster before and had your environment name "local", you will want to make this something like "local1". 
 - gcp_user_account: this should be filled in with a google account email that has permissions to setup service accounts in your google project.
 - materialize_datastack: as you might have more than one and will need to edit the config files to support more than 1 datastack.
@@ -111,29 +117,27 @@ In that vein, in CAVEdeployment, we had a mechanism to add arbitrary other crede
 This can be done via the command line (as above) or the google cloud console. 
 
 ## Import existing resources
-Given that you are migration, you have a bunch of existing infrastructure that has data you don't want to lose. We need to make terraform/terragrunt aware of these existing cloud resources.  Make sure the names of everything are aligned with what actually exists, which might requires careful editing of the root.hcl and terragrunt.hcl contained variables. 
+Given that you are migrating, you have a bunch of existing infrastructure that has data you don't want to lose. We need to make Terraform/Terragrunt aware of these existing cloud resources. Start with the static layer; make sure the names of everything are aligned with what actually exists, which might require careful editing of `root.hcl` and the Terragrunt inputs.
 ```
 cd <environment_name>/static
 ../scripts/terragrunt_import.sh
 terragrunt plan -refresh-only
 ```
 This should not be making any meaningful changes to any resources
-## Provision
+## Apply the full stack
+After the static imports succeed, run the entire environment so that Terragrunt applies the cluster and the new `kubernetes/` module in the right order. Always execute this from the environment root (for example `ltv/ltv7` for a cluster named `ltv7`).
 ```
-cd <environment_name>/static
-terragrunt apply
+cd <environment_name>
+terragrunt run --all apply -- -auto-approve=false
 ```
 
-Review these proposed changes carefully, it should not be creating any new cloud resources (though a helmfile config file should be made), and the changes to the resources it is making should be expected.  Make sure that the username and passwords that you are referencing (i.e. the postgres username and password) are correct and reflect your current deployments values, because you don't want to bring down the old deployments services by accidentally changing the password.  Added labels, and a created helmfile is expected. If there are unexpected or undesired changes, such as changing sql server memory or cpu, you might need to adjust the root.hcl configuration to reflect your desired configuration. 
+Terragrunt’s redesigned CLI requires the `run --all` wrapper; it replaces the old `terragrunt run-all apply` command. Everything after `--` is passed to `terraform apply`, so drop the `-auto-approve=false` suffix if you prefer fully non-interactive runs. This invocation resolves the dependency graph (`static` → `<cluster_prefix>` → `<cluster_prefix>/kubernetes`) and applies each module in sequence.
 
-Now we can move on the the more ephemeral cluster. 
+Review the proposed changes carefully. The static layer should not recreate existing resources—the diff should mostly be labels and generated files. The cluster layer will produce the Helm defaults under `ENVIRONMENTS_REPO/{local_environment_name}/{local_cluster_prefix}/helmfile`, and the `kubernetes/` module will reconcile Helm releases after the cluster is ready. Make sure that referenced secrets (for example the Cloud SQL credentials) match your current deployment to avoid downtime. If there are unexpected changes (e.g. SQL CPU/memory churn), adjust `root.hcl` before re-applying.
 
-``
-cd ../<cluster_prefix>
-terragrunt init && terragrunt apply
-``
+While the initial apply runs, Terragrunt parallels the modules only when dependencies allow it. If you need to troubleshoot an individual layer you can still run `terragrunt apply` inside `static/`, `<cluster_prefix>/`, or `<cluster_prefix>/kubernetes/`, but the recommended workflow is to let `terragrunt run --all apply` orchestrate the sequence.
 
-This should create a number of files inside ENVIRONMENTS_REPO/{ local_environment_name}/{local_cluster_prefix}/helmfile. The XXXX.defaults.yaml (where XXXX is the name of a service) files and cluster.yaml files include values that are exported from terraform. 
+This create step generates the Helmfile defaults (the `*.defaults.yaml` files plus `cluster.yaml`) inside `ENVIRONMENTS_REPO/{local_environment_name}/{local_cluster_prefix}/helmfile`.
 
 - Copy helmfile.yaml.example to helmfile.yaml 
 

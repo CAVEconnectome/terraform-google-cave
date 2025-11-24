@@ -1,7 +1,7 @@
 resource "google_container_node_pool" "sp" {
-  name       = "standard-pool"
-  location   = var.zone
-  cluster    = google_container_cluster.cluster.name
+  name     = "standard-pool"
+  location = var.zone
+  cluster  = google_container_cluster.cluster.name
 
   node_config {
     labels = {
@@ -11,8 +11,8 @@ resource "google_container_node_pool" "sp" {
 
     machine_type = var.standard_machine_type
     disk_size_gb = 40
-    preemptible = false
-    
+    preemptible  = false
+
     metadata = {
       disable-legacy-endpoints = "true"
     }
@@ -34,9 +34,9 @@ resource "google_container_node_pool" "sp" {
 }
 
 resource "google_container_node_pool" "lp" {
-  name       = "lightweight-pool"
-  location   = var.zone
-  cluster    = google_container_cluster.cluster.name
+  name     = "lightweight-pool"
+  location = var.zone
+  cluster  = google_container_cluster.cluster.name
 
   node_config {
     labels = {
@@ -47,7 +47,7 @@ resource "google_container_node_pool" "lp" {
     machine_type = var.lightweight_machine_type
     disk_size_gb = 20
     preemptible  = true
-    
+
     metadata = {
       disable-legacy-endpoints = "true"
     }
@@ -70,9 +70,9 @@ resource "google_container_node_pool" "lp" {
 
 
 resource "google_container_node_pool" "mp" {
-  name       = "mesh-pool"
-  location   = var.zone
-  cluster    = google_container_cluster.cluster.name
+  name     = "mesh-pool"
+  location = var.zone
+  cluster  = google_container_cluster.cluster.name
 
   node_config {
     labels = {
@@ -83,7 +83,7 @@ resource "google_container_node_pool" "mp" {
     machine_type = var.mesh_machine_type
     disk_size_gb = 40
     preemptible  = true
-    
+
     metadata = {
       disable-legacy-endpoints = "true"
     }
@@ -106,9 +106,9 @@ resource "google_container_node_pool" "mp" {
 
 
 resource "google_container_node_pool" "cp" {
-  name       = "core-pool"
-  location   = var.zone
-  cluster    = google_container_cluster.cluster.name
+  name     = "core-pool"
+  location = var.zone
+  cluster  = google_container_cluster.cluster.name
   # Create 1 node initially so system services can schedule; autoscaler manages size afterwards
   initial_node_count = 1
 
@@ -121,7 +121,7 @@ resource "google_container_node_pool" "cp" {
     machine_type = var.core_machine_type
     disk_size_gb = 20
     preemptible  = false
-    
+
     metadata = {
       disable-legacy-endpoints = "true"
     }
