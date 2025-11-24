@@ -28,6 +28,12 @@ variable "cluster_prefix" {
   type        = string
 }
 
+variable "gcp_user_account" {
+  description = "Email for the GCP user to grant cluster-admin via ClusterRoleBinding"
+  type        = string
+  default     = ""
+}
+
 variable "environment" {
   description = "Environment name used for labeling and templating"
   type        = string
@@ -102,6 +108,24 @@ variable "letsencrypt_issuer_name" {
 variable "helm_config_dir" {
   description = "Directory where Helm configuration files will be rendered"
   type        = string
+}
+
+variable "workload_identity_gsa_email" {
+  description = "Email of the Google service account used for workload identity binding"
+  type        = string
+  default     = ""
+}
+
+variable "workload_identity_kubernetes_sa_name" {
+  description = "Name of the Kubernetes service account to bind to the workload identity GSA"
+  type        = string
+  default     = "workload-identity"
+}
+
+variable "workload_identity_kubernetes_namespace" {
+  description = "Namespace where the workload identity Kubernetes service account resides"
+  type        = string
+  default     = "default"
 }
 
 variable "helm_terraform_state_url" {

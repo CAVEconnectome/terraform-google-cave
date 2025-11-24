@@ -29,5 +29,6 @@ inputs = {
   materialization_upload_bucket_name = dependency.static.outputs.materialization_upload_bucket_name
   dns_entries = dependency.cluster.outputs.dns_entries
   helm_config_dir = "${dirname(get_terragrunt_dir())}/helmfile"
+  workload_identity_gsa_email = dependency.cluster.outputs.workload_identity_service_account_email
   # mat_redis_host = ""
 }

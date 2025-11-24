@@ -104,3 +104,8 @@ output "dns_entries" {
   value       = var.dns_entries
   description = "DNS entries map provided to the cluster module"
 }
+
+output "workload_identity_service_account_email" {
+  value       = google_service_account.workload_identity.email
+  description = "Email address of the GCP service account used for Workload Identity"
+}
