@@ -1,0 +1,58 @@
+remote_state {
+  backend = "gcs"
+  generate = {
+    path      = "backend.tf"
+    if_exists = "overwrite_terragrunt"
+  }
+  config = {
+    bucket = "{{ state_bucket }}"
+    prefix = "{{ local_environment_name }}/${path_relative_to_include()}"
+  }
+}
+
+inputs = {
+  owner                    = "cave"
+  project_id               = "{{ project_id }}"
+  region                   = "{{ region }}"
+  zone                     = "{{ zone }}"
+  environment              = "{{ local_environment_name }}"
+  domain_name              = "{{ domain_name }}"
+  global_server            = "{{ global_server}}"
+  docker_registry          = "{{ docker_registry }}"
+  gcp_user_account         = "{{ gcp_user_account }}"
+  sql_instance_name        = "{{ local_sql_instance_name }}"
+  
+  pcg_bucket_name            = "{{ pcg_bucket_name }}"
+{%- if bigtable_google_project %}
+  bigtable_google_project  = "{{ bigtable_google_project }}"
+{%- endif %}
+  bigtable_instance_name   = "{{ bigtable_instance_name }}"
+  
+  helm_terraform_state_url = "gs://{{ state_bucket }}/{{ local_environment_name }}/static/default.tfstate"
+  helm_config_dir          = "${get_terragrunt_dir()}/helmfile"
+  
+  # dns variables
+  dns_zone                   = "{{ dns_zone }}"
+
+  # Optional configurations - only included if values are provided
+{%- if pcg_redis_name_override %}
+  pcg_redis_name_override    = "{{ pcg_redis_name_override }}"
+{%- endif %}
+{%- if vpc_name_override %}
+  vpc_name_override          = "{{ vpc_name_override }}"
+{%- endif %}
+{%- if skeleton_cache_cloudpath %}
+  skeleton_cache_cloudpath   = "{{ skeleton_cache_cloudpath }}"
+{%- endif %}
+  
+  # Required configurations
+  cave_secret_name           = "{{ cave_secret_name }}"
+  letsencrypt_email          = "{{ letsencrypt_email }}"
+
+
+  # Default configurations
+  skeleton_cache_public_read = {{ pcg_skeleton_cache_bucket_public_read | lower }}
+  deletion_protection        = false
+
+  sql_instance_memory_gb     = 26
+}
