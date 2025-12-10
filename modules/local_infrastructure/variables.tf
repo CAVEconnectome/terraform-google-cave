@@ -140,14 +140,14 @@ variable "skeleton_cache_public_read" {
   default     = false
 }
 
-variable "materialization_dump_bucket_name" {
-  description = "Optional GCS bucket name for materialization dumps. If empty, a default bucket is created and used."
+variable "materialization_dump_bucket_path" {
+  description = "Optional GCS bucket path for materialization dumps (e.g., 'bucket-name' or 'bucket-name/path'). If empty, a default bucket is created and used."
   type        = string
   default     = ""
 }
 
-variable "materialization_upload_bucket_name" {
-  description = "Optional GCS bucket name for materialization uploads. If empty, a default bucket is created and used."
+variable "materialization_upload_bucket_path" {
+  description = "Optional GCS bucket path for materialization uploads (e.g., 'bucket-name' or 'bucket-name/path'). If empty, a default bucket is created and used."
   type        = string
   default     = ""
 }

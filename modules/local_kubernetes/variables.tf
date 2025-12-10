@@ -172,14 +172,28 @@ variable "skeleton_cache_cloudpath" {
   type        = string
 }
 
-variable "materialization_dump_bucket_name" {
-  description = "Optional GCS bucket name used for materialization dumps"
+variable "materialization_dump_bucket_path" {
+  description = "GCS bucket path for materialization dumps (e.g., 'bucket-name' or 'bucket-name/path'). Extracted bucket name is used for IAM permissions."
   type        = string
   default     = ""
 }
 
+variable "materialization_upload_bucket_path" {
+  description = "GCS bucket path for materialization uploads (e.g., 'bucket-name' or 'bucket-name/path'). Extracted bucket name is used for IAM permissions."
+  type        = string
+  default     = ""
+}
+
+# Deprecated: kept for backward compatibility, use bucket_path instead
+variable "materialization_dump_bucket_name" {
+  description = "Deprecated: Use materialization_dump_bucket_path instead. Kept for backward compatibility."
+  type        = string
+  default     = ""
+}
+
+# Deprecated: kept for backward compatibility, use bucket_path instead
 variable "materialization_upload_bucket_name" {
-  description = "Optional GCS bucket name used for materialization uploads"
+  description = "Deprecated: Use materialization_upload_bucket_path instead. Kept for backward compatibility."
   type        = string
   default     = ""
 }

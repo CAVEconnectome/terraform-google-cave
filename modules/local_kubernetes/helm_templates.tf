@@ -23,12 +23,14 @@ resource "local_file" "helm_values_cluster" {
 resource "local_file" "values_materialize" {
   filename = "${var.helm_config_dir}/materialize.defaults.yaml"
   content = templatefile("${path.module}/templates/materialize.tpl", {
-    redis_host         = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host,
-    project_id         = var.project_id,
-    sql_instance_name  = var.sql_instance_name,
-    secrets_project_id = var.project_id,
-    cave_secret_name   = var.cave_secret_name,
-    pycg_sa_secret     = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace)
+    redis_host                    = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host,
+    project_id                    = var.project_id,
+    sql_instance_name             = var.sql_instance_name,
+    secrets_project_id            = var.project_id,
+    cave_secret_name              = var.cave_secret_name,
+    pycg_sa_secret                = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
+    materialization_upload_bucket_name = var.materialization_upload_bucket_path != "" ? var.materialization_upload_bucket_path : var.materialization_upload_bucket_name,
+    materialization_dump_bucket_name   = var.materialization_dump_bucket_path != "" ? var.materialization_dump_bucket_path : var.materialization_dump_bucket_name
   })
   file_permission = "0644"
 }

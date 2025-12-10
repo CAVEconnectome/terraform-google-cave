@@ -192,14 +192,14 @@ variable "global_server" {
   type        = string
 }
 
-variable "materialization_dump_bucket_name" {
-  description = "Optional GCS bucket used for materialization dumps; grants PyCG SA access if set"
+variable "materialization_dump_bucket_path" {
+  description = "Optional GCS bucket path for materialization dumps (e.g., 'bucket-name' or 'bucket-name/path'); grants PyCG SA access if set"
   type        = string
   default     = ""
 }
 
-variable "materialization_upload_bucket_name" {
-  description = "Optional GCS bucket for materialization uploads; grants PyCG SA access if set"
+variable "materialization_upload_bucket_path" {
+  description = "Optional GCS bucket path for materialization uploads (e.g., 'bucket-name' or 'bucket-name/path'); grants PyCG SA access if set"
   type        = string
   default     = ""
 }

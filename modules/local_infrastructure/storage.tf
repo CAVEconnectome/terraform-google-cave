@@ -12,8 +12,16 @@ locals {
   # Materialization buckets with default naming
   materialization_dump_bucket_default   = lower(replace("${var.owner}-${var.environment}-materialization-dump", "_", "-"))
   materialization_upload_bucket_default = lower(replace("${var.owner}-${var.environment}-materialization-upload", "_", "-"))
-  materialization_dump_bucket_name      = var.materialization_dump_bucket_name != "" ? var.materialization_dump_bucket_name : local.materialization_dump_bucket_default
-  materialization_upload_bucket_name    = var.materialization_upload_bucket_name != "" ? var.materialization_upload_bucket_name : local.materialization_upload_bucket_default
+  # Extract bucket name from path (remove path suffix if present) for Terraform resource and IAM
+  # If variable contains a path (has /), extract just the bucket name part
+  materialization_dump_bucket_path_raw  = var.materialization_dump_bucket_path != "" ? var.materialization_dump_bucket_path : local.materialization_dump_bucket_default
+  materialization_upload_bucket_path_raw = var.materialization_upload_bucket_path != "" ? var.materialization_upload_bucket_path : local.materialization_upload_bucket_default
+  # Extract bucket name (first part before /) for Terraform resources and IAM permissions
+  materialization_dump_bucket_name      = length(split("/", local.materialization_dump_bucket_path_raw)) > 1 ? split("/", local.materialization_dump_bucket_path_raw)[0] : local.materialization_dump_bucket_path_raw
+  materialization_upload_bucket_name    = length(split("/", local.materialization_upload_bucket_path_raw)) > 1 ? split("/", local.materialization_upload_bucket_path_raw)[0] : local.materialization_upload_bucket_path_raw
+  # Only create buckets if using default names (i.e., variable was not provided)
+  should_create_dump_bucket             = var.materialization_dump_bucket_path == ""
+  should_create_upload_bucket           = var.materialization_upload_bucket_path == ""
 }
 
 resource "google_storage_bucket" "skeleton_cache" {
@@ -57,7 +65,10 @@ resource "google_storage_bucket_iam_member" "skeleton_cache_public" {
 # Materialization buckets for PyChunkedGraph data dumps/uploads
 ############################################################
 
+# Only create dump bucket if using default naming (bucket name variable not provided)
 resource "google_storage_bucket" "materialization_dump" {
+  count = local.should_create_dump_bucket ? 1 : 0
+  
   name     = local.materialization_dump_bucket_name
   project  = var.project_id
   location = var.region
@@ -72,7 +83,10 @@ resource "google_storage_bucket" "materialization_dump" {
   }
 }
 
+# Only create upload bucket if using default naming (bucket name variable not provided)
 resource "google_storage_bucket" "materialization_upload" {
+  count = local.should_create_upload_bucket ? 1 : 0
+  
   name     = local.materialization_upload_bucket_name
   project  = var.project_id
   location = var.region

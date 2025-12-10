@@ -1,3 +1,19 @@
+# Extract bucket names from bucket_path variables (paths may include /path suffix)
+locals {
+  # Extract bucket name from materialization_dump_bucket_path if it contains a path
+  materialization_dump_bucket_name_clean = var.materialization_dump_bucket_path != "" ? (
+    length(split("/", var.materialization_dump_bucket_path)) > 1 ? split("/", var.materialization_dump_bucket_path)[0] : var.materialization_dump_bucket_path
+  ) : (var.materialization_dump_bucket_name != "" ? (
+    length(split("/", var.materialization_dump_bucket_name)) > 1 ? split("/", var.materialization_dump_bucket_name)[0] : var.materialization_dump_bucket_name
+  ) : "")
+  # Extract bucket name from materialization_upload_bucket_path if it contains a path
+  materialization_upload_bucket_name_clean = var.materialization_upload_bucket_path != "" ? (
+    length(split("/", var.materialization_upload_bucket_path)) > 1 ? split("/", var.materialization_upload_bucket_path)[0] : var.materialization_upload_bucket_path
+  ) : (var.materialization_upload_bucket_name != "" ? (
+    length(split("/", var.materialization_upload_bucket_name)) > 1 ? split("/", var.materialization_upload_bucket_name)[0] : var.materialization_upload_bucket_name
+  ) : "")
+}
+
 resource "google_service_account" "pycg_service_account" {
   account_id   = "pychunkedgraph-${var.cluster_prefix}-${terraform.workspace}"
   display_name = "PyChunkedGraph-${var.cluster_prefix}-${terraform.workspace}"
@@ -55,39 +71,51 @@ resource "google_storage_bucket_iam_member" "pycg_object_reader_iam_member" {
 
 # Optional additional buckets for PyCG
 resource "google_storage_bucket_iam_member" "pycg_dump_writer" {
-  count  = var.materialization_dump_bucket_name != "" ? 1 : 0
-  bucket = var.materialization_dump_bucket_name
+  count  = local.materialization_dump_bucket_name_clean != "" ? 1 : 0
+  bucket = local.materialization_dump_bucket_name_clean
   role   = "roles/storage.legacyBucketWriter"
   member = "serviceAccount:${google_service_account.pycg_service_account.email}"
 }
 resource "google_storage_bucket_iam_member" "pycg_dump_owner" {
-  count  = var.materialization_dump_bucket_name != "" ? 1 : 0
-  bucket = var.materialization_dump_bucket_name
+  count  = local.materialization_dump_bucket_name_clean != "" ? 1 : 0
+  bucket = local.materialization_dump_bucket_name_clean
   role   = "roles/storage.legacyObjectOwner"
   member = "serviceAccount:${google_service_account.pycg_service_account.email}"
 }
 resource "google_storage_bucket_iam_member" "pycg_dump_reader" {
-  count  = var.materialization_dump_bucket_name != "" ? 1 : 0
-  bucket = var.materialization_dump_bucket_name
+  count  = local.materialization_dump_bucket_name_clean != "" ? 1 : 0
+  bucket = local.materialization_dump_bucket_name_clean
   role   = "roles/storage.legacyObjectReader"
   member = "serviceAccount:${google_service_account.pycg_service_account.email}"
 }
+resource "google_storage_bucket_iam_member" "pycg_dump_bucket_owner" {
+  count  = local.materialization_dump_bucket_name_clean != "" ? 1 : 0
+  bucket = local.materialization_dump_bucket_name_clean
+  role   = "roles/storage.legacyBucketOwner"
+  member = "serviceAccount:${google_service_account.pycg_service_account.email}"
+}
 resource "google_storage_bucket_iam_member" "pycg_upload_writer" {
-  count  = var.materialization_upload_bucket_name != "" ? 1 : 0
-  bucket = var.materialization_upload_bucket_name
+  count  = local.materialization_upload_bucket_name_clean != "" ? 1 : 0
+  bucket = local.materialization_upload_bucket_name_clean
   role   = "roles/storage.legacyBucketWriter"
   member = "serviceAccount:${google_service_account.pycg_service_account.email}"
 }
 resource "google_storage_bucket_iam_member" "pycg_upload_owner" {
-  count  = var.materialization_upload_bucket_name != "" ? 1 : 0
-  bucket = var.materialization_upload_bucket_name
+  count  = local.materialization_upload_bucket_name_clean != "" ? 1 : 0
+  bucket = local.materialization_upload_bucket_name_clean
   role   = "roles/storage.legacyObjectOwner"
   member = "serviceAccount:${google_service_account.pycg_service_account.email}"
 }
 resource "google_storage_bucket_iam_member" "pycg_upload_reader" {
-  count  = var.materialization_upload_bucket_name != "" ? 1 : 0
-  bucket = var.materialization_upload_bucket_name
+  count  = local.materialization_upload_bucket_name_clean != "" ? 1 : 0
+  bucket = local.materialization_upload_bucket_name_clean
   role   = "roles/storage.legacyObjectReader"
+  member = "serviceAccount:${google_service_account.pycg_service_account.email}"
+}
+resource "google_storage_bucket_iam_member" "pycg_upload_bucket_owner" {
+  count  = local.materialization_upload_bucket_name_clean != "" ? 1 : 0
+  bucket = local.materialization_upload_bucket_name_clean
+  role   = "roles/storage.legacyBucketOwner"
   member = "serviceAccount:${google_service_account.pycg_service_account.email}"
 }
 

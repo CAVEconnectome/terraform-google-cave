@@ -51,12 +51,22 @@ output "skeleton_cache_cloudpath" {
 }
 
 output "materialization_dump_bucket_name" {
-  value       = google_storage_bucket.materialization_dump.name
-  description = "Name of the materialization dump bucket"
+  value       = local.should_create_dump_bucket ? google_storage_bucket.materialization_dump[0].name : local.materialization_dump_bucket_name
+  description = "Name of the materialization dump bucket (extracted from path, for IAM permissions and imports)"
 }
 
 output "materialization_upload_bucket_name" {
-  value       = google_storage_bucket.materialization_upload.name
-  description = "Name of the materialization upload bucket"
+  value       = local.should_create_upload_bucket ? google_storage_bucket.materialization_upload[0].name : local.materialization_upload_bucket_name
+  description = "Name of the materialization upload bucket (extracted from path, for IAM permissions and imports)"
+}
+
+output "materialization_dump_bucket_path" {
+  value       = var.materialization_dump_bucket_path != "" ? var.materialization_dump_bucket_path : local.materialization_dump_bucket_default
+  description = "Full bucket path for materialization dumps (includes path suffix if provided, for Helm/config)"
+}
+
+output "materialization_upload_bucket_path" {
+  value       = var.materialization_upload_bucket_path != "" ? var.materialization_upload_bucket_path : local.materialization_upload_bucket_default
+  description = "Full bucket path for materialization uploads (includes path suffix if provided, for Helm/config)"
 }
 
