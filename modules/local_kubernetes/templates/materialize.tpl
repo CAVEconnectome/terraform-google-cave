@@ -11,8 +11,8 @@ materialize:
 %{ if materialization_upload_bucket_name != "" ~}
   uploadBucketName: "${materialization_upload_bucket_name}"
 %{ endif ~}
-%{ if materialization_dump_bucket_name != "" ~}
-  dumpBucketName: "${materialization_dump_bucket_name}"
+%{ if materialization_dump_bucket_path != "" ~}
+  dumpBucketPath: "gs://${materialization_dump_bucket_path}"
 %{ endif ~}
 limiter:
   redis:
