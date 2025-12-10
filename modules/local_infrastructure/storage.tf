@@ -96,4 +96,11 @@ resource "google_storage_bucket" "materialization_upload" {
     owner       = var.owner
     component   = "materialization-upload"
   }
+
+  cors {
+    origin        = ["*"]
+    method        = ["OPTIONS", "POST", "PUT"]
+    response_header = ["Content-Type", "x-goog-resumable"]
+    max_age_seconds = 3600
+  }
 }
