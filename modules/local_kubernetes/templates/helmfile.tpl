@@ -86,7 +86,7 @@ releases:
 
   - name: swaggerui
     namespace: default
-    chart: /Users/forrestc/ConnectomeStack/cave-helm-charts/charts/swaggerui
+    chart: cave/swaggerui
     version: 0.1.0
     values:
       - ${cluster_values}
