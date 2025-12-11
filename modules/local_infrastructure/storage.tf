@@ -104,3 +104,25 @@ resource "google_storage_bucket" "materialization_upload" {
     max_age_seconds = 3600
   }
 }
+
+############################################################
+# IAM bindings for PostgreSQL service account on materialization dump bucket
+############################################################
+
+resource "google_storage_bucket_iam_member" "postgres_materialization_dump_legacy_reader" {
+  bucket = local.materialization_dump_bucket_name
+  role   = "roles/storage.legacyBucketReader"
+  member = "serviceAccount:${google_sql_database_instance.postgres.service_account_email_address}"
+}
+
+resource "google_storage_bucket_iam_member" "postgres_materialization_dump_object_admin" {
+  bucket = local.materialization_dump_bucket_name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_sql_database_instance.postgres.service_account_email_address}"
+}
+
+resource "google_storage_bucket_iam_member" "postgres_materialization_dump_object_viewer" {
+  bucket = local.materialization_dump_bucket_name
+  role   = "roles/storage.objectViewer"
+  member = "serviceAccount:${google_sql_database_instance.postgres.service_account_email_address}"
+}
