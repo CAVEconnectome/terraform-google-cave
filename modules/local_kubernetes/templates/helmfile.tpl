@@ -19,7 +19,7 @@ releases:
   - name: materialization-engine
     namespace: default
     chart: cave/materializationengine
-    version: 5.14.2-dev.1
+    version: 5.14.2-dev.2
     values:
       - ${cluster_values}
       - ${materialize_defaults}
@@ -43,7 +43,7 @@ releases:
   - name: pychunkedgraph
     namespace: default
     chart: cave/pychunkedgraph
-    version: 0.2.3
+    version: 2.20.0-r1
     values:
       - ${cluster_values}
       - ${pychunkedgraph_defaults}
@@ -52,7 +52,7 @@ releases:
   - name: pcgl2cache
     namespace: default
     chart: cave/pcgl2cache
-    version: 1.3.1
+    version: 1.3.1-dev.3
     values:
       - ${cluster_values}
       - ${pcgl2cache_defaults}
@@ -61,7 +61,7 @@ releases:
   - name: skeletoncache
     namespace: default
     chart: cave/skeletoncache
-    version: 0.22.49
+    version: 0.22.49-dev.4
     values:
       - ${cluster_values}
       - ${skeletoncache_defaults}
