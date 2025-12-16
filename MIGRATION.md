@@ -93,7 +93,7 @@ Services that needed a cave token used to be given that access by setting up a c
 
 You can do that via the command line. Note you must replace YOUR_TOKEN and {{ cave_secret_name }} with the token from your old secret, and the name of the cave_secret_name you just choose in your cookiecutter template. 
 ```
-printf '%s' '{"token":"YOUR_TOKEN"} \
+printf '%s' '{"token":"YOUR_TOKEN"}' \
  | gcloud secrets create {{ cave_secret_name }} --data-file=-
 ```
 or the cloud console, using the secret name you provided in the cookiecutter template. 
