@@ -330,7 +330,7 @@ else
   echo "Skipping materialization upload bucket import (missing materialization_upload_bucket_path)"
 fi
 
-if [ -n ${skeleton_cache_cloudpath}] ;then 
+if [ -n "${skeleton_cache_cloudpath}" ] ;then 
   skeleton_cache_bucket_name=$(echo "$skeleton_cache_cloudpath" | sed -n -e 's/^gs:\/\/\([^/]*\).*$/\1/p')
   if [ -n "${skeleton_cache_bucket_name}" ]; then
     if has_state "google_storage_bucket.skeleton_cache"; then
