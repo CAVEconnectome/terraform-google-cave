@@ -51,12 +51,12 @@ output "skeleton_cache_cloudpath" {
 }
 
 output "materialization_dump_bucket_name" {
-  value       = google_storage_bucket.materialization_dump[0].name
+  value       = google_storage_bucket.materialization_dump.name
   description = "Name of the materialization dump bucket (extracted from path, for IAM permissions and imports)"
 }
 
 output "materialization_upload_bucket_name" {
-  value       = google_storage_bucket.materialization_upload[0].name
+  value       = google_storage_bucket.materialization_upload.name
   description = "Name of the materialization upload bucket (extracted from path, for IAM permissions and imports)"
 }
 

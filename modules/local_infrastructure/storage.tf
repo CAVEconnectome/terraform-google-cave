@@ -65,14 +65,14 @@ resource "google_storage_bucket_iam_member" "skeleton_cache_public" {
 ############################################################
 
 resource "google_storage_bucket" "materialization_dump" {  
-  count = 1
+  # count = 1
 
   name     = local.materialization_dump_bucket_name
   project  = var.project_id
   location = var.region
 
-  uniform_bucket_level_access = true
-  public_access_prevention    = "enforced"
+  uniform_bucket_level_access = var.materialization_dump_bucket_uniform_bucket_level_access
+  public_access_prevention    = var.materialization_dump_bucket_public_access_prevention #"enforced"
 
   labels = {
     environment = var.environment
@@ -82,7 +82,7 @@ resource "google_storage_bucket" "materialization_dump" {
 }
 
 resource "google_storage_bucket" "materialization_upload" {
-  count = 1
+  # count = 1
 
   name     = local.materialization_upload_bucket_name
   project  = var.project_id

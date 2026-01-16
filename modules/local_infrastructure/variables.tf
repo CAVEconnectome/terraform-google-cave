@@ -151,3 +151,15 @@ variable "materialization_upload_bucket_path" {
   type        = string
   default     = ""
 }
+
+variable "materialization_dump_bucket_uniform_bucket_level_access" {
+  description = "Whether to enable uniform bucket-level access for the materialization dump bucket."
+  type        = bool
+  default     = true
+}
+
+variable "materialization_dump_bucket_public_access_prevention" {
+  description = "Public Access Prevention setting for the materialization dump bucket. Set to 'enforced' to prevent public access."
+  type        = string
+  default     = "enforced"
+}
