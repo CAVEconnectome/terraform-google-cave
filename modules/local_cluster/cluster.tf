@@ -63,8 +63,12 @@ resource "google_container_cluster" "cluster" {
   node_config {
     service_account = google_service_account.workload_identity.email
     oauth_scopes    = ["https://www.googleapis.com/auth/cloud-platform"]
-  }
+    shielded_instance_config {
+      enable_secure_boot = true
+    }
 }
+  }
+
 
 
 
@@ -86,5 +90,6 @@ resource "google_project_iam_member" "keda_monitoring_viewer" {
   project = var.project_id
   role    = "roles/monitoring.viewer"
   member  = "principal://iam.googleapis.com/projects/${data.google_project.current.number}/locations/global/workloadIdentityPools/${var.project_id}.svc.id.goog/subject/ns/keda/sa/keda-operator"
+  depends_on = [google_container_cluster.cluster]
 }
 

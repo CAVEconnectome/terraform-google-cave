@@ -20,6 +20,10 @@ resource "google_container_node_pool" "sp" {
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
+    shielded_instance_config {
+      enable_secure_boot = true
+    }
+
   }
   autoscaling {
     min_node_count = 1
@@ -43,7 +47,9 @@ resource "google_container_node_pool" "lp" {
       project = var.environment
       owner   = var.owner
     }
-
+    shielded_instance_config {
+      enable_secure_boot = true
+    }
     machine_type = var.lightweight_machine_type
     disk_size_gb = 20
     preemptible  = true
@@ -79,7 +85,9 @@ resource "google_container_node_pool" "mp" {
       project = var.environment
       owner   = var.owner
     }
-
+    shielded_instance_config {
+      enable_secure_boot = true
+    }
     machine_type = var.mesh_machine_type
     disk_size_gb = 40
     preemptible  = true
@@ -117,7 +125,9 @@ resource "google_container_node_pool" "cp" {
       project = var.environment
       owner   = var.owner
     }
-
+    shielded_instance_config {
+      enable_secure_boot = true
+    }
     machine_type = var.core_machine_type
     disk_size_gb = 20
     preemptible  = false
