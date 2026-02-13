@@ -30,5 +30,5 @@ inputs = {
   dns_entries = dependency.cluster.outputs.dns_entries
   helm_config_dir = "${dirname(get_terragrunt_dir())}/helmfile"
   workload_identity_gsa_email = dependency.cluster.outputs.workload_identity_service_account_email
-  # mat_redis_host = ""
+  mat_redis_host = dependency.cluster.outputs.mat_redis_host
 }

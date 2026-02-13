@@ -109,3 +109,8 @@ output "workload_identity_service_account_email" {
   value       = google_service_account.workload_identity.email
   description = "Email address of the GCP service account used for Workload Identity"
 }
+
+output "mat_redis_host" {
+  value       = google_redis_instance.mat_redis.host
+  description = "The ip of the mat_redis host"
+}

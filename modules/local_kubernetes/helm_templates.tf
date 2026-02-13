@@ -83,6 +83,7 @@ resource "local_file" "values_pcg" {
   filename = "${var.helm_config_dir}/pychunkedgraph.defaults.yaml"
   content = templatefile("${path.module}/templates/pychunkedgraph.tpl", {
     redis_host         = var.pcg_redis_host,
+    mat_redis_host     = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host,
     project_id         = var.project_id,
     data_project_id    = var.bigtable_google_project != "" ? var.bigtable_google_project : var.project_id,
     bigtable_instance  = var.bigtable_instance_name,
