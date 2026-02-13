@@ -4,7 +4,7 @@ locals {
 }
 
 # Create the Kubernetes service account that uses Workload Identity.
-resource "kubernetes_service_account" "workload_identity" {
+resource "kubernetes_service_account_v1" "workload_identity" {
   count = var.workload_identity_gsa_email != "" ? 1 : 0
 
   metadata {
@@ -28,7 +28,7 @@ resource "google_service_account_iam_binding" "workload_identity" {
   role               = "roles/iam.workloadIdentityUser"
   members            = [local.workload_identity_k8s_member]
 
-  depends_on = [kubernetes_service_account.workload_identity]
+  depends_on = [kubernetes_service_account_v1.workload_identity]
 }
 
 # Optionally grant cluster-admin to the operator's GCP user account for bootstrap access.
