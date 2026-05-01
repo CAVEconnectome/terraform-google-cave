@@ -47,7 +47,7 @@ fi
 # Ensure helm-diff plugin is installed
 if ! helm plugin list | awk '{print $1}' | grep -qx "diff"; then
   echo "Installing helm-diff plugin"
-  helm plugin install https://github.com/databus23/helm-diff
+  helm plugin install https://github.com/databus23/helm-diff --verify=false
 fi
 
 # Select kube context
