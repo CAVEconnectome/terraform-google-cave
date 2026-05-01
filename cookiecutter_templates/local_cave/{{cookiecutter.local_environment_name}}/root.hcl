@@ -45,7 +45,7 @@ inputs = {
   skeleton_cache_cloudpath   = "{{ cookiecutter.skeleton_cache_cloudpath }}"
 {%- endif %}
 {%- if cookiecutter.materialization_dump_bucket_name %}
-  materialization_dump_bucket_path = " {{ cookiecutter.materialization_dump_bucket_name }}
+  materialization_dump_bucket_path = "{{ cookiecutter.materialization_dump_bucket_name }}"
 {%- endif %}
   # Required configurations
   cave_secret_name           = "{{ cookiecutter.cave_secret_name }}"
