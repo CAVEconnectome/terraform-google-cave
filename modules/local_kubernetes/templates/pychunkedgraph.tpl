@@ -1,7 +1,7 @@
 # Generated values for PyChunkedGraph
 limiter:
   redis:
-    host: "${redis_host}"
+    host: "${mat_redis_host}"
 pychunkedgraph:
   graphIds: ""
   secretFiles:

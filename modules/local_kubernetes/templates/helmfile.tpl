@@ -67,14 +67,14 @@ releases:
       - ${skeletoncache_defaults}
       # - skeletoncache.yaml  # optional user override
 
-  #- name: dash
-  #  namespace: default
-  #  chart: cave/dash
-  #  version: 0.2.2
-  #  values:
-  #    - ${cluster_values}
-  #    - ${dash_defaults}
-  #    # - dash.yaml          # optional user override
+  - name: dash
+    namespace: default
+    chart: cave/dash
+    version: 1.14.6
+    values:
+      - ${cluster_values}
+      - ${dash_defaults}
+      # - dash.yaml          # need to configure secretKey and python config file
 
   - name: authinfo
     namespace: default
