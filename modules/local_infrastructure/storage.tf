@@ -28,7 +28,8 @@ resource "google_storage_bucket" "skeleton_cache" {
   project  = var.project_id
   location = var.region
 
-  uniform_bucket_level_access = true
+  storage_class = "REGIONAL"
+  uniform_bucket_level_access = var.skeleton_cache_uniform_bucket_level_access
   # Public Access Prevention: omit when public read is enabled (Terraform treats null as "unset").
   # Some provider versions only accept "enforced"; leaving it unset inherits project/org policy.
   public_access_prevention    = var.skeleton_cache_public_read ? null : "enforced"

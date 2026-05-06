@@ -163,3 +163,9 @@ variable "materialization_dump_bucket_public_access_prevention" {
   type        = string
   default     = "enforced"
 }
+
+variable "skeleton_cache_uniform_bucket_level_access" {
+  description = "Whether to enable uniform bucket-level access for the skeleton cache bucket."
+  type        = bool
+  default     = true
+}
