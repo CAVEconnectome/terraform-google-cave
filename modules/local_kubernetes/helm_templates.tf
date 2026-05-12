@@ -66,8 +66,7 @@ resource "local_file" "values_catalog" {
     datastacks         = var.catalog_datastacks,
     secrets_project_id = var.project_id,
     catalog_sa_secret  = format("catalog-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
-    cave_secret_name   = var.cave_secret_name,
-    sql_instance_name  = var.sql_instance_name
+    cave_secret_name   = var.cave_secret_name
   })
   file_permission = "0644"
 }
