@@ -60,6 +60,18 @@ resource "local_file" "values_annotation" {
   file_permission = "0644"
 }
 
+resource "local_file" "values_catalog" {
+  filename = "${var.helm_config_dir}/catalog.defaults.yaml"
+  content = templatefile("${path.module}/templates/catalog.tpl", {
+    datastacks         = var.catalog_datastacks,
+    secrets_project_id = var.project_id,
+    catalog_sa_secret  = format("catalog-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
+    cave_secret_name   = var.cave_secret_name,
+    sql_instance_name  = var.sql_instance_name
+  })
+  file_permission = "0644"
+}
+
 resource "local_file" "values_cloudsql" {
   filename = "${var.helm_config_dir}/cloudsql.defaults.yaml"
   content = templatefile("${path.module}/templates/cloudsql.tpl", {
@@ -124,7 +136,8 @@ resource "local_file" "bootstrap_helmfile_example" {
     dash_defaults           = "dash.defaults.yaml",
     pychunkedgraph_defaults = "pychunkedgraph.defaults.yaml",
     pcgl2cache_defaults     = "pcgl2cache.defaults.yaml",
-    skeletoncache_defaults  = "skeletoncache.defaults.yaml"
+    skeletoncache_defaults  = "skeletoncache.defaults.yaml",
+    catalog_defaults        = "catalog.defaults.yaml"
   })
   file_permission = "0644"
 }
