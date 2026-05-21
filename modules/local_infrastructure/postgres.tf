@@ -2,7 +2,7 @@ resource "google_sql_database_instance" "postgres" {
   name             = var.sql_instance_name
   region           = var.region
   project          = var.project_id
-  database_version = "POSTGRES_13"
+  database_version = var.postgres_version
 
   lifecycle {
     prevent_destroy = true
@@ -12,6 +12,7 @@ resource "google_sql_database_instance" "postgres" {
     # convert gb to mb in memory
     tier            = "db-custom-${var.sql_instance_cpu}-${var.sql_instance_memory_gb * 1024}"
     disk_autoresize = false
+    deletion_protection_enabled = true
     
     database_flags {
       name  = "maintenance_work_mem"
