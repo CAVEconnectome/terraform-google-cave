@@ -47,6 +47,10 @@ inputs = {
 {%- if cookiecutter.materialization_dump_bucket_name %}
   materialization_dump_bucket_path = "{{ cookiecutter.materialization_dump_bucket_name }}"
 {%- endif %}
+{%- if cookiecutter.materialization_upload_bucket_name %}
+  materialization_upload_bucket_name = "{{ cookiecutter.materialization_upload_bucket_name }}"
+{%- endif %}
+
   # Required configurations
   cave_secret_name           = "{{ cookiecutter.cave_secret_name }}"
   letsencrypt_email          = "{{ cookiecutter.letsencrypt_email }}"
