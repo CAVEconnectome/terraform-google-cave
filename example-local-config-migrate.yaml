@@ -23,4 +23,5 @@ default_context:
   cave_secret_name: "my-cave-secret" # you need to set this up with cave service account token you were using for secrets.sh
   letsencrypt_email: "$LETSENCRYPT_EMAIL"
   materialization_dump_bucket_name: "$MATERIALIZATION_DUMP_BUCKET_NAME"
-  materialization_upload_bucket_name: "$MATERIALIZATION_UPLOAD_BUCKET_NAME"
+  materialization_upload_bucket_name: "$MATERIALIZATION_UPLOAD_BUCKET_PATH" # you can leave this blank, if you have not already set up a bucket for materialization uploads
+  health_annotation_align_volume: "$MAT_HEALTH_ALIGNED_VOLUME_NAME" # you can leave this blank, if you have not already set up a volume for health annotation alignment, if left blank, health annotation alignment will be disabled.
