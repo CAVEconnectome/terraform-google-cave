@@ -98,6 +98,11 @@ resource "google_storage_bucket" "materialization_upload" {
     component   = "materialization-upload"
   }
 
+  autoclass {
+    enabled                = "true"
+    terminal_storage_class = "NEARLINE"
+  }
+
   cors {
     origin        = ["*"]
     method        = ["OPTIONS", "POST", "PUT"]

@@ -15,8 +15,8 @@ locals {
 }
 
 resource "google_service_account" "pycg_service_account" {
-  account_id   = "pychunkedgraph-${var.cluster_prefix}-${terraform.workspace}"
-  display_name = "PyChunkedGraph-${var.cluster_prefix}-${terraform.workspace}"
+  account_id   = "pychunkedgraph-${var.cluster_prefix}"
+  display_name = "PyChunkedGraph-${var.cluster_prefix}"
 }
 
 resource "google_project_iam_member" "pycg_bigtable_user" {

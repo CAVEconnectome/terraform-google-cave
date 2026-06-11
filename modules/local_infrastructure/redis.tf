@@ -11,7 +11,7 @@ resource "google_redis_instance" "pcg_redis" {
   authorized_network = google_compute_network.vpc.self_link
   redis_configs =  {
     maxmemory-policy = "allkeys-lru"
-    maxmemory-gb     = "0.98"
+    maxmemory-gb     = "${var.pcg_redis_memory_size_gb * 0.98}"
   }
 
   labels = {
