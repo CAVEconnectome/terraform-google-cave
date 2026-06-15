@@ -46,7 +46,7 @@ releases:
   - name: pychunkedgraph
     namespace: default
     chart: cave/pychunkedgraph
-    version: 2.20.0-r1
+    version: 2.20.0-r2
     values:
       - ${cluster_values}
       - ${pychunkedgraph_defaults}
