@@ -1,5 +1,5 @@
 terraform {
-  source = "tfr:///CAVEconnectome/cave/google//modules/local_kubernetes?version=0.1.2"
+  source = "tfr:///CAVEconnectome/cave/google//modules/local_kubernetes?version=0.1.3"
 }
 
 include "root" {
