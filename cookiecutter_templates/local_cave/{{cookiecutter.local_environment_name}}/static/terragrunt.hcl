@@ -6,7 +6,7 @@
 
 terraform { 
   # 
-  source  = "tfr:///CAVEconnectome/cave/google//modules/local_infrastructure?version=0.1.1"
+  source  = "tfr:///CAVEconnectome/cave/google//modules/local_infrastructure?version=0.1.2"
   #source = "../../../../terraform-google-cave/modules/local_infrastructure"
 }
 
