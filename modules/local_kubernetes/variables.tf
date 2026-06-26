@@ -202,3 +202,15 @@ variable "cave_secret_name" {
   description = "Secret Manager secret containing the CAVE token"
   type        = string
 }
+
+variable "catalog_managed_buckets" {
+  description = "List of GCS bucket names the catalog SA gets objectViewer on for credential vending"
+  type        = list(string)
+  default     = []
+}
+
+variable "catalog_datastacks" {
+  description = "List of datastack names served by the catalog service"
+  type        = list(string)
+  default     = []
+}
