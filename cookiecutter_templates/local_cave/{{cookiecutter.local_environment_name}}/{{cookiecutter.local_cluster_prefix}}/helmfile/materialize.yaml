@@ -1,5 +1,7 @@
 materialize:
   # Reference the scaffolded schedules.json via Helmfile file ref
-  schedules: "ref+file://schedules.py"
+  schedules: "ref+file://schedules.json"
+  maxDatabases: 3
+  minDatabases: 1
   datastacks:
     - {{ cookiecutter.materialize_datastack }}
