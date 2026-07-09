@@ -140,3 +140,15 @@ resource "local_file" "bootstrap_configure_script" {
   })
   file_permission = "0755"
 }
+
+resource "local_file" "cloudsql_proxy_script" {
+  filename = "${var.helm_config_dir}/cloudsqlproxy.sh"
+  content = templatefile("${path.module}/templates/cloudsqlproxy.sh.tpl", {
+    project_id           = var.project_id,
+    region               = var.region,
+    zone                 = var.zone,
+    sql_instance_name    = var.sql_instance_name,
+    postgres_credentials = "${var.environment}-postgres-credentials"
+  })
+  file_permission = "0755"
+}
