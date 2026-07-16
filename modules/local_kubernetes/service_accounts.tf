@@ -297,6 +297,35 @@ resource "google_secret_manager_secret_version" "clouddns_secret_version" {
   secret_data = base64decode(google_service_account_key.clouddns_key.private_key)
 }
 
+# Catalog Service Account
+resource "google_service_account" "catalog_service_account" {
+  account_id   = "catalog-${var.cluster_prefix}-${terraform.workspace}"
+  display_name = "Catalog-${var.cluster_prefix}-${terraform.workspace}"
+}
+
+# Per-bucket objectViewer for credential vending (self-downscoping via CAB)
+resource "google_storage_bucket_iam_member" "catalog_bucket_viewer" {
+  for_each = toset(var.catalog_managed_buckets)
+  bucket   = each.value
+  role     = "roles/storage.objectViewer"
+  member   = "serviceAccount:${google_service_account.catalog_service_account.email}"
+}
+
+resource "google_service_account_key" "catalog_key" {
+  service_account_id = google_service_account.catalog_service_account.name
+  private_key_type   = local.sa_key_private_type
+}
+resource "google_secret_manager_secret" "catalog_secret" {
+  secret_id = "catalog-google-secret-${var.cluster_prefix}-${terraform.workspace}"
+  replication {
+    auto {}
+  }
+}
+resource "google_secret_manager_secret_version" "catalog_secret_version" {
+  secret      = google_secret_manager_secret.catalog_secret.id
+  secret_data = base64decode(google_service_account_key.catalog_key.private_key)
+}
+
 # Read existing CAVE token from Secret Manager (must be manually created)
 data "google_secret_manager_secret_version" "cave_token" {
   project = var.project_id

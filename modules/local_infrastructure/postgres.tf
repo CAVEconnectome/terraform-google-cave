@@ -45,6 +45,12 @@ resource "google_sql_database" "materialization" {
   instance = google_sql_database_instance.postgres.name
 }
 
+resource "google_sql_database" "cave_catalog" {
+  name     = "cave_catalog"
+  project  = var.project_id
+  instance = google_sql_database_instance.postgres.name
+}
+
 locals {
   db_credentials = jsondecode(data.google_secret_manager_secret_version.postgres_credentials.secret_data)
 }
