@@ -153,6 +153,12 @@ variable "deletion_protection" {
   default     = false
 }
 
+variable "enable_vertical_pod_autoscaling" {
+  type        = bool
+  description = "enable vertical pod autoscaling for the cluster"
+  default     = true
+}
+
 variable "redis_version" {
   type        = string
   default     = "7_2"

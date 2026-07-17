@@ -54,6 +54,10 @@ resource "google_container_cluster" "cluster" {
     managed_prometheus { enabled = true }
   }
 
+  vertical_pod_autoscaling {
+    enabled = var.enable_vertical_pod_autoscaling
+  }
+
   timeouts {
     create = "30m"
     update = "30m"
