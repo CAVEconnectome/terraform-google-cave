@@ -10,11 +10,11 @@ pcgl2cache:
       value: "ref+gcpsecrets://${secrets_project_id}/${pycg_sa_secret}"
     - name: cave-secret.json
       value: "ref+gcpsecrets://${secrets_project_id}/${cave_secret_name}"
-  # Default Pub/Sub subscription names derived from cluster_prefix
+  # Subscription names come from the local_cluster module outputs (single source of truth).
   queues:
-    update: "${cluster_prefix}_L2CACHE_WORKER"
-    high: "${cluster_prefix}_L2CACHE_HIGH_PRIORITY_TRIGGER"
-    low: "${cluster_prefix}_L2CACHE_LOW_PRIORITY_TRIGGER"
+    update: "${l2cache_worker_subscription}"
+    high: "${l2cache_high_trigger}"
+    low: "${l2cache_low_trigger}"
   # Default exchanges
   exchanges:
     update: "${cluster_prefix}_L2CACHE"

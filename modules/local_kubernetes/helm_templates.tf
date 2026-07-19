@@ -23,12 +23,12 @@ resource "local_file" "helm_values_cluster" {
 resource "local_file" "values_materialize" {
   filename = "${var.helm_config_dir}/materialize.defaults.yaml"
   content = templatefile("${path.module}/templates/materialize.tpl", {
-    redis_host                    = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host,
-    project_id                    = var.project_id,
-    sql_instance_name             = var.sql_instance_name,
-    secrets_project_id            = var.project_id,
-    cave_secret_name              = var.cave_secret_name,
-    pycg_sa_secret                = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
+    redis_host                         = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host,
+    project_id                         = var.project_id,
+    sql_instance_name                  = var.sql_instance_name,
+    secrets_project_id                 = var.project_id,
+    cave_secret_name                   = var.cave_secret_name,
+    pycg_sa_secret                     = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
     materialization_upload_bucket_name = var.materialization_upload_bucket_path != "" ? var.materialization_upload_bucket_path : var.materialization_upload_bucket_name,
     materialization_dump_bucket_path   = var.materialization_dump_bucket_path != "" ? var.materialization_dump_bucket_path : var.materialization_dump_bucket_name
   })
@@ -104,11 +104,14 @@ resource "local_file" "values_pcg" {
 resource "local_file" "values_pcgl2cache" {
   filename = "${var.helm_config_dir}/pcgl2cache.defaults.yaml"
   content = templatefile("${path.module}/templates/pcgl2cache.tpl", {
-    cluster_prefix     = var.cluster_prefix,
-    bigtable_instance  = var.bigtable_instance_name,
-    pycg_sa_secret     = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
-    secrets_project_id = var.project_id,
-    cave_secret_name   = var.cave_secret_name
+    cluster_prefix              = var.cluster_prefix,
+    l2cache_worker_subscription = var.l2cache_worker_subscription,
+    l2cache_high_trigger        = var.l2cache_high_priority_trigger_subscription,
+    l2cache_low_trigger         = var.l2cache_low_priority_trigger_subscription,
+    bigtable_instance           = var.bigtable_instance_name,
+    pycg_sa_secret              = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
+    secrets_project_id          = var.project_id,
+    cave_secret_name            = var.cave_secret_name
   })
   file_permission = "0644"
 }

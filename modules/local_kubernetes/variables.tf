@@ -28,6 +28,23 @@ variable "cluster_prefix" {
   type        = string
 }
 
+# pcgl2cache worker Pub/Sub subscription names, sourced from local_cluster outputs
+# so the naming format lives only in the local_cluster pubsub definitions.
+variable "l2cache_worker_subscription" {
+  description = "Pub/Sub subscription for the pcgl2cache update/missing worker (from local_cluster)"
+  type        = string
+}
+
+variable "l2cache_high_priority_trigger_subscription" {
+  description = "Pub/Sub subscription for the pcgl2cache high-priority worker (from local_cluster)"
+  type        = string
+}
+
+variable "l2cache_low_priority_trigger_subscription" {
+  description = "Pub/Sub subscription for the pcgl2cache low-priority worker (from local_cluster)"
+  type        = string
+}
+
 variable "gcp_user_account" {
   description = "Email for the GCP user to grant cluster-admin via ClusterRoleBinding"
   type        = string

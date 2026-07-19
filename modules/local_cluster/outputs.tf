@@ -40,6 +40,24 @@ output "l2cache_update" {
   description = "The name of the pubsub subscription for l2cache jobs"
 }
 
+# Single source of truth for the pcgl2cache worker subscription names. These read
+# straight off the subscription resources, so any naming change in pubsub.tf
+# (e.g. the terraform.workspace segment on the trigger subs) flows through here.
+output "l2cache_worker_subscription" {
+  value       = google_pubsub_subscription.l2cache_update.name
+  description = "Subscription the pcgl2cache update/missing worker listens on"
+}
+
+output "l2cache_high_priority_trigger_subscription" {
+  value       = google_pubsub_subscription.l2cache_trigger.name
+  description = "Subscription the pcgl2cache high-priority worker listens on"
+}
+
+output "l2cache_low_priority_trigger_subscription" {
+  value       = google_pubsub_subscription.l2cache_trigger_low_priority.name
+  description = "Subscription the pcgl2cache low-priority worker listens on"
+}
+
 output "pychunkedgraph_edits_topic" {
   value       = google_pubsub_topic.pychunkedgraph_edits.name
   description = "The name of the pubsub topic for pcg remesh jobs"

@@ -1,5 +1,5 @@
 terraform {
-  source = "tfr:///CAVEconnectome/cave/google//modules/local_kubernetes?version=0.2.0"
+  source = "tfr:///CAVEconnectome/cave/google//modules/local_kubernetes?version=0.1.3"
 }
 
 include "root" {
@@ -31,4 +31,8 @@ inputs = {
   helm_config_dir = "${dirname(get_terragrunt_dir())}/helmfile"
   workload_identity_gsa_email = dependency.cluster.outputs.workload_identity_service_account_email
   mat_redis_host = dependency.cluster.outputs.mat_redis_host
+  # pcgl2cache worker subscriptions (single source of truth: local_cluster pubsub)
+  l2cache_worker_subscription                = dependency.cluster.outputs.l2cache_worker_subscription
+  l2cache_high_priority_trigger_subscription = dependency.cluster.outputs.l2cache_high_priority_trigger_subscription
+  l2cache_low_priority_trigger_subscription  = dependency.cluster.outputs.l2cache_low_priority_trigger_subscription
 }
