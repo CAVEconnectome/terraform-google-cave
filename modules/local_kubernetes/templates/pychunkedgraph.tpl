@@ -20,7 +20,7 @@ pychunkedgraph:
   writeCpuMilli: 500
   readMinReplicas: 1
   readMaxReplicas: 10
-  readMemGb: 1.8
+  readMemGb: 2
   readCpuMilli: 125
   meshMinReplicas: 1
   meshMaxReplicas: 3
