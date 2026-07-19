@@ -24,8 +24,8 @@ pychunkedgraph:
   readCpuMilli: 125
   meshMinReplicas: 1
   meshMaxReplicas: 3
-  meshMemGb: 4
-  meshCpuMilli: 1000
+  # mesh-api resources default to the chart's lightweight sizing (200Mi/100m).
+  # Set meshMemory / meshCpu (k8s quantities) in a per-env override to raise them.
   meshWorkerMinReplicas: 0
   meshWorkerMaxReplicas: 10
   remeshQueue:
