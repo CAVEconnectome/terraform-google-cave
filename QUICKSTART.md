@@ -40,18 +40,18 @@ printf '%s' '{"username":"postgres","password":"<strong-secret>"}' \
 ```
 
 ## Environment repository
-We reccomend that you setup a seperate repository/folder to store all your environment configurations. So make a new folder that you will store and track these files. 
+We recommend that you set up a seperate repository/folder to store all your environment configurations. So make a new folder that you will store and track these files. 
 
 You can see an example repository at https://www.github.com/CAVEconnectome/terraform-cave-private which is used to manage several cave deployments (3 global, and 6 local clusters).
 
 copy the example-global-config.yaml and example-local-config.yaml into this folder on your 
 ## Generate a starter global environnent with CookieCutter
 
-We reccomend that you setup a seperate repository to store all your environment configurations. So make a new folder that you will store and track these files. 
+We recommend that you set up a seperate repository to store all your environment configurations. So make a new folder that you will store and track these files. 
 
 ## Generate a starter local environment with Cookiecutter
 
-We reccomend that you setup a seperate repository to store all your environment configurations. So make a new folder that you will store and track these files. 
+We recommend that you set up a seperate repository to store all your environment configurations. So make a new folder that you will store and track these files. 
 
 copy an example cookiecutter template file into that directory (we will refer to this AS ENVIRONMENTS_REPO) and rename it to something (we will call it CC_TEMPLATE.yaml)
 
