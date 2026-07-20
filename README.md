@@ -10,7 +10,7 @@ A repository to store terraform modules for setting up infrastructure as code fo
    mac: install homebrew
         brew install helm helmfile
 
-3. setup environment(s) using the cookiecutter templates (see cookiecutter_templates/README.md)
+3. set up environment(s) using the cookiecutter templates (see cookiecutter_templates/README.md)
 
 
 
