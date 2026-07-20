@@ -45,7 +45,7 @@ We recommend that you set up a seperate repository/folder to store all your envi
 You can see an example repository at https://www.github.com/CAVEconnectome/terraform-cave-private which is used to manage several cave deployments (3 global, and 6 local clusters).
 
 copy the example-global-config.yaml and example-local-config.yaml into this folder on your 
-## Generate a starter global environnent with CookieCutter
+## Generate a starter global environnent with Cookiecutter
 
 We recommend that you set up a seperate repository to store all your environment configurations. So make a new folder that you will store and track these files. 
 
