@@ -14,7 +14,7 @@ A repository to store terraform modules for setting up infrastructure as code fo
 
 
 
-3. make sure you can login to your google account, and you have a google project setup with the follwoing permissions on your account. 
+3. make sure you can login to your google account, and you have a google project setup with the following permissions on your account. 
 
 service account user
 kubernetes adminsitrator
