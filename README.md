@@ -17,7 +17,7 @@ A repository to store terraform modules for setting up infrastructure as code fo
 3. make sure you can login to your google account, and you have a google project setup with the following permissions on your account. 
 
 service account user
-kubernetes adminsitrator
+kubernetes administrator
 
 4. This assumes you have setup bigtable and ingested some data into a table seperately.  This is currently managed by a seperate process documented and outlined in seung-lab/CAVEpipelines.  If you need to read more about how to format your segmentation result to be ingested look at thie markdown file [TODO: ADD LINK]
 
