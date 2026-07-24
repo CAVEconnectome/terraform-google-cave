@@ -116,6 +116,16 @@ resource "local_file" "values_pcgl2cache" {
   file_permission = "0644"
 }
 
+# Defaults for the landing page chart. The service list is the chart default;
+# this file supplies the per-environment title/heading.
+resource "local_file" "values_landingpage" {
+  filename = "${var.helm_config_dir}/landingpage.defaults.yaml"
+  content = templatefile("${path.module}/templates/landingpage.tpl", {
+    environment = var.environment
+  })
+  file_permission = "0644"
+}
+
 # Bootstrap helmfile example: write helmfile.yaml.example so users can copy/modify helmfile.yaml themselves.
 resource "local_file" "bootstrap_helmfile_example" {
   filename = "${var.helm_config_dir}/helmfile.yaml.example"
@@ -127,7 +137,8 @@ resource "local_file" "bootstrap_helmfile_example" {
     dash_defaults           = "dash.defaults.yaml",
     pychunkedgraph_defaults = "pychunkedgraph.defaults.yaml",
     pcgl2cache_defaults     = "pcgl2cache.defaults.yaml",
-    skeletoncache_defaults  = "skeletoncache.defaults.yaml"
+    skeletoncache_defaults  = "skeletoncache.defaults.yaml",
+    landingpage_defaults    = "landingpage.defaults.yaml"
   })
   file_permission = "0644"
 }

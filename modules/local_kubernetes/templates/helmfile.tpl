@@ -93,3 +93,12 @@ releases:
     version: 0.1.0
     values:
       - ${cluster_values}
+
+  - name: landingpage
+    namespace: default
+    chart: cave/landingpage
+    version: 0.1.0
+    values:
+      - ${cluster_values}
+      - ${landingpage_defaults}
+      # - landingpage.yaml   # optional user override (e.g. custom service list)
