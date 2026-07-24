@@ -1,7 +1,6 @@
 # terraform-google-cave
 A repository to store terraform modules for setting up infrastructure as code for CAVE in google cloud
 
-
 # setup
 1. Install terraform and terragrunt
    mac:  install homebrew
@@ -10,18 +9,16 @@ A repository to store terraform modules for setting up infrastructure as code fo
    mac: install homebrew
         brew install helm helmfile
 
-3. setup environment(s) using the cookiecutter templates (see cookiecutter_templates/README.md)
+3. set up environment(s) using the cookiecutter templates (see cookiecutter_templates/README.md)
 
-
-
-3. make sure you can login to your google account, and you have a google project setup with the follwoing permissions on your account. 
+4. make sure you can login to your google account, and you have a google project set up with the following permissions on your account. 
 
 service account user
-kubernetes adminsitrator
+kubernetes administrator
 
-4. This assumes you have setup bigtable and ingested some data into a table seperately.  This is currently managed by a seperate process documented and outlined in seung-lab/CAVEpipelines.  If you need to read more about how to format your segmentation result to be ingested look at thie markdown file [TODO: ADD LINK]
+5. This assumes you have set up bigtable and ingested some data into a table seperately.  This is currently managed by a seperate process documented and outlined in seung-lab/CAVEpipelines.  If you need to read more about how to format your segmentation result to be ingested look at thie markdown file [TODO: ADD LINK]
 
-5. create a new environment in environments folder. Follow pattern found in example_environment.  Fill in values in the terraform.tfvars folder. 
+6. create a new environment in environments folder. Follow pattern found in example_environment.  Fill in values in the terraform.tfvars folder. 
 
 Navigate to your environment folder with a terminal.
 
@@ -34,8 +31,6 @@ if this is a production environemnt, we reccomend setting up blue/green workspac
    terraform plan
 
 If you have an existing deployment of CAVE that you would like to start managing with CAVE you will see a lot of resources being created here. To fix this you need to follow the instructions under the Migration section below. 
-
-
 
 ## How this repo fits with Helm charts
 
@@ -83,7 +78,7 @@ from the environment folder.
 We have made two scripts to assist with this process. To use them navigate to your infrastrucutre directories ({{deployment_description}}/{{static}}), and then run ../scripts/import
 
 ### todo
-1. for global figure out oauth secret integration with terragrutn or add to manual step before going to helm 
+1. for global figure out oauth secret integration with terragrunt or add to manual step before going to helm 
 2. consider adding scalers to global deployments
 3. write instructions about when/how to do the cavetoken thing with global and/or local
 4. recheck how the postgres username/password flow is suppose to work and is well documented.
