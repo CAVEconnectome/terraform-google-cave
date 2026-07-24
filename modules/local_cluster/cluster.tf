@@ -51,6 +51,12 @@ resource "google_container_cluster" "cluster" {
   }
 
   monitoring_config {
+  enable_components = [
+    "SYSTEM_COMPONENTS", 
+    "POD", 
+    "DEPLOYMENT", 
+    "STATEFULSET"
+  ]
     managed_prometheus { enabled = true }
   }
 
