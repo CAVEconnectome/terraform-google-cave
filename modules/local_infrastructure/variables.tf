@@ -8,12 +8,12 @@ variable "region" {
 
 
 variable "helm_config_dir" {
-  type = string
+  type        = string
   description = "folder where to output helmfile config files"
 }
 
 variable "helm_terraform_state_url" {
-  type = string
+  type        = string
   description = "url where to find tfstate state, using helmfile syntax, assuming ref+tfstateURL so for example i.e. ://PATH_TO_STATE, or gs://BUCKET/PATH_TO_STATE"
 }
 
@@ -23,14 +23,14 @@ variable "project_id" {
 }
 
 variable "owner" {
-  type = string
+  type        = string
   description = "added as label to resources, convenient to filter costs based on labels"
-  default = "na"
+  default     = "na"
 }
 
 variable "sql_instance_name" {
   description = "Name of the SQL instance"
-  type = string
+  type        = string
 }
 
 variable "postgres_version" {
@@ -63,29 +63,29 @@ variable "vpc_name_override" {
 
 locals {
   pcg_redis_name = var.pcg_redis_name_override != "" ? var.pcg_redis_name_override : "${var.owner}-${var.environment}-pcg-redis"
-  vpc_name = var.vpc_name_override != "" ? var.vpc_name_override : "${var.owner}-${var.environment}-vpc"
+  vpc_name       = var.vpc_name_override != "" ? var.vpc_name_override : "${var.owner}-${var.environment}-vpc"
 }
 
 variable "sql_instance_cpu" {
   description = "Number of CPUs for the SQL instance"
-  default = 4
+  default     = 4
 }
 
 variable "sql_instance_memory_gb" {
   description = "Amount of memory for the SQL instance in gb"
-  default = 16 # 10240 Mb in GB
+  default     = 16 # 10240 Mb in GB
 }
 
 variable "sql_temp_file_limit_gb" {
   description = "Temporary file size limit in gigabytes"
   type        = number
-  default     = 100  # 104857600 Kb in GB
+  default     = 100 # 104857600 Kb in GB
 }
 
 variable "sql_maintenance_work_mem_gb" {
   description = "Maximum amount of memory to be used for maintenance operations in gigabytes"
   type        = number
-  default     = 2 
+  default     = 2
 }
 
 variable "max_parallel_maintenance_workers" {
@@ -97,19 +97,19 @@ variable "max_parallel_maintenance_workers" {
 variable "temp_file_limit" {
   description = "Temporary file size limit in kilobytes"
   type        = number
-  default     = 104857600  # 100 GB in KB
+  default     = 104857600 # 100 GB in KB
 }
 
 variable "work_mem" {
   description = "Amount of memory to be used by internal sort operations and hash tables in kilobytes"
   type        = number
-  default     = 64000  # 64 MB in KB
+  default     = 64000 # 64 MB in KB
 }
 
 variable "sql_work_mem_mb" {
   description = "Amount of memory to be used by internal sort operations and hash tables in megabytes"
   type        = number
-  default     = 64  # 64000 Kb in MB
+  default     = 64 # 64000 Kb in MB
 }
 
 variable "pcg_redis_memory_size_gb" {
@@ -174,4 +174,34 @@ variable "skeleton_cache_uniform_bucket_level_access" {
   description = "Whether to enable uniform bucket-level access for the skeleton cache bucket."
   type        = bool
   default     = true
+}
+
+variable "sql_backups_enabled" {
+  description = "Whether automated backups are enabled on the SQL instance. Turn off only for environments whose data is disposable or reproducible."
+  type        = bool
+  default     = true
+}
+
+variable "sql_point_in_time_recovery_enabled" {
+  description = "Whether point-in-time recovery is enabled on the SQL instance. Has no effect when sql_backups_enabled is false, since PITR depends on backups."
+  type        = bool
+  default     = true
+}
+
+variable "sql_backup_start_time" {
+  description = "HH:MM (UTC) start of the daily backup window. Leave null to let GCP keep its existing/default window."
+  type        = string
+  default     = null
+}
+
+variable "sql_transaction_log_retention_days" {
+  description = "Days of transaction logs to retain for point-in-time recovery. Leave null to keep the GCP default."
+  type        = number
+  default     = null
+}
+
+variable "sql_backup_retained_count" {
+  description = "Number of automated backups to retain. Leave null to keep the GCP default."
+  type        = number
+  default     = null
 }
