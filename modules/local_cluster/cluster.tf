@@ -51,12 +51,11 @@ resource "google_container_cluster" "cluster" {
   }
 
   monitoring_config {
-  enable_components = [
-    "SYSTEM_COMPONENTS", 
-    "POD", 
-    "DEPLOYMENT", 
-    "STATEFULSET"
-  ]
+    # CADVISOR and KUBELET are the components that back the console's workload
+    # CPU/memory views; POD/DEPLOYMENT/STATEFULSET alone only yield kube-state
+    # metrics. See the variable description for the cost trade-off.
+    enable_components = var.monitoring_enable_components
+
     managed_prometheus { enabled = true }
   }
 

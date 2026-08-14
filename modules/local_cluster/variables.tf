@@ -159,6 +159,55 @@ variable "enable_vertical_pod_autoscaling" {
   default     = true
 }
 
+variable "monitoring_enable_components" {
+  type = list(string)
+  description = <<-EOT
+    GKE monitoring components to enable. POD/DEPLOYMENT/STATEFULSET/DAEMONSET/HPA
+    are kube-state metrics (replica counts, phases, restarts). CADVISOR and KUBELET
+    are what produce the per-container/per-pod CPU and memory series that the GKE
+    console's workload observability views read -- without them those views render
+    but stay empty.
+
+    All components except SYSTEM_COMPONENTS require managed_prometheus, which this
+    module enables unconditionally.
+
+    Cost note: CADVISOR and KUBELET are the highest-cardinality components GKE
+    offers (per-container, per-pod, per-volume series billed as GMP samples). On
+    clusters with large, short-lived worker fleets they materially increase
+    ingestion volume. Override this variable to trim the list per environment.
+
+    Valid values: SYSTEM_COMPONENTS, APISERVER, SCHEDULER, CONTROLLER_MANAGER,
+    STORAGE, HPA, POD, DAEMONSET, DEPLOYMENT, STATEFULSET, CADVISOR, KUBELET,
+    DCGM, JOBSET. (WORKLOADS is accepted by the API but is a deprecated no-op for
+    monitoring -- it is only meaningful in logging_config.)
+  EOT
+  default = [
+    "SYSTEM_COMPONENTS",
+    "POD",
+    "DEPLOYMENT",
+    "STATEFULSET",
+    "DAEMONSET",
+    "HPA",
+    "STORAGE",
+    "CADVISOR",
+    "KUBELET",
+  ]
+
+  validation {
+    condition     = contains(var.monitoring_enable_components, "SYSTEM_COMPONENTS")
+    error_message = "SYSTEM_COMPONENTS must be included; GKE rejects a monitoring config that enables other components without it."
+  }
+
+  validation {
+    condition = length(setsubtract(var.monitoring_enable_components, [
+      "SYSTEM_COMPONENTS", "APISERVER", "SCHEDULER", "CONTROLLER_MANAGER",
+      "STORAGE", "HPA", "POD", "DAEMONSET", "DEPLOYMENT", "STATEFULSET",
+      "CADVISOR", "KUBELET", "DCGM", "JOBSET",
+    ])) == 0
+    error_message = "Unsupported monitoring component. See the variable description for the valid list."
+  }
+}
+
 variable "redis_version" {
   type        = string
   default     = "7_2"
