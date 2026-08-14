@@ -5,16 +5,6 @@ repositories:
 # Copy this file to helmfile.yaml and add your own overrides next to the *.defaults.yaml files
 
 releases:
-  - name: authinfo
-    namespace: default
-    chart: cave/authinfo
-    version: 0.1.0
-    values:
-      - ${cluster_values}
-  - ${cloudsql_defaults}
-      - ${authinfo_defaults}
-      # - authinfo.yaml      # optional user override (set supportedDatastacks)
-
   - name: auth
     namespace: default
     chart: cave/auth

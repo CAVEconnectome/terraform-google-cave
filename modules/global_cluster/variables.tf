@@ -22,15 +22,6 @@ variable "gcp_user_account" {
   description = "The GCP user account for creating ClusterRoleBinding"
 }
 
-variable "letsencrypt_email" {
-  description = "email to use for getting certificates"
-  type        = string
-}
-
-variable "sql_instance_name" {
-  description = "Name of the SQL instance"
-}
-
 variable "dns_zone" {
   description = "The name of the DNS managed zone"
   type        = string
@@ -52,41 +43,19 @@ variable "dns_entries" {
 variable "owner" {
   type        = string
   description = "added as label to resources, convenient to filter costs based on labels"
-  default     = "na"
+  default     = "cave"
 }
 
-variable "standard_machine_type" {
+variable "machine_type" {
   type        = string
-  default     = "e2-standard-2"
+  default     = "e2-medium"
   description = "VM instance type for standard pool"
 }
 
-variable "max_nodes_standard_pool" {
+variable "max_nodes" {
   type        = number
-  default     = 4
+  default     = 5
   description = "Maximum size of standard pool"
-}
-
-variable "letsencrypt_issuer_name" {
-  type        = string
-  default     = "letsencrypt-staging"
-  description = "which certificate issuer to configure cert-manager with"
-}
-
-variable "letsencrypt_server" {
-  description = "ACME server URL"
-  type        = string
-  default     = "https://acme-v02.api.letsencrypt.org/directory"
-}
-
-variable "helm_config_dir" {
-  type        = string
-  description = "folder where to output helmfile config files"
-}
-
-variable "helm_terraform_state_url" {
-  type        = string
-  description = "url where to find tfstate state, using helmfile syntax, assuming ref+tfstateURL so for example i.e. ://PATH_TO_STATE, or gs://BUCKET/PATH_TO_STATE"
 }
 
 variable "deletion_protection" {
@@ -105,19 +74,51 @@ variable "subnetwork"{
   description ="the self_link of the vpc subnetwork to put the cluster on"
 }
 
-variable "docker_registry" {
-  description = "Container registry to use in Helm values"
-  type        = string
-  default     = "docker.io/caveconnectome"
-}
+variable "monitoring_enable_components" {
+  type = list(string)
+  description = <<-EOT
+    GKE monitoring components to enable. POD/DEPLOYMENT/STATEFULSET/DAEMONSET/HPA
+    are kube-state metrics (replica counts, phases, restarts). CADVISOR and KUBELET
+    are what produce the per-container/per-pod CPU and memory series that the GKE
+    console's workload observability views read -- without them those views render
+    but stay empty.
 
-variable "global_server" {
-  description = "Fully qualified global server hostname (where auth and info service reside) (e.g., global.daf-apis.com)"
-  type        = string
-}
+    All components except SYSTEM_COMPONENTS require managed_prometheus, which this
+    module enables unconditionally.
 
-variable "cave_token" {
-  description = "CAVE access token (JSON will be created as {\"token\": \"...\"})"
-  type        = string
-  sensitive   = true
+    Cost note: CADVISOR and KUBELET are the highest-cardinality components GKE
+    offers (per-container, per-pod, per-volume series billed as GMP samples). On
+    clusters with large, short-lived worker fleets they materially increase
+    ingestion volume. Override this variable to trim the list per environment.
+
+    Valid values: SYSTEM_COMPONENTS, APISERVER, SCHEDULER, CONTROLLER_MANAGER,
+    STORAGE, HPA, POD, DAEMONSET, DEPLOYMENT, STATEFULSET, CADVISOR, KUBELET,
+    DCGM, JOBSET. (WORKLOADS is accepted by the API but is a deprecated no-op for
+    monitoring -- it is only meaningful in logging_config.)
+  EOT
+  default = [
+    "SYSTEM_COMPONENTS",
+    "POD",
+    "DEPLOYMENT",
+    "STATEFULSET",
+    "DAEMONSET",
+    "HPA",
+    "STORAGE",
+    "CADVISOR",
+    "KUBELET",
+  ]
+
+  validation {
+    condition     = contains(var.monitoring_enable_components, "SYSTEM_COMPONENTS")
+    error_message = "SYSTEM_COMPONENTS must be included; GKE rejects a monitoring config that enables other components without it."
+  }
+
+  validation {
+    condition = length(setsubtract(var.monitoring_enable_components, [
+      "SYSTEM_COMPONENTS", "APISERVER", "SCHEDULER", "CONTROLLER_MANAGER",
+      "STORAGE", "HPA", "POD", "DAEMONSET", "DEPLOYMENT", "STATEFULSET",
+      "CADVISOR", "KUBELET", "DCGM", "JOBSET",
+    ])) == 0
+    error_message = "Unsupported monitoring component. See the variable description for the valid list."
+  }
 }

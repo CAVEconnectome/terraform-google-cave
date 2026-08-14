@@ -20,23 +20,11 @@ resource "local_file" "bootstrap_helmfile_example" {
   filename = "${var.helm_config_dir}/helmfile.yaml.example"
   content  = templatefile("${path.module}/templates/helmfile.tpl", {
     cluster_values     = "cluster.yaml"
-    authinfo_defaults  = "authinfo.defaults.yaml"
     cloudsql_defaults  = "cloudsql.defaults.yaml"
   })
   file_permission = "0644"
 }
 
-resource "local_file" "values_authinfo" {
-  filename = "${var.helm_config_dir}/authinfo.defaults.yaml"
-  content  = templatefile("${path.module}/templates/authinfo.tpl", {
-    global_server       = var.global_server,
-    environment         = var.environment,
-    domain_name         = var.domain_name,
-    standard_pool_name  = google_container_node_pool.sp.name,
-    docker_registry     = var.docker_registry
-  })
-  file_permission = "0644"
-}
 
 resource "local_file" "values_cloudsql" {
   filename = "${var.helm_config_dir}/cloudsql.defaults.yaml"
@@ -49,50 +37,27 @@ resource "local_file" "values_cloudsql" {
   file_permission = "0644"
 }
 
+resource "local_file" "values_auth" {
+  filename = "${var.helm_config_dir}/auth.defaults.yaml"
+  content  = templatefile("${path.module}/templates/auth.tpl", {
+    terraform_state_url  = var.helm_terraform_state_url
+    secrets_project_id   = var.project_id
+    cave_secret_name     = var.cave_secret_name
+    auth_sa_secret   = format("auth-google-secret-%s-%s", var.cluster_prefix, terraform.workspace)
+  })
+  file_permission = "0644"
+}
+
 # Defaults for global services; users can override next to these files.
 resource "local_file" "values_auth" {
   filename = "${var.helm_config_dir}/auth.defaults.yaml"
   content  = <<-EOT
 redis:
-  host: "ref+tfstate${var.helm_terraform_state_url}/output.pcg_redis_host"
+  host: "ref+tfstate${var.helm_terraform_state_url}/output.auth_redis_host"
 auth:
   # oauthSecretName: "k8s-secret-name"
   # clientSecretName: "k8s-secret-name"
   # dbName: "auth"
-EOT
-  file_permission = "0644"
-}
-
-
-resource "local_file" "values_infoservice" {
-  filename = "${var.helm_config_dir}/infoservice.defaults.yaml"
-  content  = <<-EOT
-redis:
-  host: "ref+tfstate${var.helm_terraform_state_url}/output.pcg_redis_host"
-infoservice:
-  # caveSecretName: "k8s-secret-name"
-  # dbName: "info"
-EOT
-  file_permission = "0644"
-}
-
-resource "local_file" "values_nglstate" {
-  filename = "${var.helm_config_dir}/nglstate.defaults.yaml"
-  content  = <<-EOT
-redis:
-  host: "ref+tfstate${var.helm_terraform_state_url}/output.pcg_redis_host"
-nglstate:
-  # nglstateServiceAccountSecret: "k8s-secret-name"
-  # bucketPath: "gs://bucket/path"
-EOT
-  file_permission = "0644"
-}
-
-resource "local_file" "values_emannotationschemas" {
-  filename = "${var.helm_config_dir}/emannotationschemas.defaults.yaml"
-  content  = <<-EOT
-emannotationschemas:
-  # serviceAccountSecret: "k8s-secret-name"
 EOT
   file_permission = "0644"
 }

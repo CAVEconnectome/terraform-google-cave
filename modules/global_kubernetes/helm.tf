@@ -16,10 +16,7 @@ resource "helm_release" "nginx_ingress" {
     }
   ]
 
-  depends_on = [google_compute_address.cluster_ip,
-                google_container_cluster.cluster,
-                google_container_node_pool.sp
-                ]
+  depends_on = [data.google_container_cluster.cluster]
 }
 
 resource "helm_release" "cert_manager" {
@@ -44,6 +41,17 @@ resource "helm_release" "cert_manager" {
       value = "ClusterIssuer"
     }
   ]
-  depends_on = [google_container_cluster.cluster,
-                google_container_node_pool.sp]
+  depends_on = [data.google_container_cluster.cluster]
+}
+
+# Install KEDA via Helm
+resource "helm_release" "keda" {
+  name             = "keda"
+  repository       = "https://kedacore.github.io/charts"
+  chart            = "keda"
+  namespace        = "keda"
+  create_namespace = true
+  wait             = false
+
+  depends_on = [data.google_container_cluster.cluster]
 }
