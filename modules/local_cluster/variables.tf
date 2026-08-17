@@ -279,3 +279,9 @@ variable "skeletoncache_retry_max_backoff" {
   type        = string
   default     = "600s"
 }
+
+variable "skeletoncache_max_delivery_attempts" {
+  description = "Deliveries before a skeletoncache message is dead-lettered. Dead-lettering adds the root id to the refusal list permanently, so this must outlast any transient downstream outage; see the measured backoff curve in pubsub.tf."
+  type        = number
+  default     = 50
+}
