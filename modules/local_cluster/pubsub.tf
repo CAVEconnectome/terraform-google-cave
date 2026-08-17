@@ -56,6 +56,13 @@ resource "google_pubsub_subscription" "l2cache_trigger_low_priority" {
   filter = "attributes.remesh_priority=\"false\""
 }
 
+# A worker nacks a message when the failure is transient -- a downstream 429/503, or an l2
+# cache that has not computed every level 2 id in the root yet. The default flat 10s backoff
+# makes that useless for the l2 cache case: the retry lands long before pcgl2cache has
+# computed the ids, and max_delivery_attempts is spent in ~100s. Dead-lettering is not a
+# no-op here -- the dead-letter consumer adds the root id to the refusal list -- so a root
+# that only needed a short wait would be permanently refused. Exponential 60s..600s gives
+# ~65 minutes across 10 attempts instead.
 # Skeletoncache topics and subscriptions
 resource "google_pubsub_topic" "skeletoncache_high" {
   name = "${var.cluster_prefix}_SKELETON_CACHE_HIGH_PRIORITY"
@@ -74,7 +81,8 @@ resource "google_pubsub_subscription" "skeletoncache_high_retrieve" {
   topic                = google_pubsub_topic.skeletoncache_high.name
   ack_deadline_seconds = 600
   retry_policy {
-    maximum_backoff = "10s"
+    minimum_backoff = var.skeletoncache_retry_min_backoff
+    maximum_backoff = var.skeletoncache_retry_max_backoff
   }
 
   dead_letter_policy {
@@ -88,7 +96,8 @@ resource "google_pubsub_subscription" "skeletoncache_low_retrieve" {
   topic                = google_pubsub_topic.skeletoncache_low.name
   ack_deadline_seconds = 600
   retry_policy {
-    maximum_backoff = "10s"
+    minimum_backoff = var.skeletoncache_retry_min_backoff
+    maximum_backoff = var.skeletoncache_retry_max_backoff
   }
 
   dead_letter_policy {

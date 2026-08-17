@@ -160,7 +160,7 @@ variable "enable_vertical_pod_autoscaling" {
 }
 
 variable "monitoring_enable_components" {
-  type = list(string)
+  type        = list(string)
   description = <<-EOT
     GKE monitoring components to enable. POD/DEPLOYMENT/STATEFULSET/DAEMONSET/HPA
     are kube-state metrics (replica counts, phases, restarts). CADVISOR and KUBELET
@@ -267,4 +267,15 @@ variable "skeleton_cache_cloudpath" {
 variable "cave_secret_name" {
   description = "Name of the Google Secret Manager secret containing the CAVE token"
   type        = string
+}
+variable "skeletoncache_retry_min_backoff" {
+  description = "Initial delay before a nacked skeletoncache message is redelivered. Must leave pcgl2cache time to compute missing level 2 ids; see the note in pubsub.tf."
+  type        = string
+  default     = "60s"
+}
+
+variable "skeletoncache_retry_max_backoff" {
+  description = "Ceiling for the exponential redelivery delay on skeletoncache worker subscriptions."
+  type        = string
+  default     = "600s"
 }
