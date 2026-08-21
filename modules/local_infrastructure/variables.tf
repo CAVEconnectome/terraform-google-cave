@@ -39,6 +39,17 @@ variable "postgres_version" {
   default     = "POSTGRES_18"
 }
 
+variable "sql_edition" {
+  description = <<EOF
+        "Cloud SQL edition: ENTERPRISE or ENTERPRISE_PLUS.
+        Must stay ENTERPRISE while tier is a db-custom-* machine type; ENTERPRISE_PLUS
+        only accepts predefined db-perf-optimized-N-* tiers. Left unset, the API
+        defaults POSTGRES_16+ instances to ENTERPRISE_PLUS, which then rejects the tier."
+    EOF
+  type        = string
+  default     = "ENTERPRISE"
+}
+
 variable "dns_zone" {
   description = "The name of the DNS managed zone"
   type        = string
@@ -62,8 +73,35 @@ variable "vpc_name_override" {
 }
 
 locals {
-  pcg_redis_name = var.pcg_redis_name_override != "" ? var.pcg_redis_name_override : "${var.owner}-${var.environment}-pcg-redis"
-  vpc_name       = var.vpc_name_override != "" ? var.vpc_name_override : "${var.owner}-${var.environment}-vpc"
+  pcg_redis_name     = var.pcg_redis_name_override != "" ? var.pcg_redis_name_override : "${var.owner}-${var.environment}-pcg-redis"
+  vpc_name           = var.vpc_name_override != "" ? var.vpc_name_override : "${var.owner}-${var.environment}-vpc"
+  sql_google_project = var.sql_google_project != "" ? var.sql_google_project : var.project_id
+  # Materialization dumps are written by the Cloud SQL export job, so they default to
+  # following the database rather than the cluster.
+  materialization_bucket_google_project = var.materialization_bucket_google_project != "" ? var.materialization_bucket_google_project : local.sql_google_project
+}
+
+variable "sql_google_project" {
+  description = <<EOF
+        "name of the google project your Cloud SQL instance sits in.
+        Use only if it should sit in a different project than project_id.
+        Set at creation time only: changing it on an existing instance forces
+        replacement, which prevent_destroy will block."
+    EOF
+  type        = string
+  default     = ""
+}
+
+variable "materialization_bucket_google_project" {
+  description = <<EOF
+        "name of the google project the materialization dump and upload buckets sit in.
+        Defaults to sql_google_project, which itself defaults to project_id, so the
+        buckets follow the Cloud SQL instance unless overridden.
+        A bucket's project is immutable: changing this on an existing deployment
+        forces the buckets to be destroyed and recreated."
+    EOF
+  type        = string
+  default     = ""
 }
 
 variable "sql_instance_cpu" {

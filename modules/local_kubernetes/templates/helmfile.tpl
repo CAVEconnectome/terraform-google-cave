@@ -22,7 +22,7 @@ releases:
   - name: materialization-engine
     namespace: default
     chart: cave/materializationengine
-    version: 5.23.1-r4
+    version: 5.26.4-r.1
     values:
       - ${cluster_values}
       - ${materialize_defaults}
@@ -35,7 +35,7 @@ releases:
   - name: annotation-engine
     namespace: default
     chart: cave/annotationengine
-    version: 4.41.4
+    version: 4.41.5-r.1
     values:
       - ${cluster_values}
       - ${annotation_defaults}
@@ -70,7 +70,11 @@ releases:
       - ${skeletoncache_defaults}
       # - skeletoncache.yaml  # optional user override
 
+  # The dash chart has no default for dash.config and its configmap pipes that value
+  # through `indent`, so the release cannot render until dash.yaml supplies a config
+  # file and secretKey. Ships disabled so a fresh deployment applies cleanly.
   - name: dash
+    installed: false       # flip to true once dash.yaml below is configured
     namespace: default
     chart: cave/dash
     version: 1.14.6

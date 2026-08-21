@@ -16,11 +16,14 @@ default_context:
   vpc_name_override: "daf-api3-network"
   pcg_redis_name_override: "v1dd-pcg-cache"
   bigtable_google_project: ""
+  sql_google_project: ""
   skeleton_cache_cloudpath: "gs://pcg_skeleton_bucket"
   pcg_skeleton_cache_bucket_public_read: "false"
   bigtable_instance_name: "pychunkedgraph"
   docker_registry: "docker.io/caveconnectome"
+  local_modules_repo: "" # blank uses the pinned registry modules; set to a terraform-google-cave checkout next to this repo to source modules locally
   cave_secret_name: "my-cave-secret"
   letsencrypt_email: "me@gmail.com"
   materialization_dump_bucket_name: "cave_materialization_bucket/public"
   materialization_upload_bucket_name: "cave_materialization_bucket"
+  materialization_bucket_google_project: "" # blank follows sql_google_project, which falls back to project_id

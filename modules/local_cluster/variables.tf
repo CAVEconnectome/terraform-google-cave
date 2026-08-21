@@ -125,6 +125,14 @@ variable "bigtable_google_project" {
   default     = ""
 }
 
+# Declared so this module accepts the shared root.hcl inputs; the SQL instance
+# itself is created by local_infrastructure.
+variable "sql_google_project" {
+  description = "Optional Google project hosting the Cloud SQL instance. Empty means project_id."
+  type        = string
+  default     = ""
+}
+
 variable "letsencrypt_issuer_name" {
   type        = string
   default     = "letsencrypt-staging"

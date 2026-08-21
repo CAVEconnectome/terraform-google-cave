@@ -18,5 +18,5 @@ limiter:
   redis:
     host: "${redis_host}"
 cloudsql:
-  projectId: "${project_id}"
+  projectId: "${sql_project_id}"
   instance: "${sql_instance_name}"

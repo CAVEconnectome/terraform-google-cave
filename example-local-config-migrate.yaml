@@ -16,12 +16,15 @@ default_context:
   vpc_name_override: "$NETWORK_NAME"
   pcg_redis_name_override: "$PCG_REDIS_NAME"
   bigtable_google_project: "$DATA_PROJECT_NAME"
+  sql_google_project: "" # leave blank when migrating: your Cloud SQL instance already exists in $PROJECT_NAME, and pointing this elsewhere would try to build a new one
   skeleton_cache_cloudpath: "gs://$SKELETON_CACHE_BUCKET"
   pcg_skeleton_cache_bucket_public_read: "false" # Could be true if skeleton bucket was made public, if same as PCG_BUCKET, needs to be true. false, will break PCG neuroglance access if so.
   bigtable_instance_name: "$BIGTABLE_INSTANCE_NAME"
   docker_registry: "$DOCKER_REPOSITORY"
+  local_modules_repo: "" # blank uses the pinned registry modules; set to a terraform-google-cave checkout next to this repo to source modules locally
   cave_secret_name: "my-cave-secret" # you need to set this up with cave service account token you were using for secrets.sh
   letsencrypt_email: "$LETSENCRYPT_EMAIL"
   materialization_dump_bucket_name: "$MATERIALIZATION_DUMP_BUCKET_NAME"
   materialization_upload_bucket_name: "$MATERIALIZATION_UPLOAD_BUCKET_PATH" # you can leave this blank, if you have not already set up a bucket for materialization uploads
+  materialization_bucket_google_project: "" # blank follows sql_google_project, which falls back to project_id
   health_annotation_align_volume: "$MAT_HEALTH_ALIGNED_VOLUME_NAME" # you can leave this blank, if you have not already set up a volume for health annotation alignment, if left blank, health annotation alignment will be disabled.

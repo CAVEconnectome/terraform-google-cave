@@ -5,9 +5,7 @@
 # notation.
 
 terraform { 
-  # 
-  source  = "tfr:///CAVEconnectome/cave/google//modules/local_infrastructure?version=0.2.0"
-  #source = "../../../../terraform-google-cave/modules/local_infrastructure"
+  source = {% if cookiecutter.local_modules_repo %}"../../../{{ cookiecutter.local_modules_repo }}/modules/local_infrastructure"{% else %}"tfr:///CAVEconnectome/cave/google//modules/local_infrastructure?version=0.2.0"{% endif %}
 }
 
 include "root" {

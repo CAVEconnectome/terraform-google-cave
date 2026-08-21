@@ -178,6 +178,16 @@ variable "bigtable_google_project" {
   default     = ""
 }
 
+variable "sql_google_project" {
+  description = "Optional Google project hosting the Cloud SQL instance. Empty means project_id."
+  type        = string
+  default     = ""
+}
+
+locals {
+  sql_google_project = var.sql_google_project != "" ? var.sql_google_project : var.project_id
+}
+
 variable "bigtable_instance_name" {
   description = "Bigtable instance name used by PyChunkedGraph and related charts"
   type        = string

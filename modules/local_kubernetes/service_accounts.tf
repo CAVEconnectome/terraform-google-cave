@@ -41,7 +41,7 @@ resource "google_project_iam_member" "pycg_storage_object_viewer" {
   member  = "serviceAccount:${google_service_account.pycg_service_account.email}"
 }
 resource "google_project_iam_member" "pycg_cloudsql_admin" {
-  project = var.project_id
+  project = local.sql_google_project
   role    = "roles/cloudsql.admin"
   member  = "serviceAccount:${google_service_account.pycg_service_account.email}"
 }
@@ -181,12 +181,14 @@ resource "google_project_iam_member" "pmanagement_datastore_user" {
 }
 
 # Cloud SQL Client Service Account
+# The identity is created in the cluster project; only the binding follows the
+# instance into sql_google_project.
 resource "google_service_account" "cloud_sql_service_account" {
   account_id   = "cloudsql-${var.cluster_prefix}-${terraform.workspace}"
   display_name = "CloudSQL-${var.cluster_prefix}-${terraform.workspace}"
 }
 resource "google_project_iam_member" "cloud_sql_client" {
-  project = var.project_id
+  project = local.sql_google_project
   role    = "roles/cloudsql.client"
   member  = "serviceAccount:${google_service_account.cloud_sql_service_account.email}"
 }

@@ -69,7 +69,7 @@ resource "google_storage_bucket" "materialization_dump" {
   # count = 1
 
   name     = local.materialization_dump_bucket_name
-  project  = var.project_id
+  project  = local.materialization_bucket_google_project
   location = var.region
 
   uniform_bucket_level_access = var.materialization_dump_bucket_uniform_bucket_level_access
@@ -86,7 +86,7 @@ resource "google_storage_bucket" "materialization_upload" {
   # count = 1
 
   name     = local.materialization_upload_bucket_name
-  project  = var.project_id
+  project  = local.materialization_bucket_google_project
   location = var.region
 
   uniform_bucket_level_access = true
@@ -115,20 +115,36 @@ resource "google_storage_bucket" "materialization_upload" {
 # IAM bindings for PostgreSQL service account on materialization dump bucket
 ############################################################
 
+# These reference the bucket resource rather than the bucket name so that replacing the
+# bucket also replaces the bindings. Bucket IAM lives on the bucket, so a replacement
+# silently drops these grants while their IDs stay identical, leaving state claiming
+# access the new bucket does not have.
 resource "google_storage_bucket_iam_member" "postgres_materialization_dump_legacy_reader" {
-  bucket = local.materialization_dump_bucket_name
+  bucket = google_storage_bucket.materialization_dump.name
   role   = "roles/storage.legacyBucketReader"
   member = "serviceAccount:${google_sql_database_instance.postgres.service_account_email_address}"
+
+  lifecycle {
+    replace_triggered_by = [google_storage_bucket.materialization_dump.id]
+  }
 }
 
 resource "google_storage_bucket_iam_member" "postgres_materialization_dump_object_admin" {
-  bucket = local.materialization_dump_bucket_name
+  bucket = google_storage_bucket.materialization_dump.name
   role   = "roles/storage.objectAdmin"
   member = "serviceAccount:${google_sql_database_instance.postgres.service_account_email_address}"
+
+  lifecycle {
+    replace_triggered_by = [google_storage_bucket.materialization_dump.id]
+  }
 }
 
 resource "google_storage_bucket_iam_member" "postgres_materialization_dump_object_viewer" {
-  bucket = local.materialization_dump_bucket_name
+  bucket = google_storage_bucket.materialization_dump.name
   role   = "roles/storage.objectViewer"
   member = "serviceAccount:${google_sql_database_instance.postgres.service_account_email_address}"
+
+  lifecycle {
+    replace_triggered_by = [google_storage_bucket.materialization_dump.id]
+  }
 }

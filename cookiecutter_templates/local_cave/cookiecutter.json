@@ -20,15 +20,18 @@
   "vpc_name_override": "",
   "pcg_redis_name_override": "",
   "bigtable_google_project": "",
+  "sql_google_project": "",
   "skeleton_cache_cloudpath": "",
   "pcg_skeleton_cache_bucket_public_read": "false",
   "bigtable_instance_name": "pychunkedgraph",
   "docker_registry": "docker.io/caveconnectome",
+  "local_modules_repo": "",
   
   "cave_secret_name": "{{ cookiecutter.local_environment_name }}-cave-token",
   "letsencrypt_email": "{{ cookiecutter.gcp_user_account }}",
   "materialization_dump_bucket_name": "",
   "materialization_upload_bucket_name": "",
+  "materialization_bucket_google_project": "",
 
   "__prompts__": {
     "repo_name": "Name of the new environment repository.",
@@ -55,13 +58,16 @@
     "vpc_name_override": "Optional: Name of vpc to utilize. If you aren't migrating let terraform name it based on other settings and leave blank",
     "pcg_redis_name_override": "Optional: Name of redis instance to store PCG meshing cache data.  Default will name it based on cluster_prefix and will work.",
     "bigtable_google_project": "Optional: if your PCG bigtable instance is in another project, the name of that project",
+    "sql_google_project": "Optional: if you want the Cloud SQL instance in another project, the name of that project. Leave blank to use project_id. Only set this for a brand new deployment; it cannot be changed later without replacing the database.",
     "skeleton_cache_cloudpath": "Optional: if you have already setup a skeleton cache bucket, name of the path to that bucket. Note you need to uncomment this in the root.hcl file to utilize.",
     "pcg_skeleton_cache_bucket_public_read": "Optional: should the skeleton cache bucket be publically readable. false will work by default. If true, you need to uncomment in the root.hcl file.",
     "docker_registry": "Optional: Container registry for images (default docker.io/caveconnectome) is likely correct.",
+    "local_modules_repo": "Optional: directory name of a terraform-google-cave checkout sitting next to your environments repo, to source modules from instead of the Terraform registry. Use this when you need a module variable that is not published yet: terragrunt passes inputs as TF_VAR_* and terraform silently ignores undeclared variables, so an older registry module drops the input without erroring. Leave blank to use the pinned registry versions.",
     
     "cave_secret_name": "Name of the Google Secret Manager secret containing the CAVE token. Defaults to {local_environment_name}-cave-token. You must manually create this secret before running terraform.",
     "letsencrypt_email": "Email for Let's Encrypt certificates. Defaults to your gcp_user_account value.",
     "materialization_dump_bucket_name": "Optional: GCS bucket name for materialization dumps. Leave blank if not needed.",
-    "materialization_upload_bucket_name": "Optional: GCS bucket name for materialization uploads. Leave blank if not needed."
+    "materialization_upload_bucket_name": "Optional: GCS bucket name for materialization uploads. Leave blank if not needed.",
+    "materialization_bucket_google_project": "Optional: google project for the materialization dump and upload buckets. Leave blank to follow sql_google_project, which itself falls back to project_id, so the buckets sit with the database. A bucket's project cannot be changed later without destroying and recreating it."
   }
 }

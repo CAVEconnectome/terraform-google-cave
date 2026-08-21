@@ -24,7 +24,7 @@ resource "local_file" "values_materialize" {
   filename = "${var.helm_config_dir}/materialize.defaults.yaml"
   content = templatefile("${path.module}/templates/materialize.tpl", {
     redis_host                         = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host,
-    project_id                         = var.project_id,
+    sql_project_id                     = local.sql_google_project,
     sql_instance_name                  = var.sql_instance_name,
     secrets_project_id                 = var.project_id,
     cave_secret_name                   = var.cave_secret_name,
@@ -53,7 +53,7 @@ resource "local_file" "values_annotation" {
   filename = "${var.helm_config_dir}/annotation.defaults.yaml"
   content = templatefile("${path.module}/templates/annotation.tpl", {
     redis_host         = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host,
-    project_id         = var.project_id,
+    sql_project_id     = local.sql_google_project,
     secrets_project_id = var.project_id,
     cave_secret_name   = var.cave_secret_name
   })
@@ -64,6 +64,7 @@ resource "local_file" "values_cloudsql" {
   filename = "${var.helm_config_dir}/cloudsql.defaults.yaml"
   content = templatefile("${path.module}/templates/cloudsql.tpl", {
     terraform_state_url  = var.helm_terraform_state_url,
+    sql_project_id       = local.sql_google_project,
     secrets_project_id   = var.project_id,
     postgres_credentials = "${var.environment}-postgres-credentials",
     cloudsql_sa_secret   = format("cloudsql-google-secret-%s-%s", var.cluster_prefix, terraform.workspace)
@@ -159,6 +160,7 @@ resource "local_file" "cloudsql_proxy_script" {
   filename = "${var.helm_config_dir}/cloudsqlproxy.sh"
   content = templatefile("${path.module}/templates/cloudsqlproxy.sh.tpl", {
     project_id           = var.project_id,
+    sql_project_id       = local.sql_google_project,
     region               = var.region,
     zone                 = var.zone,
     sql_instance_name    = var.sql_instance_name,

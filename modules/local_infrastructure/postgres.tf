@@ -1,7 +1,7 @@
 resource "google_sql_database_instance" "postgres" {
   name             = var.sql_instance_name
   region           = var.region
-  project          = var.project_id
+  project          = local.sql_google_project
   database_version = var.postgres_version
 
   lifecycle {
@@ -11,6 +11,7 @@ resource "google_sql_database_instance" "postgres" {
   settings {
     # convert gb to mb in memory
     tier                        = "db-custom-${var.sql_instance_cpu}-${var.sql_instance_memory_gb * 1024}"
+    edition                     = var.sql_edition
     disk_autoresize             = false
     deletion_protection_enabled = true
 
@@ -52,13 +53,13 @@ resource "google_sql_database_instance" "postgres" {
 
 resource "google_sql_database" "annotation" {
   name     = "annotation"
-  project  = var.project_id
+  project  = local.sql_google_project
   instance = google_sql_database_instance.postgres.name
 }
 
 resource "google_sql_database" "materialization" {
   name     = "materialization"
-  project  = var.project_id
+  project  = local.sql_google_project
   instance = google_sql_database_instance.postgres.name
 }
 
@@ -68,10 +69,13 @@ locals {
 
 resource "google_sql_user" "writer" {
   name     = local.db_credentials.username
+  project  = local.sql_google_project
   instance = google_sql_database_instance.postgres.name
   password = local.db_credentials.password
 }
 
+# The credentials secret stays in the cluster project even when the instance
+# lives elsewhere, so helm's ref+gcpsecrets lookups keep resolving there.
 data "google_secret_manager_secret_version" "postgres_credentials" {
   project = data.google_project.project.number
   secret  = "${var.environment}-postgres-credentials"
