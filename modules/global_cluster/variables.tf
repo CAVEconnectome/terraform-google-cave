@@ -40,6 +40,18 @@ variable "dns_entries" {
   }))
 }
 
+variable "enable_vertical_pod_autoscaling" {
+  type        = bool
+  description = "enable vertical pod autoscaling for the cluster"
+  default     = true
+}
+
+variable "global_server" {
+  description = "Fully qualified global server hostname where auth and info service reside (e.g. global.daf-apis.com). Used to build the OAuth redirect URI checklist; leave empty if it is already covered by dns_entries."
+  type        = string
+  default     = ""
+}
+
 variable "owner" {
   type        = string
   description = "added as label to resources, convenient to filter costs based on labels"

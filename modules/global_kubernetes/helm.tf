@@ -8,7 +8,7 @@ resource "helm_release" "nginx_ingress" {
   set = [
     {
       name  = "controller.service.loadBalancerIP"
-      value = google_compute_address.cluster_ip.address
+      value = var.cluster_ip
     },
     {
       name  = "controller.service.externalTrafficPolicy"

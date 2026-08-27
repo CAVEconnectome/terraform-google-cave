@@ -137,3 +137,38 @@ variable "auth_redis_host" {
   type        = string
   default     = ""
 }
+
+variable "cluster_ip" {
+  description = "Static IP address for the cluster ingress controller (output of the global_cluster module)"
+  type        = string
+}
+
+variable "standard_pool_name" {
+  description = "Name of the standard node pool (output of the global_cluster module)"
+  type        = string
+}
+
+variable "auth_oauth_secret_name" {
+  description = <<-EOT
+    Name of the Secret Manager secret holding the Google OAuth 2.0 "Web
+    application" client JSON used by middle_auth for sign-in. The client must be
+    created by hand in the Cloud console and the JSON stored with
+    `gcloud secrets create/versions add` — Terraform reads it but never writes
+    it, so no credential lives in the configuration repository. Run
+    `terragrunt output oauth_setup_instructions` on the cluster stage for the
+    console URL and the exact list of URIs to register. See GLOBAL_OAUTH_SETUP.md.
+  EOT
+  type        = string
+}
+
+variable "auth_url_prefix" {
+  description = "URL prefix serving the regular auth deployment; must match the auth chart's regular.urlPrefix"
+  type        = string
+  default     = "auth"
+}
+
+variable "sticky_auth_url_prefix" {
+  description = "URL prefix serving the sticky auth deployment; must match the auth chart's sticky.urlPrefix"
+  type        = string
+  default     = "sticky_auth"
+}

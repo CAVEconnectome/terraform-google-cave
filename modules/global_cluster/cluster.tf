@@ -81,10 +81,8 @@ resource "google_container_cluster" "cluster" {
 
 
 
-resource "google_compute_address" "cluster_ip" {
-  name   = "${var.cluster_prefix}-cave"
-  region = var.region
-}
+# NOTE: the ingress address is declared in dns.tf as "${var.cluster_prefix}-global",
+# next to the A records that consume it.
 
 # Discover the current project to get the numeric project number
 data "google_project" "current" {

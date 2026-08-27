@@ -8,8 +8,8 @@ resource "local_file" "helm_values_cluster" {
     environment           = var.environment,
     cluster_prefix        = var.cluster_prefix,
     global_server         = var.global_server,
-    cluster               = google_container_cluster.cluster.name,
-    standard_pool_name    = google_container_node_pool.sp.name,
+    cluster               = data.google_container_cluster.cluster.name,
+    standard_pool_name    = var.standard_pool_name,
     docker_registry       = var.docker_registry,
     data_project_id       = var.project_id,
     dns_entries           = [for k, v in var.dns_entries : v.domain_name]
@@ -37,27 +37,20 @@ resource "local_file" "values_cloudsql" {
   file_permission = "0644"
 }
 
-resource "local_file" "values_auth" {
-  filename = "${var.helm_config_dir}/auth.defaults.yaml"
-  content  = templatefile("${path.module}/templates/auth.tpl", {
-    terraform_state_url  = var.helm_terraform_state_url
-    secrets_project_id   = var.project_id
-    cave_secret_name     = var.cave_secret_name
-    auth_sa_secret   = format("auth-google-secret-%s-%s", var.cluster_prefix, terraform.workspace)
-  })
-  file_permission = "0644"
-}
-
 # Defaults for global services; users can override next to these files.
 resource "local_file" "values_auth" {
   filename = "${var.helm_config_dir}/auth.defaults.yaml"
-  content  = <<-EOT
-redis:
-  host: "ref+tfstate${var.helm_terraform_state_url}/output.auth_redis_host"
-auth:
-  # oauthSecretName: "k8s-secret-name"
-  # clientSecretName: "k8s-secret-name"
-  # dbName: "auth"
-EOT
+  content = templatefile("${path.module}/templates/auth.tpl", {
+    terraform_state_url    = var.helm_terraform_state_url
+    secrets_project_id     = var.project_id
+    oauth_secret_name      = var.auth_oauth_secret_name
+    auth_secret_key_name   = google_secret_manager_secret.auth_secret_key.secret_id
+    oauth_secret_filename  = "oauth-secret.json"
+    auth_url_prefix        = var.auth_url_prefix
+    sticky_auth_url_prefix = var.sticky_auth_url_prefix
+  })
   file_permission = "0644"
+
+  # Do not emit helm values pointing at an OAuth client that would fail at login.
+  depends_on = [terraform_data.oauth_client_gate]
 }
