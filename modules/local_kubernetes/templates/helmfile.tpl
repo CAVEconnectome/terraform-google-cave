@@ -31,6 +31,11 @@ releases:
       - annotation.yaml    # optional user override
       - ${cloudsql_defaults}
       # - cloudsql.yaml      # optional user override
+      # Ephemeral Ray platform (RBAC + RayJob pod-spec ConfigMap only; no Ray
+      # cluster is created until the app submits a RayJob). Inert unless
+      # enable_ray = true in Terraform.
+      - ${ray_defaults}
+      # - ray.yaml           # optional user override
 
   - name: annotation-engine
     namespace: default

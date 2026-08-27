@@ -229,3 +229,58 @@ variable "cave_secret_name" {
   description = "Secret Manager secret containing the CAVE token"
   type        = string
 }
+
+# --- Ray / KubeRay ---------------------------------------------------------
+# Ephemeral RayJob platform for long-running jobs that Celery-over-Redis struggles
+# with. Ray workers run on the existing mesh-pool; there is no dedicated node pool.
+
+variable "enable_ray" {
+  description = <<-EOT
+    Install the KubeRay operator and create the Ray service account + secret.
+    Ray clusters themselves are ephemeral: the application creates a RayJob CR,
+    KubeRay stands up a cluster, runs it, and deletes it. Nothing runs at rest
+    except the operator pod.
+  EOT
+  type        = bool
+  default     = false
+}
+
+variable "kuberay_operator_version" {
+  description = "Pinned kuberay-operator Helm chart version."
+  type        = string
+  default     = "1.6.2"
+}
+
+variable "ray_version" {
+  description = <<-EOT
+    Ray version declared on the RayCluster spec. MUST match the ray package
+    actually installed in the materializationengine image -- KubeRay uses this
+    for health checks and feature gating, and a mismatch fails in confusing ways.
+    Keep current; the floor from the 2023 CVEs is 2.8.1.
+  EOT
+  type        = string
+  default     = "2.57.0"
+}
+
+variable "ray_namespace" {
+  description = <<-EOT
+    Namespace RayJobs are created in. Deliberately not "default": Ray's job
+    submission API has no authentication (CVE-2023-48022), so RayJobs are kept
+    out of the shared namespace to scope RBAC and to leave room for a
+    NetworkPolicy if enforcement is ever enabled on the cluster.
+  EOT
+  type        = string
+  default     = "ray-jobs"
+}
+
+variable "ray_deltalake_bucket_name" {
+  description = <<-EOT
+    Bucket the Ray deltalake entrypoint writes to. The Ray service account is
+    granted objectAdmin on this bucket ALONE rather than at project level --
+    anything that reaches the Ray head gets arbitrary code execution, so the
+    mounted credential is scoped as tightly as the workload allows.
+    Defaults to the materialization dump bucket when empty.
+  EOT
+  type        = string
+  default     = ""
+}
