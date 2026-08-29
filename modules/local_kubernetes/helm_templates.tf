@@ -130,7 +130,10 @@ resource "local_file" "values_pcgl2cache" {
     bigtable_instance           = var.bigtable_instance_name,
     pycg_sa_secret              = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
     secrets_project_id          = var.project_id,
-    cave_secret_name            = var.cave_secret_name
+    cave_secret_name            = var.cave_secret_name,
+    # Same source and fallback as pychunkedgraph's limiter, so every service's
+    # rate limits share one Redis and one bucket namespace.
+    mat_redis_host              = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host
   })
   file_permission = "0644"
 }
