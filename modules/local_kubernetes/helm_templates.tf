@@ -49,6 +49,24 @@ resource "local_file" "values_skeletoncache" {
   file_permission = "0644"
 }
 
+# Defaults for the ephemeral Ray platform. Rendered unconditionally so the file
+# is always present for helmfile; ray.enabled gates whether the chart renders
+# anything from it.
+resource "local_file" "values_ray" {
+  filename = "${var.helm_config_dir}/ray.defaults.yaml"
+  content = templatefile("${path.module}/templates/ray.tpl", {
+    ray_enabled        = var.enable_ray,
+    ray_namespace      = var.ray_namespace,
+    ray_version        = var.ray_version,
+    ray_sa_secret      = format("ray-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
+    secrets_project_id = var.project_id,
+    cave_secret_name   = var.cave_secret_name,
+    sql_project_id     = local.sql_google_project,
+    sql_instance_name  = var.sql_instance_name
+  })
+  file_permission = "0644"
+}
+
 resource "local_file" "values_annotation" {
   filename = "${var.helm_config_dir}/annotation.defaults.yaml"
   content = templatefile("${path.module}/templates/annotation.tpl", {
@@ -112,7 +130,10 @@ resource "local_file" "values_pcgl2cache" {
     bigtable_instance           = var.bigtable_instance_name,
     pycg_sa_secret              = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
     secrets_project_id          = var.project_id,
-    cave_secret_name            = var.cave_secret_name
+    cave_secret_name            = var.cave_secret_name,
+    # Same source and fallback as pychunkedgraph's limiter, so every service's
+    # rate limits share one Redis and one bucket namespace.
+    mat_redis_host              = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host
   })
   file_permission = "0644"
 }
@@ -139,7 +160,8 @@ resource "local_file" "bootstrap_helmfile_example" {
     pychunkedgraph_defaults = "pychunkedgraph.defaults.yaml",
     pcgl2cache_defaults     = "pcgl2cache.defaults.yaml",
     skeletoncache_defaults  = "skeletoncache.defaults.yaml",
-    landingpage_defaults    = "landingpage.defaults.yaml"
+    landingpage_defaults    = "landingpage.defaults.yaml",
+    ray_defaults            = "ray.defaults.yaml"
   })
   file_permission = "0644"
 }

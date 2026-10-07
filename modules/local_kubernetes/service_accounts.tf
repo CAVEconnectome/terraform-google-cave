@@ -305,3 +305,66 @@ data "google_secret_manager_secret_version" "cave_token" {
   secret  = var.cave_secret_name
   version = "latest"
 }
+
+# --- Ray service account ---------------------------------------------------
+#
+# Deliberately NOT the materialize service account. Ray's job submission API has
+# no authentication at all (CVE-2023-48022, disputed upstream as intended
+# behaviour), so anything that can reach a Ray head executes arbitrary Python as
+# the Ray process. Mounting the materialize key -- which carries
+# roles/cloudsql.admin and project-level roles/storage.objectAdmin -- would turn
+# that into a full credential compromise.
+#
+# This identity is scoped to what the deltalake entrypoint actually needs:
+# cloudsql.client (not admin) and objectAdmin on one bucket (not the project).
+# Widen it one grant at a time as further entrypoints are added.
+
+locals {
+  # Bucket the Ray deltalake entrypoint writes to. Falls back to the
+  # materialization dump bucket, reusing the path-stripping done at the top of
+  # this file so a "bucket/path" value still yields a bare bucket name.
+  ray_deltalake_bucket = var.ray_deltalake_bucket_name != "" ? (
+    length(split("/", var.ray_deltalake_bucket_name)) > 1 ? split("/", var.ray_deltalake_bucket_name)[0] : var.ray_deltalake_bucket_name
+  ) : local.materialization_dump_bucket_name_clean
+}
+
+resource "google_service_account" "ray_service_account" {
+  count        = var.enable_ray ? 1 : 0
+  account_id   = "ray-${var.cluster_prefix}-${terraform.workspace}"
+  display_name = "Ray-${var.cluster_prefix}-${terraform.workspace}"
+}
+
+# Client, not admin: the entrypoint connects through the cloud-sql-proxy
+# sidecar and never needs to administer the instance.
+resource "google_project_iam_member" "ray_cloudsql_client" {
+  count   = var.enable_ray ? 1 : 0
+  project = local.sql_google_project
+  role    = "roles/cloudsql.client"
+  member  = "serviceAccount:${google_service_account.ray_service_account[0].email}"
+}
+
+# Scoped to the single deltalake bucket rather than granted at project level.
+resource "google_storage_bucket_iam_member" "ray_deltalake_object_admin" {
+  count  = var.enable_ray && local.ray_deltalake_bucket != "" ? 1 : 0
+  bucket = local.ray_deltalake_bucket
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.ray_service_account[0].email}"
+}
+
+resource "google_service_account_key" "ray_key" {
+  count              = var.enable_ray ? 1 : 0
+  service_account_id = google_service_account.ray_service_account[0].name
+  private_key_type   = local.sa_key_private_type
+}
+resource "google_secret_manager_secret" "ray_secret" {
+  count     = var.enable_ray ? 1 : 0
+  secret_id = "ray-google-secret-${var.cluster_prefix}-${terraform.workspace}"
+  replication {
+    auto {}
+  }
+}
+resource "google_secret_manager_secret_version" "ray_secret_version" {
+  count       = var.enable_ray ? 1 : 0
+  secret      = google_secret_manager_secret.ray_secret[0].id
+  secret_data = base64decode(google_service_account_key.ray_key[0].private_key)
+}
