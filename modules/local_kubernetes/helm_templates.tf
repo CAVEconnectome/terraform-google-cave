@@ -56,6 +56,7 @@ resource "local_file" "values_ray" {
   filename = "${var.helm_config_dir}/ray.defaults.yaml"
   content = templatefile("${path.module}/templates/ray.tpl", {
     ray_enabled        = var.enable_ray,
+    ray_upload_enabled = var.enable_ray && var.enable_ray_upload,
     ray_namespace      = var.ray_namespace,
     ray_version        = var.ray_version,
     ray_sa_secret      = format("ray-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),

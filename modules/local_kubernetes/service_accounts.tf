@@ -351,6 +351,62 @@ resource "google_storage_bucket_iam_member" "ray_deltalake_object_admin" {
   member = "serviceAccount:${google_service_account.ray_service_account[0].email}"
 }
 
+# --- Ray bulk uploads (enable_ray_upload) ---
+#
+# The upload driver writes the processed CSV to the upload bucket and asks Cloud
+# SQL to import it (the instance's own service account then reads the bucket);
+# workers look up root ids in Bigtable. Each grant is the narrowest one that does
+# that.
+
+locals {
+  ray_upload = var.enable_ray && var.enable_ray_upload
+}
+
+resource "google_storage_bucket_iam_member" "ray_upload_object_admin" {
+  count  = local.ray_upload && local.materialization_upload_bucket_name_clean != "" ? 1 : 0
+  bucket = local.materialization_upload_bucket_name_clean
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.ray_service_account[0].email}"
+}
+
+resource "google_storage_bucket_iam_member" "ray_upload_source_reader" {
+  for_each = local.ray_upload ? toset(var.ray_upload_read_buckets) : toset([])
+  bucket   = each.value
+  role     = "roles/storage.objectViewer"
+  member   = "serviceAccount:${google_service_account.ray_service_account[0].email}"
+}
+
+# cloudsql.admin would hand the (unauthenticated) Ray head the whole instance;
+# imports need only these two: import, and get to read the operation it started.
+resource "google_project_iam_custom_role" "ray_cloudsql_importer" {
+  count       = local.ray_upload ? 1 : 0
+  project     = local.sql_google_project
+  role_id     = replace("rayCloudSqlImporter_${var.cluster_prefix}_${terraform.workspace}", "-", "_")
+  title       = "Ray Cloud SQL importer (${var.cluster_prefix}-${terraform.workspace})"
+  description = "Import a CSV into Cloud SQL and watch the operation; for the Ray bulk upload driver."
+  permissions = ["cloudsql.instances.get", "cloudsql.instances.import"]
+}
+
+resource "google_project_iam_member" "ray_cloudsql_importer" {
+  count   = local.ray_upload ? 1 : 0
+  project = local.sql_google_project
+  role    = google_project_iam_custom_role.ray_cloudsql_importer[0].id
+  member  = "serviceAccount:${google_service_account.ray_service_account[0].email}"
+  # this instance only
+  condition {
+    title      = "app-instance-only"
+    expression = "resource.name == \"projects/${local.sql_google_project}/instances/${var.sql_instance_name}\""
+  }
+}
+
+resource "google_bigtable_instance_iam_member" "ray_bigtable_reader" {
+  count    = local.ray_upload ? 1 : 0
+  project  = var.bigtable_google_project != "" ? var.bigtable_google_project : var.project_id
+  instance = var.bigtable_instance_name
+  role     = "roles/bigtable.reader"
+  member   = "serviceAccount:${google_service_account.ray_service_account[0].email}"
+}
+
 resource "google_service_account_key" "ray_key" {
   count              = var.enable_ray ? 1 : 0
   service_account_id = google_service_account.ray_service_account[0].name

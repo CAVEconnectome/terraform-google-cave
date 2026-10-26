@@ -14,6 +14,10 @@ ray:
   # 2023 CVEs is 2.8.1.
   rayVersion: "${ray_version}"
 
+  # Bulk uploads as RayJobs (enable_ray_upload). Emitted with the service account
+  # grants it needs, so the two cannot drift apart.
+  upload: ${ray_upload_enabled}
+
   # Credentials mounted into Ray pods. This is the dedicated least-privilege Ray
   # service account (cloudsql.client + objectAdmin on the deltalake bucket only),
   # NOT the materialize key -- anything reaching the Ray head gets arbitrary code

@@ -273,6 +273,29 @@ variable "ray_namespace" {
   default     = "ray-jobs"
 }
 
+variable "enable_ray_upload" {
+  description = <<-EOT
+    Run bulk uploads as RayJobs (the chart's ray.upload, emitted into the generated
+    ray values). Grants the Ray service account what the upload driver and its
+    workers need, and nothing more: objectAdmin on the upload bucket, a custom
+    role with only cloudsql.instances.import/get on the app's Cloud SQL instance,
+    and bigtable.reader on the PyChunkedGraph instance (root id lookups).
+    Requires enable_ray.
+  EOT
+  type        = bool
+  default     = false
+}
+
+variable "ray_upload_read_buckets" {
+  description = <<-EOT
+    Further buckets the Ray service account may read (objectViewer) for uploads read
+    in place from a cloud location (gs://bucket/... sources outside the upload
+    bucket). Public buckets need no grant.
+  EOT
+  type        = list(string)
+  default     = []
+}
+
 variable "ray_deltalake_bucket_name" {
   description = <<-EOT
     Bucket the Ray deltalake entrypoint writes to. The Ray service account is
