@@ -100,6 +100,13 @@ resource "kubernetes_namespace_v1" "ray" {
       project                        = var.environment
       owner                          = "cave"
     }
+    # What this module has provisioned for Ray workloads beyond the platform, for
+    # the materializationengine chart's preflight to check (it cannot see IAM): with
+    # ray.upload on, the chart refuses to install unless the upload grants are at
+    # least the version it needs. Bump RAY_UPLOAD_GRANTS_VERSION when they change.
+    annotations = local.ray_upload ? {
+      "caveconnectome.org/ray-upload-grants" = local.ray_upload_grants_version
+    } : {}
   }
 
   depends_on = [data.google_container_cluster.cluster]

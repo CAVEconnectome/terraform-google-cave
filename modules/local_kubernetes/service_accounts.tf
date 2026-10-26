@@ -360,6 +360,9 @@ resource "google_storage_bucket_iam_member" "ray_deltalake_object_admin" {
 
 locals {
   ray_upload = var.enable_ray && var.enable_ray_upload
+  # RAY_UPLOAD_GRANTS_VERSION: recorded on the Ray namespace (helm.tf) for the chart's
+  # preflight. 1: upload bucket, Cloud SQL import, Bigtable reader.
+  ray_upload_grants_version = "1"
 }
 
 resource "google_storage_bucket_iam_member" "ray_upload_object_admin" {
