@@ -3,14 +3,14 @@ locals {
   # Extract bucket name from materialization_dump_bucket_path if it contains a path
   materialization_dump_bucket_name_clean = var.materialization_dump_bucket_path != "" ? (
     length(split("/", var.materialization_dump_bucket_path)) > 1 ? split("/", var.materialization_dump_bucket_path)[0] : var.materialization_dump_bucket_path
-  ) : (var.materialization_dump_bucket_name != "" ? (
-    length(split("/", var.materialization_dump_bucket_name)) > 1 ? split("/", var.materialization_dump_bucket_name)[0] : var.materialization_dump_bucket_name
+    ) : (var.materialization_dump_bucket_name != "" ? (
+      length(split("/", var.materialization_dump_bucket_name)) > 1 ? split("/", var.materialization_dump_bucket_name)[0] : var.materialization_dump_bucket_name
   ) : "")
   # Extract bucket name from materialization_upload_bucket_path if it contains a path
   materialization_upload_bucket_name_clean = var.materialization_upload_bucket_path != "" ? (
     length(split("/", var.materialization_upload_bucket_path)) > 1 ? split("/", var.materialization_upload_bucket_path)[0] : var.materialization_upload_bucket_path
-  ) : (var.materialization_upload_bucket_name != "" ? (
-    length(split("/", var.materialization_upload_bucket_name)) > 1 ? split("/", var.materialization_upload_bucket_name)[0] : var.materialization_upload_bucket_name
+    ) : (var.materialization_upload_bucket_name != "" ? (
+      length(split("/", var.materialization_upload_bucket_name)) > 1 ? split("/", var.materialization_upload_bucket_name)[0] : var.materialization_upload_bucket_name
   ) : "")
 }
 
@@ -378,8 +378,11 @@ resource "google_storage_bucket_iam_member" "ray_upload_source_reader" {
 
 # cloudsql.admin would hand the (unauthenticated) Ray head the whole instance;
 # imports need only these two: import, and get to read the operation it started.
+# No predefined role is narrower (cloudsql.editor has export but not import), so
+# this custom role is created unless ray_cloudsql_import_role names an existing
+# role to bind instead (creating roles needs iam.roles.create on the project).
 resource "google_project_iam_custom_role" "ray_cloudsql_importer" {
-  count       = local.ray_upload ? 1 : 0
+  count       = local.ray_upload && var.ray_cloudsql_import_role == "" ? 1 : 0
   project     = local.sql_google_project
   role_id     = replace("rayCloudSqlImporter_${var.cluster_prefix}_${terraform.workspace}", "-", "_")
   title       = "Ray Cloud SQL importer (${var.cluster_prefix}-${terraform.workspace})"
@@ -390,8 +393,9 @@ resource "google_project_iam_custom_role" "ray_cloudsql_importer" {
 resource "google_project_iam_member" "ray_cloudsql_importer" {
   count   = local.ray_upload ? 1 : 0
   project = local.sql_google_project
-  role    = google_project_iam_custom_role.ray_cloudsql_importer[0].id
-  member  = "serviceAccount:${google_service_account.ray_service_account[0].email}"
+  role = (var.ray_cloudsql_import_role != "" ? var.ray_cloudsql_import_role
+  : google_project_iam_custom_role.ray_cloudsql_importer[0].id)
+  member = "serviceAccount:${google_service_account.ray_service_account[0].email}"
   # this instance only
   condition {
     title      = "app-instance-only"
@@ -399,12 +403,13 @@ resource "google_project_iam_member" "ray_cloudsql_importer" {
   }
 }
 
-resource "google_bigtable_instance_iam_member" "ray_bigtable_reader" {
-  count    = local.ray_upload ? 1 : 0
-  project  = var.bigtable_google_project != "" ? var.bigtable_google_project : var.project_id
-  instance = var.bigtable_instance_name
-  role     = "roles/bigtable.reader"
-  member   = "serviceAccount:${google_service_account.ray_service_account[0].email}"
+# Project level, as the pychunkedgraph and annotation accounts' Bigtable roles are
+# (an instance-level binding needs bigtable.instances.setIamPolicy), but read-only.
+resource "google_project_iam_member" "ray_bigtable_reader" {
+  count   = local.ray_upload ? 1 : 0
+  project = var.bigtable_google_project != "" ? var.bigtable_google_project : var.project_id
+  role    = "roles/bigtable.reader"
+  member  = "serviceAccount:${google_service_account.ray_service_account[0].email}"
 }
 
 resource "google_service_account_key" "ray_key" {

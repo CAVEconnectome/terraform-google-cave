@@ -286,6 +286,19 @@ variable "enable_ray_upload" {
   default     = false
 }
 
+variable "ray_cloudsql_import_role" {
+  description = <<-EOT
+    Role that lets the Ray service account import CSVs into the app's Cloud SQL
+    instance (bound with a condition naming that instance). Empty creates a custom
+    role holding only cloudsql.instances.import and .get, which needs
+    iam.roles.create on the SQL project; otherwise an existing role, e.g. a custom
+    role an admin created, or roles/cloudsql.admin (the only predefined role with
+    import).
+  EOT
+  type        = string
+  default     = ""
+}
+
 variable "ray_upload_read_buckets" {
   description = <<-EOT
     Further buckets the Ray service account may read (objectViewer) for uploads read
