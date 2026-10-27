@@ -56,3 +56,58 @@ resource "helm_release" "keda" {
 
   depends_on = [data.google_container_cluster.cluster]
 }
+
+# Install the KubeRay operator via Helm.
+#
+# This is the only standing cost of the Ray platform (~50m CPU / 128Mi). Ray
+# clusters are created per-job by the application as RayJob CRs and deleted on
+# completion, so nothing else runs at rest.
+#
+# Pinned deliberately: KEDA above is unpinned, but cert-manager and nginx are
+# pinned and that is the convention to follow for anything installing CRDs.
+resource "helm_release" "kuberay_operator" {
+  count            = var.enable_ray ? 1 : 0
+  name             = "kuberay-operator"
+  repository       = "https://ray-project.github.io/kuberay-helm/"
+  chart            = "kuberay-operator"
+  version          = var.kuberay_operator_version
+  namespace        = "kuberay-system"
+  create_namespace = true
+
+  set = [
+    # The operator must never land on a preemptible pool -- losing it mid-job
+    # leaves orphaned RayClusters holding mesh-pool nodes.
+    {
+      name  = "nodeSelector.cloud\\.google\\.com/gke-nodepool"
+      value = var.core_pool_name
+    },
+  ]
+
+  depends_on = [data.google_container_cluster.cluster]
+}
+
+# Namespace RayJobs live in. Created here rather than by the operator release so
+# it exists independently of the operator's lifecycle -- the ME chart's RBAC
+# binds into it, and helm uninstalling the operator should not take the
+# namespace (and any running job's CRs) with it.
+resource "kubernetes_namespace_v1" "ray" {
+  count = var.enable_ray ? 1 : 0
+
+  metadata {
+    name = var.ray_namespace
+    labels = {
+      "app.kubernetes.io/managed-by" = "terraform"
+      project                        = var.environment
+      owner                          = "cave"
+    }
+    # What this module has provisioned for Ray workloads beyond the platform, for
+    # the materializationengine chart's preflight to check (it cannot see IAM): with
+    # ray.upload on, the chart refuses to install unless the upload grants are at
+    # least the version it needs. Bump RAY_UPLOAD_GRANTS_VERSION when they change.
+    annotations = local.ray_upload ? {
+      "caveconnectome.org/ray-upload-grants" = local.ray_upload_grants_version
+    } : {}
+  }
+
+  depends_on = [data.google_container_cluster.cluster]
+}
