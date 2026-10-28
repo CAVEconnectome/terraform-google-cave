@@ -153,9 +153,10 @@ resource "google_storage_bucket_iam_member" "postgres_materialization_dump_objec
 # IAM bindings for PostgreSQL service account on materialization upload bucket
 ############################################################
 
-# The bulk upload loads processed CSVs with `gcloud sql import csv`, which reads the file
-# as the Cloud SQL instance's service account, not the caller's. Read access is enough;
-# nothing exports into this bucket.
+# The bulk upload loads processed CSVs with Cloud SQL imports, which read the file as
+# the Cloud SQL instance's service account, not the caller's. Its transfer to
+# production also exports staging tables into this bucket (under transfer/), which
+# Cloud SQL writes as that account too, so it can also create objects here.
 resource "google_storage_bucket_iam_member" "postgres_materialization_upload_legacy_reader" {
   bucket = google_storage_bucket.materialization_upload.name
   role   = "roles/storage.legacyBucketReader"
@@ -169,6 +170,16 @@ resource "google_storage_bucket_iam_member" "postgres_materialization_upload_leg
 resource "google_storage_bucket_iam_member" "postgres_materialization_upload_object_viewer" {
   bucket = google_storage_bucket.materialization_upload.name
   role   = "roles/storage.objectViewer"
+  member = "serviceAccount:${google_sql_database_instance.postgres.service_account_email_address}"
+
+  lifecycle {
+    replace_triggered_by = [google_storage_bucket.materialization_upload.id]
+  }
+}
+
+resource "google_storage_bucket_iam_member" "postgres_materialization_upload_object_creator" {
+  bucket = google_storage_bucket.materialization_upload.name
+  role   = "roles/storage.objectCreator"
   member = "serviceAccount:${google_sql_database_instance.postgres.service_account_email_address}"
 
   lifecycle {
