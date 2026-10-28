@@ -40,6 +40,9 @@ resource "google_sql_database_instance" "postgres" {
       # retention are left as-is rather than churning on every apply.
       start_time                     = var.sql_backup_start_time
       transaction_log_retention_days = var.sql_transaction_log_retention_days
+      # Unlike those, a null location is applied: it clears a location set on the
+      # instance, so an instance with one needs it set here.
+      location = var.sql_backup_location
 
       dynamic "backup_retention_settings" {
         for_each = var.sql_backup_retained_count == null ? [] : [var.sql_backup_retained_count]
