@@ -238,6 +238,12 @@ variable "sql_transaction_log_retention_days" {
   default     = null
 }
 
+variable "sql_backup_location" {
+  description = "Where automated backups are stored, e.g. \"us-east1\". Null uses GCP's default (the multi-region nearest the instance) and clears a location already set on the instance, so set it to match an instance that has one."
+  type        = string
+  default     = null
+}
+
 variable "sql_backup_retained_count" {
   description = "Number of automated backups to retain. Leave null to keep the GCP default."
   type        = number
