@@ -361,8 +361,9 @@ resource "google_storage_bucket_iam_member" "ray_deltalake_object_admin" {
 locals {
   ray_upload = var.enable_ray && var.enable_ray_upload
   # RAY_UPLOAD_GRANTS_VERSION: recorded on the Ray namespace (helm.tf) for the chart's
-  # preflight. 1: upload bucket, Cloud SQL import, Bigtable reader.
-  ray_upload_grants_version = "1"
+  # preflight. 1: upload bucket, Cloud SQL import, Bigtable reader. 2: Cloud SQL
+  # export (the transfer to production exports the staging segmentation table).
+  ray_upload_grants_version = "2"
 }
 
 resource "google_storage_bucket_iam_member" "ray_upload_object_admin" {
@@ -380,8 +381,8 @@ resource "google_storage_bucket_iam_member" "ray_upload_source_reader" {
 }
 
 # cloudsql.admin would hand the (unauthenticated) Ray head the whole instance;
-# imports need only these two: import, and get to read the operation it started.
-# No predefined role is narrower (cloudsql.editor has export but not import), so
+# uploads need only these: import and export, and get to read the operations they
+# started. No predefined role is narrower (cloudsql.editor has export but not import), so
 # this custom role is created unless ray_cloudsql_import_role names an existing
 # role to bind instead (creating roles needs iam.roles.create on the project).
 resource "google_project_iam_custom_role" "ray_cloudsql_importer" {
@@ -389,8 +390,8 @@ resource "google_project_iam_custom_role" "ray_cloudsql_importer" {
   project     = local.sql_google_project
   role_id     = replace("rayCloudSqlImporter_${var.cluster_prefix}_${terraform.workspace}", "-", "_")
   title       = "Ray Cloud SQL importer (${var.cluster_prefix}-${terraform.workspace})"
-  description = "Import a CSV into Cloud SQL and watch the operation; for the Ray bulk upload driver."
-  permissions = ["cloudsql.instances.get", "cloudsql.instances.import"]
+  description = "Import and export CSVs with Cloud SQL and watch the operations; for the Ray bulk upload driver."
+  permissions = ["cloudsql.instances.export", "cloudsql.instances.get", "cloudsql.instances.import"]
 }
 
 resource "google_project_iam_member" "ray_cloudsql_importer" {
