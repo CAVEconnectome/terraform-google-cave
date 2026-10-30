@@ -22,7 +22,7 @@ releases:
   - name: materialization-engine
     namespace: default
     chart: cave/materializationengine
-    version: 5.26.4-r.1
+    version: 5.36.0
     values:
       - ${cluster_values}
       - ${materialize_defaults}
@@ -32,8 +32,8 @@ releases:
       - ${cloudsql_defaults}
       # - cloudsql.yaml      # optional user override
       # Ephemeral Ray platform (RBAC + RayJob pod-spec ConfigMap only; no Ray
-      # cluster is created until the app submits a RayJob). Inert unless
-      # enable_ray = true in Terraform.
+      # cluster is created until the app submits a RayJob). enable_ray = false in
+      # Terraform turns it off.
       - ${ray_defaults}
       # - ray.yaml           # optional user override
 

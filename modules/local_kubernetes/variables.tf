@@ -239,10 +239,12 @@ variable "enable_ray" {
     Install the KubeRay operator and create the Ray service account + secret.
     Ray clusters themselves are ephemeral: the application creates a RayJob CR,
     KubeRay stands up a cluster, runs it, and deletes it. Nothing runs at rest
-    except the operator pod.
+    except the operator pod. On by default: Ray is the preferred way to run bulk
+    uploads and Delta Lake exports. materializationengine charts before 5.30
+    have no Ray templates and ignore the generated ray values.
   EOT
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "kuberay_operator_version" {
@@ -280,10 +282,10 @@ variable "enable_ray_upload" {
     workers need, and nothing more: objectAdmin on the upload bucket, a custom
     role with only cloudsql.instances.import/get on the app's Cloud SQL instance,
     and bigtable.reader on the PyChunkedGraph instance (root id lookups).
-    Requires enable_ray.
+    Requires enable_ray. On by default; false keeps bulk uploads on Celery.
   EOT
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "ray_cloudsql_import_role" {
