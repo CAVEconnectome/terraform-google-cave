@@ -2,7 +2,7 @@ resource "google_sql_database_instance" "postgres" {
   name             = var.sql_instance_name
   region           = var.region
   project          = var.project_id
-  database_version = "POSTGRES_13"
+  database_version = var.postgres_version
 
   lifecycle {
     prevent_destroy = true

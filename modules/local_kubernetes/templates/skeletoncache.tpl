@@ -32,4 +32,3 @@ skeletoncache:
   # Limiter wiring (use the same Redis as PCG/materialization if provided)
   limiter:
     uri: "redis://${redis_host}/0"
-    categories: ""

@@ -8,12 +8,12 @@ variable "region" {
 
 
 variable "helm_config_dir" {
-  type = string
+  type        = string
   description = "folder where to output helmfile config files"
 }
 
 variable "helm_terraform_state_url" {
-  type = string
+  type        = string
   description = "url where to find tfstate state, using helmfile syntax, assuming ref+tfstateURL so for example i.e. ://PATH_TO_STATE, or gs://BUCKET/PATH_TO_STATE"
 }
 
@@ -23,14 +23,31 @@ variable "project_id" {
 }
 
 variable "owner" {
-  type = string
+  type        = string
   description = "added as label to resources, convenient to filter costs based on labels"
-  default = "na"
+  default     = "na"
 }
 
 variable "sql_instance_name" {
   description = "Name of the SQL instance"
-  type = string
+  type        = string
+}
+
+variable "postgres_version" {
+  description = "PostgreSQL version for the SQL instance (e.g., POSTGRES_13, POSTGRES_14)"
+  type        = string
+  default     = "POSTGRES_18"
+}
+
+variable "sql_edition" {
+  description = <<EOF
+        "Cloud SQL edition: ENTERPRISE or ENTERPRISE_PLUS.
+        Must stay ENTERPRISE while tier is a db-custom-* machine type; ENTERPRISE_PLUS
+        only accepts predefined db-perf-optimized-N-* tiers. Left unset, the API
+        defaults POSTGRES_16+ instances to ENTERPRISE_PLUS, which then rejects the tier."
+    EOF
+  type        = string
+  default     = "ENTERPRISE"
 }
 
 variable "dns_zone" {
@@ -56,30 +73,57 @@ variable "vpc_name_override" {
 }
 
 locals {
-  pcg_redis_name = var.pcg_redis_name_override != "" ? var.pcg_redis_name_override : "${var.owner}-${var.environment}-pcg-redis"
-  vpc_name = var.vpc_name_override != "" ? var.vpc_name_override : "${var.owner}-${var.environment}-vpc"
+  pcg_redis_name     = var.pcg_redis_name_override != "" ? var.pcg_redis_name_override : "${var.owner}-${var.environment}-pcg-redis"
+  vpc_name           = var.vpc_name_override != "" ? var.vpc_name_override : "${var.owner}-${var.environment}-vpc"
+  sql_google_project = var.sql_google_project != "" ? var.sql_google_project : var.project_id
+  # Materialization dumps are written by the Cloud SQL export job, so they default to
+  # following the database rather than the cluster.
+  materialization_bucket_google_project = var.materialization_bucket_google_project != "" ? var.materialization_bucket_google_project : local.sql_google_project
+}
+
+variable "sql_google_project" {
+  description = <<EOF
+        "name of the google project your Cloud SQL instance sits in.
+        Use only if it should sit in a different project than project_id.
+        Set at creation time only: changing it on an existing instance forces
+        replacement, which prevent_destroy will block."
+    EOF
+  type        = string
+  default     = ""
+}
+
+variable "materialization_bucket_google_project" {
+  description = <<EOF
+        "name of the google project the materialization dump and upload buckets sit in.
+        Defaults to sql_google_project, which itself defaults to project_id, so the
+        buckets follow the Cloud SQL instance unless overridden.
+        A bucket's project is immutable: changing this on an existing deployment
+        forces the buckets to be destroyed and recreated."
+    EOF
+  type        = string
+  default     = ""
 }
 
 variable "sql_instance_cpu" {
   description = "Number of CPUs for the SQL instance"
-  default = 4
+  default     = 4
 }
 
 variable "sql_instance_memory_gb" {
   description = "Amount of memory for the SQL instance in gb"
-  default = 16 # 10240 Mb in GB
+  default     = 16 # 10240 Mb in GB
 }
 
 variable "sql_temp_file_limit_gb" {
   description = "Temporary file size limit in gigabytes"
   type        = number
-  default     = 100  # 104857600 Kb in GB
+  default     = 100 # 104857600 Kb in GB
 }
 
 variable "sql_maintenance_work_mem_gb" {
   description = "Maximum amount of memory to be used for maintenance operations in gigabytes"
   type        = number
-  default     = 2 
+  default     = 2
 }
 
 variable "max_parallel_maintenance_workers" {
@@ -91,19 +135,19 @@ variable "max_parallel_maintenance_workers" {
 variable "temp_file_limit" {
   description = "Temporary file size limit in kilobytes"
   type        = number
-  default     = 104857600  # 100 GB in KB
+  default     = 104857600 # 100 GB in KB
 }
 
 variable "work_mem" {
   description = "Amount of memory to be used by internal sort operations and hash tables in kilobytes"
   type        = number
-  default     = 64000  # 64 MB in KB
+  default     = 64000 # 64 MB in KB
 }
 
 variable "sql_work_mem_mb" {
   description = "Amount of memory to be used by internal sort operations and hash tables in megabytes"
   type        = number
-  default     = 64  # 64000 Kb in MB
+  default     = 64 # 64000 Kb in MB
 }
 
 variable "pcg_redis_memory_size_gb" {
@@ -168,4 +212,40 @@ variable "skeleton_cache_uniform_bucket_level_access" {
   description = "Whether to enable uniform bucket-level access for the skeleton cache bucket."
   type        = bool
   default     = true
+}
+
+variable "sql_backups_enabled" {
+  description = "Whether automated backups are enabled on the SQL instance. Turn off only for environments whose data is disposable or reproducible."
+  type        = bool
+  default     = true
+}
+
+variable "sql_point_in_time_recovery_enabled" {
+  description = "Whether point-in-time recovery is enabled on the SQL instance. Has no effect when sql_backups_enabled is false, since PITR depends on backups."
+  type        = bool
+  default     = true
+}
+
+variable "sql_backup_start_time" {
+  description = "HH:MM (UTC) start of the daily backup window. Leave null to let GCP keep its existing/default window."
+  type        = string
+  default     = null
+}
+
+variable "sql_transaction_log_retention_days" {
+  description = "Days of transaction logs to retain for point-in-time recovery. Leave null to keep the GCP default."
+  type        = number
+  default     = null
+}
+
+variable "sql_backup_location" {
+  description = "Where automated backups are stored, e.g. \"us-east1\". Null uses GCP's default (the multi-region nearest the instance) and clears a location already set on the instance, so set it to match an instance that has one."
+  type        = string
+  default     = null
+}
+
+variable "sql_backup_retained_count" {
+  description = "Number of automated backups to retain. Leave null to keep the GCP default."
+  type        = number
+  default     = null
 }

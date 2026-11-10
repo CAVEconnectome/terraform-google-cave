@@ -21,6 +21,12 @@ variable "sql_instance_name" {
   type        = string
 }
 
+variable "postgres_version" {
+  description = "PostgreSQL version for the SQL instance (e.g., POSTGRES_13, POSTGRES_14)"
+  type        = string
+  default     = "POSTGRES_18"
+}
+
 variable "dns_zone" {
   description = "The name of the DNS managed zone"
   type        = string

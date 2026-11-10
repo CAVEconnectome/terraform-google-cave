@@ -1,16 +1,37 @@
 #!/usr/bin/env bash
 # Import existing Cloud SQL and VPC resources into Terraform state via Terragrunt
 # Usage:
-#   ./terragrunt_import_sql.sh [TERRAGRUNT_MODULE_DIR]
+#   ./terragrunt_import_sql.sh [--fix-mismatch] [TERRAGRUNT_MODULE_DIR]
 # If no directory is provided, the current directory is used. The directory
 # must contain a terragrunt.hcl that defines the resources being imported.
+#
+# An address that is already in state is normally left alone, but "already in
+# state" is not the same as "pointing at the resource the config asks for": if
+# e.g. sql_instance_name changed after a previous import, state still holds the
+# old instance. Those stale entries are reported, and with --fix-mismatch they
+# are removed from state and re-imported against the current config.
 
 set -euo pipefail
 
-WORK_DIR="${1:-$(pwd)}"
+WORK_DIR=""
+FIX_MISMATCH="${FIX_MISMATCH:-0}"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --fix-mismatch)    FIX_MISMATCH=1 ;;
+    --no-fix-mismatch) FIX_MISMATCH=0 ;;
+    -h|--help)
+      echo "usage: $0 [--fix-mismatch] [TERRAGRUNT_MODULE_DIR]"
+      exit 0
+      ;;
+    *) WORK_DIR="$1" ;;
+  esac
+  shift
+done
+WORK_DIR="${WORK_DIR:-$(pwd)}"
+
 if [ ! -f "$WORK_DIR/terragrunt.hcl" ]; then
   echo "error: no terragrunt.hcl found in: $WORK_DIR" >&2
-  echo "usage: $0 /path/to/module" >&2
+  echo "usage: $0 [--fix-mismatch] /path/to/module" >&2
   exit 1
 fi
 
@@ -36,15 +57,85 @@ has_state() {
   return $rc
 }
 
-# Helper: import with optional fallback ID (used when providers accept multiple ID syntaxes)
-import_try() {
-  local addr="$1"; shift
-  local id_primary="$1"; shift
-  local id_fallback="${1:-}"; shift || true
-  if has_state "$addr"; then
-    echo "$addr already managed (skipping import)"
+# Snapshot the state once. `state show` output is not machine-readable, so the
+# pulled JSON is what we inspect to see which cloud resource each address holds.
+# The copy also doubles as a restore point if a removal/re-import goes wrong.
+STATE_JSON="$(mktemp)"
+trap 'rm -f "$STATE_JSON"' EXIT
+if ! terragrunt --working-dir "$WORK_DIR" state pull > "$STATE_JSON" 2>/dev/null || [ ! -s "$STATE_JSON" ]; then
+  echo '{"resources":[]}' > "$STATE_JSON"
+fi
+STATE_BACKUP="${TMPDIR:-/tmp}/terragrunt-import-backup-$(basename "$WORK_DIR").tfstate"
+cp "$STATE_JSON" "$STATE_BACKUP"
+echo "State snapshot saved to: $STATE_BACKUP"
+echo "  (restore with: terragrunt --working-dir $WORK_DIR state push $STATE_BACKUP)"
+
+# Helper: print one attribute of a state address, or nothing if absent.
+# Matches with or without a count/for_each index, so "foo.bar" also finds "foo.bar[0]".
+state_attr() {
+  local addr="$1" attr="$2"
+  jq -r --arg addr "$addr" --arg attr "$attr" '
+    (.resources // [])[]
+    | select(((if (.module // "") == "" then "" else .module + "." end) + .type + "." + .name) == $addr)
+    | (.instances // [])[0].attributes[$attr] // empty
+  ' "$STATE_JSON" 2>/dev/null | head -1
+}
+
+# Helper: classify a state address against what the config asks for.
+#   0 -> in state, pointing at the expected resource (nothing to do)
+#   1 -> not in state (import it)
+#   2 -> in state, pointing at something else (stale entry; sets MISMATCH_DETAIL)
+# $2 is the attribute holding the identity ("name", or "instance" for Cloud SQL
+# children) and $3 the value the current config expects it to have.
+MISMATCH_DETAIL=""
+state_status() {
+  local addr="$1" attr="$2" expected="$3"
+  local actual
+  actual="$(state_attr "$addr" "$attr")"
+  if [ -z "$actual" ]; then
+    # Absent from the snapshot, or present without that attribute. Fall back to
+    # `state show` so an unreadable attribute never triggers a bogus re-import.
+    has_state "$addr" || return 1
     return 0
   fi
+  [ -z "$expected" ] && return 0
+  [ "$actual" = "$expected" ] && return 0
+  MISMATCH_DETAIL="$addr: state has $attr=\"$actual\", config wants \"$expected\""
+  return 2
+}
+
+# Collected stale entries, reported together at the end.
+MISMATCHES=""
+
+# Helper: import an address unless state already points at the right resource.
+# usage: import_resource ADDR ID_ATTR EXPECTED_ID_VALUE IMPORT_ID [FALLBACK_IMPORT_ID]
+# The fallback is used when providers accept multiple ID syntaxes.
+import_resource() {
+  local addr="$1" attr="$2" expected="$3" id_primary="$4" id_fallback="${5:-}"
+  local rc=0
+  set +e
+  state_status "$addr" "$attr" "$expected"
+  rc=$?
+  set -e
+  case $rc in
+    0)
+      echo "$addr already managed${expected:+ as \"$expected\"} (skipping import)"
+      return 0
+      ;;
+    2)
+      echo "WARNING: stale state entry -- $MISMATCH_DETAIL" >&2
+      if [ "$FIX_MISMATCH" != "1" ]; then
+        MISMATCHES="${MISMATCHES}  ${MISMATCH_DETAIL}
+"
+        echo "  state left untouched. Re-run with --fix-mismatch, or by hand:" >&2
+        echo "    terragrunt --working-dir \"$WORK_DIR\" state rm $addr" >&2
+        echo "    terragrunt --working-dir \"$WORK_DIR\" import $addr $id_primary" >&2
+        return 0
+      fi
+      echo "  removing $addr from state so it can be re-imported"
+      terragrunt --working-dir "$WORK_DIR" state rm "$addr"
+      ;;
+  esac
   if [ -z "$id_primary" ]; then
     echo "Skipping import for $addr (missing import ID)"
     return 0
@@ -52,7 +143,7 @@ import_try() {
   echo "Importing $addr with: $id_primary"
   set +e
   terragrunt --working-dir "$WORK_DIR" import "$addr" "$id_primary"
-  local rc=$?
+  rc=$?
   set -e
   if [ $rc -ne 0 ] && [ -n "$id_fallback" ]; then
     echo "Primary import failed, retrying $addr with fallback: $id_fallback"
@@ -221,76 +312,57 @@ Importing resources with the following values:
 INFO
 
 # Import the SQL user (if we have enough info)
+# Identity is the instance it belongs to; the username itself is sensitive in state.
 if [ -n "${sql_user_id}" ]; then
-  if has_state "google_sql_user.writer"; then
-    echo "SQL user already managed: google_sql_user.writer (skipping import)"
-  else
-    echo "Importing SQL user..."
-    terragrunt --working-dir "$WORK_DIR" import "google_sql_user.writer" "$sql_user_id"
-  fi
+  import_resource "google_sql_user.writer" "instance" "$sql_instance_name" "$sql_user_id"
 else
   echo "Skipping SQL user import (missing project_id/sql_instance_name/postgres_write_user)"
 fi
 
 # Import the compute network (if we have enough info)
 if [ -n "${network_id}" ]; then
-  if has_state "google_compute_network.vpc"; then
-    echo "VPC network already managed: google_compute_network.vpc (skipping import)"
-  else
-    echo "Importing compute network..."
-    terragrunt --working-dir "$WORK_DIR" import "google_compute_network.vpc" "$network_id"
-  fi
+  import_resource "google_compute_network.vpc" "name" "$network_name" "$network_id"
 else
   echo "Skipping VPC network import (missing project_id/network_name)"
 fi
 
 # Import the subnetwork
 if [ -n "${subnetwork_id}" ]; then
-  if has_state "google_compute_subnetwork.subnet"; then
-    echo "Subnetwork already managed: google_compute_subnetwork.subnet (skipping import)"
-  else
-    echo "Importing subnetwork..."
-    terragrunt --working-dir "$WORK_DIR" import "google_compute_subnetwork.subnet" "$subnetwork_id"
-  fi
+  import_resource "google_compute_subnetwork.subnet" "name" "$subnetwork_name" "$subnetwork_id"
 else
   echo "Skipping subnetwork import (missing project_id/region/subnetwork_name)"
 fi
 
 # Import the Cloud SQL database instance
 if [ -n "${sql_instance_id}" ]; then
-  if has_state "google_sql_database_instance.postgres"; then
-    echo "SQL instance already managed: google_sql_database_instance.postgres (skipping import)"
-  else
-    echo "Importing SQL instance..."
-    terragrunt --working-dir "$WORK_DIR" import "google_sql_database_instance.postgres" "$sql_instance_id"
-  fi
+  import_resource "google_sql_database_instance.postgres" "name" "$sql_instance_name" "$sql_instance_id"
 else
   echo "Skipping SQL instance import (missing project_id/sql_instance_name)"
 fi
 
 # Import SQL databases (annotation, materialization) with fallback ID formats
 if [ -n "${project_id}" ] && [ -n "${sql_instance_name}" ]; then
-  import_try "google_sql_database.annotation"     "${project_id}/${sql_instance_name}/annotation"     "projects/${project_id}/instances/${sql_instance_name}/databases/annotation"
-  import_try "google_sql_database.materialization" "${project_id}/${sql_instance_name}/materialization" "projects/${project_id}/instances/${sql_instance_name}/databases/materialization"
+  import_resource "google_sql_database.annotation" "instance" "$sql_instance_name" \
+    "${project_id}/${sql_instance_name}/annotation" \
+    "projects/${project_id}/instances/${sql_instance_name}/databases/annotation"
+  import_resource "google_sql_database.materialization" "instance" "$sql_instance_name" \
+    "${project_id}/${sql_instance_name}/materialization" \
+    "projects/${project_id}/instances/${sql_instance_name}/databases/materialization"
 else
   echo "Skipping SQL database imports (missing project_id/sql_instance_name)"
 fi
 
 # Import DNS managed zone (primary)
 if [ -n "${dns_zone_id_primary}" ]; then
-  import_try "google_dns_managed_zone.primary" "$dns_zone_id_primary" "$dns_zone_id_fallback"
+  import_resource "google_dns_managed_zone.primary" "name" "$dns_zone_name" \
+    "$dns_zone_id_primary" "$dns_zone_id_fallback"
 else
   echo "Skipping DNS managed zone import (missing project_id/dns_zone_name)"
 fi
 
 # Import Redis instance (pcg_redis)
 if [ -n "${redis_id}" ]; then
-  if has_state "google_redis_instance.pcg_redis"; then
-    echo "Redis instance already managed: google_redis_instance.pcg_redis (skipping import)"
-  else
-    echo "Importing Redis instance..."
-    terragrunt --working-dir "$WORK_DIR" import "google_redis_instance.pcg_redis" "$redis_id"
-  fi
+  import_resource "google_redis_instance.pcg_redis" "name" "$redis_name" "$redis_id"
 else
   echo "Skipping Redis import (missing project_id/region/redis_name)"
 fi
@@ -300,12 +372,9 @@ if [ -n "${materialization_dump_bucket_path}" ]; then
   # Extract bucket name from path (first part before /)
   dump_bucket_name=$(echo "$materialization_dump_bucket_path" | sed -n -e 's/^\([^/]*\).*$/\1/p')
   if [ -n "${dump_bucket_name}" ]; then
-    if has_state "google_storage_bucket.materialization_dump"; then
-      echo "Materialization dump bucket already managed: google_storage_bucket.materialization_dump (skipping import)"
-    else
-      echo "Importing materialization dump bucket: $dump_bucket_name (extracted from path: $materialization_dump_bucket_path)"
-      terragrunt --working-dir "$WORK_DIR" import "google_storage_bucket.materialization_dump" "$dump_bucket_name"
-    fi
+    echo "Materialization dump bucket: $dump_bucket_name (from path: $materialization_dump_bucket_path)"
+    import_resource "google_storage_bucket.materialization_dump" "name" \
+      "$dump_bucket_name" "$dump_bucket_name"
   else
     echo "Skipping materialization dump bucket import (unable to extract bucket name from path: $materialization_dump_bucket_path)"
   fi
@@ -317,12 +386,9 @@ if [ -n "${materialization_upload_bucket_path}" ]; then
   # Extract bucket name from path (first part before /)
   upload_bucket_name=$(echo "$materialization_upload_bucket_path" | sed -n -e 's/^\([^/]*\).*$/\1/p')
   if [ -n "${upload_bucket_name}" ]; then
-    if has_state "google_storage_bucket.materialization_upload"; then
-      echo "Materialization upload bucket already managed: google_storage_bucket.materialization_upload (skipping import)"
-    else
-      echo "Importing materialization upload bucket: $upload_bucket_name (extracted from path: $materialization_upload_bucket_path)"
-      terragrunt --working-dir "$WORK_DIR" import "google_storage_bucket.materialization_upload" "$upload_bucket_name"
-    fi
+    echo "Materialization upload bucket: $upload_bucket_name (from path: $materialization_upload_bucket_path)"
+    import_resource "google_storage_bucket.materialization_upload" "name" \
+      "$upload_bucket_name" "$upload_bucket_name"
   else
     echo "Skipping materialization upload bucket import (unable to extract bucket name from path: $materialization_upload_bucket_path)"
   fi
@@ -330,20 +396,28 @@ else
   echo "Skipping materialization upload bucket import (missing materialization_upload_bucket_path)"
 fi
 
-if [ -n "${skeleton_cache_cloudpath}" ] ;then 
+if [ -n "${skeleton_cache_cloudpath}" ]; then
   skeleton_cache_bucket_name=$(echo "$skeleton_cache_cloudpath" | sed -n -e 's/^gs:\/\/\([^/]*\).*$/\1/p')
   if [ -n "${skeleton_cache_bucket_name}" ]; then
-    if has_state "google_storage_bucket.skeleton_cache"; then
-      echo "Skeleton cache bucket already managed: google_storage_bucket.skeleton_cache (skipping import)"
-    else
-      echo "Importing skeleton cache bucket..."
-      terragrunt --working-dir "$WORK_DIR" import "google_storage_bucket.skeleton_cache" "$skeleton_cache_bucket_name"
-    fi
+    import_resource "google_storage_bucket.skeleton_cache" "name" \
+      "$skeleton_cache_bucket_name" "$skeleton_cache_bucket_name"
   else
     echo "Skipping skeleton cache bucket import (unable to parse bucket name from skeleton_cache_cloudpath)"
   fi
 else
   echo "Skipping skeleton cache bucket import (missing skeleton_cache_cloudpath)"
+fi
+
+if [ -n "$MISMATCHES" ]; then
+  cat >&2 <<MISMATCH
+Import completed, but these state entries point at resources the config no
+longer asks for, so they were NOT imported:
+
+$MISMATCHES
+Re-run with --fix-mismatch to remove and re-import them, or run the
+state rm/import pairs printed above by hand. State backup: $STATE_BACKUP
+MISMATCH
+  exit 1
 fi
 
 echo "Import completed."

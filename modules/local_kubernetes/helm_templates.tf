@@ -23,12 +23,12 @@ resource "local_file" "helm_values_cluster" {
 resource "local_file" "values_materialize" {
   filename = "${var.helm_config_dir}/materialize.defaults.yaml"
   content = templatefile("${path.module}/templates/materialize.tpl", {
-    redis_host                    = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host,
-    project_id                    = var.project_id,
-    sql_instance_name             = var.sql_instance_name,
-    secrets_project_id            = var.project_id,
-    cave_secret_name              = var.cave_secret_name,
-    pycg_sa_secret                = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
+    redis_host                         = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host,
+    sql_project_id                     = local.sql_google_project,
+    sql_instance_name                  = var.sql_instance_name,
+    secrets_project_id                 = var.project_id,
+    cave_secret_name                   = var.cave_secret_name,
+    pycg_sa_secret                     = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
     materialization_upload_bucket_name = var.materialization_upload_bucket_path != "" ? var.materialization_upload_bucket_path : var.materialization_upload_bucket_name,
     materialization_dump_bucket_path   = var.materialization_dump_bucket_path != "" ? var.materialization_dump_bucket_path : var.materialization_dump_bucket_name
   })
@@ -49,11 +49,30 @@ resource "local_file" "values_skeletoncache" {
   file_permission = "0644"
 }
 
+# Defaults for the ephemeral Ray platform. Rendered unconditionally so the file
+# is always present for helmfile; ray.enabled gates whether the chart renders
+# anything from it.
+resource "local_file" "values_ray" {
+  filename = "${var.helm_config_dir}/ray.defaults.yaml"
+  content = templatefile("${path.module}/templates/ray.tpl", {
+    ray_enabled        = var.enable_ray,
+    ray_upload_enabled = var.enable_ray && var.enable_ray_upload,
+    ray_namespace      = var.ray_namespace,
+    ray_version        = var.ray_version,
+    ray_sa_secret      = format("ray-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
+    secrets_project_id = var.project_id,
+    cave_secret_name   = var.cave_secret_name,
+    sql_project_id     = local.sql_google_project,
+    sql_instance_name  = var.sql_instance_name
+  })
+  file_permission = "0644"
+}
+
 resource "local_file" "values_annotation" {
   filename = "${var.helm_config_dir}/annotation.defaults.yaml"
   content = templatefile("${path.module}/templates/annotation.tpl", {
     redis_host         = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host,
-    project_id         = var.project_id,
+    sql_project_id     = local.sql_google_project,
     secrets_project_id = var.project_id,
     cave_secret_name   = var.cave_secret_name
   })
@@ -75,6 +94,7 @@ resource "local_file" "values_cloudsql" {
   filename = "${var.helm_config_dir}/cloudsql.defaults.yaml"
   content = templatefile("${path.module}/templates/cloudsql.tpl", {
     terraform_state_url  = var.helm_terraform_state_url,
+    sql_project_id       = local.sql_google_project,
     secrets_project_id   = var.project_id,
     postgres_credentials = "${var.environment}-postgres-credentials",
     cloudsql_sa_secret   = format("cloudsql-google-secret-%s-%s", var.cluster_prefix, terraform.workspace)
@@ -115,11 +135,27 @@ resource "local_file" "values_pcg" {
 resource "local_file" "values_pcgl2cache" {
   filename = "${var.helm_config_dir}/pcgl2cache.defaults.yaml"
   content = templatefile("${path.module}/templates/pcgl2cache.tpl", {
-    cluster_prefix     = var.cluster_prefix,
-    bigtable_instance  = var.bigtable_instance_name,
-    pycg_sa_secret     = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
-    secrets_project_id = var.project_id,
-    cave_secret_name   = var.cave_secret_name
+    cluster_prefix              = var.cluster_prefix,
+    l2cache_worker_subscription = var.l2cache_worker_subscription,
+    l2cache_high_trigger        = var.l2cache_high_priority_trigger_subscription,
+    l2cache_low_trigger         = var.l2cache_low_priority_trigger_subscription,
+    bigtable_instance           = var.bigtable_instance_name,
+    pycg_sa_secret              = format("pycg-google-secret-%s-%s", var.cluster_prefix, terraform.workspace),
+    secrets_project_id          = var.project_id,
+    cave_secret_name            = var.cave_secret_name,
+    # Same source and fallback as pychunkedgraph's limiter, so every service's
+    # rate limits share one Redis and one bucket namespace.
+    mat_redis_host              = var.mat_redis_host != "" ? var.mat_redis_host : var.pcg_redis_host
+  })
+  file_permission = "0644"
+}
+
+# Defaults for the landing page chart. The service list is the chart default;
+# this file supplies the per-environment title/heading.
+resource "local_file" "values_landingpage" {
+  filename = "${var.helm_config_dir}/landingpage.defaults.yaml"
+  content = templatefile("${path.module}/templates/landingpage.tpl", {
+    environment = var.environment
   })
   file_permission = "0644"
 }
@@ -137,6 +173,8 @@ resource "local_file" "bootstrap_helmfile_example" {
     pcgl2cache_defaults     = "pcgl2cache.defaults.yaml",
     skeletoncache_defaults  = "skeletoncache.defaults.yaml",
     catalog_defaults        = "catalog.defaults.yaml"
+    landingpage_defaults    = "landingpage.defaults.yaml",
+    ray_defaults            = "ray.defaults.yaml"
   })
   file_permission = "0644"
 }
@@ -149,6 +187,19 @@ resource "local_file" "bootstrap_configure_script" {
     zone         = var.zone,
     cluster_name = var.cluster_name,
     kube_context = format("gke_%s_%s_%s", var.project_id, var.zone, var.cluster_name)
+  })
+  file_permission = "0755"
+}
+
+resource "local_file" "cloudsql_proxy_script" {
+  filename = "${var.helm_config_dir}/cloudsqlproxy.sh"
+  content = templatefile("${path.module}/templates/cloudsqlproxy.sh.tpl", {
+    project_id           = var.project_id,
+    sql_project_id       = local.sql_google_project,
+    region               = var.region,
+    zone                 = var.zone,
+    sql_instance_name    = var.sql_instance_name,
+    postgres_credentials = "${var.environment}-postgres-credentials"
   })
   file_permission = "0755"
 }

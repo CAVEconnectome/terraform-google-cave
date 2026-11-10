@@ -125,6 +125,14 @@ variable "bigtable_google_project" {
   default     = ""
 }
 
+# Declared so this module accepts the shared root.hcl inputs; the SQL instance
+# itself is created by local_infrastructure.
+variable "sql_google_project" {
+  description = "Optional Google project hosting the Cloud SQL instance. Empty means project_id."
+  type        = string
+  default     = ""
+}
+
 variable "letsencrypt_issuer_name" {
   type        = string
   default     = "letsencrypt-staging"
@@ -151,6 +159,61 @@ variable "deletion_protection" {
   type        = bool
   description = "enable deletion protection for the cluster"
   default     = false
+}
+
+variable "enable_vertical_pod_autoscaling" {
+  type        = bool
+  description = "enable vertical pod autoscaling for the cluster"
+  default     = true
+}
+
+variable "monitoring_enable_components" {
+  type        = list(string)
+  description = <<-EOT
+    GKE monitoring components to enable. POD/DEPLOYMENT/STATEFULSET/DAEMONSET/HPA
+    are kube-state metrics (replica counts, phases, restarts). CADVISOR and KUBELET
+    are what produce the per-container/per-pod CPU and memory series that the GKE
+    console's workload observability views read -- without them those views render
+    but stay empty.
+
+    All components except SYSTEM_COMPONENTS require managed_prometheus, which this
+    module enables unconditionally.
+
+    Cost note: CADVISOR and KUBELET are the highest-cardinality components GKE
+    offers (per-container, per-pod, per-volume series billed as GMP samples). On
+    clusters with large, short-lived worker fleets they materially increase
+    ingestion volume. Override this variable to trim the list per environment.
+
+    Valid values: SYSTEM_COMPONENTS, APISERVER, SCHEDULER, CONTROLLER_MANAGER,
+    STORAGE, HPA, POD, DAEMONSET, DEPLOYMENT, STATEFULSET, CADVISOR, KUBELET,
+    DCGM, JOBSET. (WORKLOADS is accepted by the API but is a deprecated no-op for
+    monitoring -- it is only meaningful in logging_config.)
+  EOT
+  default = [
+    "SYSTEM_COMPONENTS",
+    "POD",
+    "DEPLOYMENT",
+    "STATEFULSET",
+    "DAEMONSET",
+    "HPA",
+    "STORAGE",
+    "CADVISOR",
+    "KUBELET",
+  ]
+
+  validation {
+    condition     = contains(var.monitoring_enable_components, "SYSTEM_COMPONENTS")
+    error_message = "SYSTEM_COMPONENTS must be included; GKE rejects a monitoring config that enables other components without it."
+  }
+
+  validation {
+    condition = length(setsubtract(var.monitoring_enable_components, [
+      "SYSTEM_COMPONENTS", "APISERVER", "SCHEDULER", "CONTROLLER_MANAGER",
+      "STORAGE", "HPA", "POD", "DAEMONSET", "DEPLOYMENT", "STATEFULSET",
+      "CADVISOR", "KUBELET", "DCGM", "JOBSET",
+    ])) == 0
+    error_message = "Unsupported monitoring component. See the variable description for the valid list."
+  }
 }
 
 variable "redis_version" {
@@ -212,4 +275,21 @@ variable "skeleton_cache_cloudpath" {
 variable "cave_secret_name" {
   description = "Name of the Google Secret Manager secret containing the CAVE token"
   type        = string
+}
+variable "skeletoncache_retry_min_backoff" {
+  description = "Initial delay before a nacked skeletoncache message is redelivered. Must leave pcgl2cache time to compute missing level 2 ids; see the note in pubsub.tf."
+  type        = string
+  default     = "60s"
+}
+
+variable "skeletoncache_retry_max_backoff" {
+  description = "Ceiling for the exponential redelivery delay on skeletoncache worker subscriptions."
+  type        = string
+  default     = "600s"
+}
+
+variable "skeletoncache_max_delivery_attempts" {
+  description = "Deliveries before a skeletoncache message is dead-lettered. Dead-lettering adds the root id to the refusal list permanently, so this must outlast any transient downstream outage; see the measured backoff curve in pubsub.tf."
+  type        = number
+  default     = 50
 }

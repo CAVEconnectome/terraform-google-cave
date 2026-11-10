@@ -26,6 +26,9 @@ inputs = {
 {%- if cookiecutter.bigtable_google_project %}
   bigtable_google_project  = "{{ cookiecutter.bigtable_google_project }}"
 {%- endif %}
+{%- if cookiecutter.sql_google_project %}
+  sql_google_project       = "{{ cookiecutter.sql_google_project }}"
+{%- endif %}
   bigtable_instance_name   = "{{ cookiecutter.bigtable_instance_name }}"
   
   helm_terraform_state_url = "gs://{{ cookiecutter.state_bucket }}/{{ cookiecutter.local_environment_name }}/static/default.tfstate"
@@ -47,6 +50,13 @@ inputs = {
 {%- if cookiecutter.materialization_dump_bucket_name %}
   materialization_dump_bucket_path = "{{ cookiecutter.materialization_dump_bucket_name }}"
 {%- endif %}
+{%- if cookiecutter.materialization_upload_bucket_name %}
+  materialization_upload_bucket_path = "{{ cookiecutter.materialization_upload_bucket_name }}"
+{%- endif %}
+{%- if cookiecutter.materialization_bucket_google_project %}
+  materialization_bucket_google_project = "{{ cookiecutter.materialization_bucket_google_project }}"
+{%- endif %}
+
   # Required configurations
   cave_secret_name           = "{{ cookiecutter.cave_secret_name }}"
   letsencrypt_email          = "{{ cookiecutter.letsencrypt_email }}"

@@ -1,5 +1,5 @@
 terraform {
-  source = "tfr:///CAVEconnectome/cave/google//modules/local_cluster?version=0.0.27"
+  source = {% if cookiecutter.local_modules_repo %}"../../../{{ cookiecutter.local_modules_repo }}/modules/local_cluster"{% else %}"tfr:///CAVEconnectome/cave/google//modules/local_cluster?version=0.14.0"{% endif %}
 }
 
 include "root" {

@@ -7,4 +7,4 @@ annotation:
     - name: cave-secret.json
       value: "ref+gcpsecrets://${secrets_project_id}/${cave_secret_name}"
 cloudsql:
-  projectId: "${project_id}"
+  projectId: "${sql_project_id}"

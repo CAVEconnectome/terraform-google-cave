@@ -44,7 +44,7 @@ gsutil mb -l us gs://<STATE_BUCKET>
 
 
 ## Environment repository
-We reccomend that you setup a seperate repository to store all your environment configurations. So make a new folder that you will store and track these files. This is the equivalent to the ENV_REPO that was specified in your CAVEdeployment environment.  However, unlike the environment files, we have tried to design this repo so that no sensitive data is stored in this repository, so it can be developed in the open. We will refer to this location as ENVIRONMENTS_REPO in this documentation.
+We recommend that you setup a seperate repository to store all your environment configurations. So make a new folder that you will store and track these files. This is the equivalent to the ENV_REPO that was specified in your CAVEdeployment environment.  However, unlike the environment files, we have tried to design this repo so that no sensitive data is stored in this repository, so it can be developed in the open. We will refer to this location as ENVIRONMENTS_REPO in this documentation.
 
 You can see an example repository at https://www.github.com/CAVEconnectome/terraform-cave-private which is used to manage several cave deployments (3 global, and 6 local clusters).
 

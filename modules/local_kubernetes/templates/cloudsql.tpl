@@ -1,5 +1,6 @@
 # Generated values for Cloud SQL connectivity
 cloudsql:
+  projectId: "${sql_project_id}"
   sqlInstanceName: "ref+tfstate${terraform_state_url}/output.sql_instance_name"
   username: "ref+gcpsecrets://${secrets_project_id}/${postgres_credentials}#username"
   password: "ref+gcpsecrets://${secrets_project_id}/${postgres_credentials}#password"
