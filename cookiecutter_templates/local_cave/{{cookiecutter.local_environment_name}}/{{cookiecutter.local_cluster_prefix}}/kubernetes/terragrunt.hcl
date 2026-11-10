@@ -1,5 +1,5 @@
 terraform {
-  source = {% if cookiecutter.local_modules_repo %}"../../../../{{ cookiecutter.local_modules_repo }}/modules/local_kubernetes"{% else %}"tfr:///CAVEconnectome/cave/google//modules/local_kubernetes?version=0.15.0"{% endif %}
+  source = {% if cookiecutter.local_modules_repo %}"../../../../{{ cookiecutter.local_modules_repo }}/modules/local_kubernetes"{% else %}"tfr:///CAVEconnectome/cave/google//modules/local_kubernetes?version=0.15.1"{% endif %}
 }
 
 include "root" {
