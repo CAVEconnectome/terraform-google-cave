@@ -31,6 +31,12 @@ resource "helm_release" "nginx_ingress" {
   # the way the charts' sysctl-buddy sets net.core.somaxconn.
   values = [yamlencode({
     controller = {
+      # Every request into the cluster passes through this one pod, so keep it off the
+      # preemptible pools: unpinned, minniev7's landed on a mesh-pool node, where a scale-down
+      # or preemption would interrupt every service at once. Same pin as the kuberay operator.
+      nodeSelector = {
+        "cloud.google.com/gke-nodepool" = var.core_pool_name
+      }
       extraInitContainers = [{
         name            = "sysctl-buddy"
         image           = "alpine:3.4"
