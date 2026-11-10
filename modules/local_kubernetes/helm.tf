@@ -16,6 +16,33 @@ resource "helm_release" "nginx_ingress" {
     }
   ]
 
+  # The controller holds the clients' TCP connections, so it is the sender whose congestion
+  # window matters. Linux's default (tcp_slow_start_after_idle=1) drops that window back to
+  # ~14 KB whenever a keep-alive connection idles past its retransmission timeout (~0.3 s at
+  # a 90 ms round trip), so every API response restarted slow start: a 75-110 KB query
+  # response took ~3 extra round trips. Measured on ltv7 (2026-11-10, laptop -> us-east1,
+  # zstd Arrow responses): 24 KB 0.21-0.30 s -> 0.13-0.15 s, 383 KB 0.45-0.52 s -> 0.24-0.26
+  # s, 1.6 MB 0.89-1.24 s -> 0.60-0.69 s. Linux paces TCP sends, so a full window after idle
+  # is not sent as one burst.
+  #
+  # The sysctl is per network namespace (node-level sysctls don't reach the pod) and
+  # Kubernetes counts it unsafe, so pod securityContext.sysctls would need the kubelet's
+  # allowed_unsafe_sysctls on the node pool; a privileged init container sets it instead,
+  # the way the charts' sysctl-buddy sets net.core.somaxconn.
+  values = [yamlencode({
+    controller = {
+      extraInitContainers = [{
+        name            = "sysctl-buddy"
+        image           = "alpine:3.4"
+        command         = ["sysctl", "-w", "net.ipv4.tcp_slow_start_after_idle=0"]
+        securityContext = { privileged = true }
+        resources = {
+          requests = { cpu = "5m", memory = "10Mi" }
+        }
+      }]
+    }
+  })]
+
   depends_on = [data.google_container_cluster.cluster]
 }
 
