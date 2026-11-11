@@ -5,7 +5,7 @@
 # notation.
 
 terraform { 
-  source = {% if cookiecutter.local_modules_repo %}"../../../{{ cookiecutter.local_modules_repo }}/modules/local_infrastructure"{% else %}"tfr:///CAVEconnectome/cave/google//modules/local_infrastructure?version=0.15.1"{% endif %}
+  source = {% if cookiecutter.local_modules_repo %}"../../../{{ cookiecutter.local_modules_repo }}/modules/local_infrastructure"{% else %}"tfr:///CAVEconnectome/cave/google//modules/local_infrastructure?version=0.16.0"{% endif %}
 }
 
 include "root" {
