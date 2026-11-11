@@ -230,6 +230,17 @@ variable "cave_secret_name" {
   type        = string
 }
 
+variable "catalog_managed_buckets" {
+  description = "List of GCS bucket names the catalog SA gets objectViewer on for credential vending"
+  type        = list(string)
+  default     = []
+}
+
+variable "catalog_datastacks" {
+  description = "List of datastack names served by the catalog service"
+  type        = list(string)
+  default     = []
+}
 # --- Ray / KubeRay ---------------------------------------------------------
 # Ephemeral RayJob platform for long-running jobs that Celery-over-Redis struggles
 # with. Ray workers run on the existing mesh-pool; there is no dedicated node pool.

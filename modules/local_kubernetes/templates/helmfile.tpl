@@ -103,6 +103,15 @@ releases:
     values:
       - ${cluster_values}
 
+  - name: catalog
+    namespace: default
+    chart: cave/catalog
+    version: 0.1.0
+    values:
+      - ${cluster_values}
+      - ${catalog_defaults}
+      - ${cloudsql_defaults}
+      # - catalog.yaml       # optional user override
   - name: landingpage
     namespace: default
     chart: cave/landingpage
