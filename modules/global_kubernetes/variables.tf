@@ -143,6 +143,16 @@ variable "cluster_ip" {
   type        = string
 }
 
+variable "ingress_disable_tcp_slow_start_after_idle" {
+  description = <<-EOT
+    Set net.ipv4.tcp_slow_start_after_idle=0 in the ingress-nginx controller's pod (a
+    privileged init container), so a keep-alive connection that idles does not restart TCP
+    slow start on its next response. Set false to keep the Linux default.
+  EOT
+  type        = bool
+  default     = true
+}
+
 variable "standard_pool_name" {
   description = "Name of the standard node pool (output of the global_cluster module)"
   type        = string

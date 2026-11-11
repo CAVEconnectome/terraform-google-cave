@@ -29,6 +29,7 @@ resource "helm_release" "nginx_ingress" {
   # Kubernetes counts it unsafe, so pod securityContext.sysctls would need the kubelet's
   # allowed_unsafe_sysctls on the node pool; a privileged init container sets it instead,
   # the way the charts' sysctl-buddy sets net.core.somaxconn.
+  # ingress_disable_tcp_slow_start_after_idle = false leaves the Linux default.
   values = [yamlencode({
     controller = {
       # Every request into the cluster passes through this one pod, so keep it off the
@@ -37,7 +38,7 @@ resource "helm_release" "nginx_ingress" {
       nodeSelector = {
         "cloud.google.com/gke-nodepool" = var.core_pool_name
       }
-      extraInitContainers = [{
+      extraInitContainers = var.ingress_disable_tcp_slow_start_after_idle ? [{
         name            = "sysctl-buddy"
         image           = "alpine:3.4"
         command         = ["sysctl", "-w", "net.ipv4.tcp_slow_start_after_idle=0"]
@@ -45,7 +46,7 @@ resource "helm_release" "nginx_ingress" {
         resources = {
           requests = { cpu = "5m", memory = "10Mi" }
         }
-      }]
+      }] : []
     }
   })]
 
