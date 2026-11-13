@@ -305,9 +305,19 @@ resource "google_service_account" "catalog_service_account" {
   display_name = "Catalog-${var.cluster_prefix}-${terraform.workspace}"
 }
 
-# Per-bucket objectViewer for credential vending (self-downscoping via CAB)
+# Per-bucket objectViewer for credential vending (self-downscoping via CAB), and for the
+# catalog's checks of a lake it registers (it reads the lake). Always the materialization
+# dump bucket and the bucket Delta Lake exports are written to (ray_deltalake_bucket, the
+# dump bucket unless set), plus catalog_managed_buckets; a bucket named twice is one grant.
+locals {
+  catalog_buckets = toset(compact(concat(
+    [local.materialization_dump_bucket_name_clean, local.ray_deltalake_bucket],
+    var.catalog_managed_buckets,
+  )))
+}
+
 resource "google_storage_bucket_iam_member" "catalog_bucket_viewer" {
-  for_each = toset(var.catalog_managed_buckets)
+  for_each = local.catalog_buckets
   bucket   = each.value
   role     = "roles/storage.objectViewer"
   member   = "serviceAccount:${google_service_account.catalog_service_account.email}"

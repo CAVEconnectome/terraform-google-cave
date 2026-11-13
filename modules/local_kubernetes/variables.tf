@@ -231,7 +231,11 @@ variable "cave_secret_name" {
 }
 
 variable "catalog_managed_buckets" {
-  description = "List of GCS bucket names the catalog SA gets objectViewer on for credential vending"
+  description = <<-EOT
+    GCS bucket names the catalog SA gets objectViewer on (credential vending, and reading
+    a lake it registers), besides the materialization dump bucket and the Delta Lake
+    export bucket, which it always gets. Listing those again is harmless.
+  EOT
   type        = list(string)
   default     = []
 }
